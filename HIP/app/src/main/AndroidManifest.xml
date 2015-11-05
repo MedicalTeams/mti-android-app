@@ -4,11 +4,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
+        android:label="HIP"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,17 +18,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignOnActivity" >
+        <activity
+            android:name=".SignOnActivity"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".VisitEntryActivity"
-            android:label="Visit Entry">
-
+        <activity
+            android:name=".DiagnosisActivity"
+            android:label="Visit Entry"
+            android:screenOrientation="portrait" >
         </activity>
         <activity android:name=".SuperActivity" >
         </activity>
         <activity android:name=".VisitSummaryActivity" >
         </activity>
         <activity android:name=".DashboardActivity" >
+        </activity>
+        <activity android:name=".DemographicEntryActivity" >
         </activity>
     </application>
 
