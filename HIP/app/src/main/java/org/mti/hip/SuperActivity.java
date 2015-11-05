@@ -18,7 +18,7 @@ public class SuperActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_super);
-        getSupportActionBar().setSubtitle("Nakivale, " + getDateNowString());
+        getSupportActionBar().setSubtitle("Nakivale HC  |  " + getDateNowString() + "  |  Dr. Robert Doakes");
     }
 
     public String getDateNowString() {
