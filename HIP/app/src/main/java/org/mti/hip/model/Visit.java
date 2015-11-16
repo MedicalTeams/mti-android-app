@@ -1,6 +1,7 @@
 package org.mti.hip.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by r624513 on 11/4/15.
@@ -14,7 +15,19 @@ public class Visit {
     private int opId;
     private int ageMonths;
     private Boolean isRevisit = false;
-    private ArrayList<Diagnosis> diagnoses;
+    private ArrayList<Diagnosis> diags;
+    private ArrayList<SupplementalDiagnosis> supplementalDiags;
+    private ArrayList<OtherDiagnosis> otherDiags;
+
+    private Date date;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     public String getClinician() {
         return clinician;
@@ -72,11 +85,27 @@ public class Visit {
         this.isRevisit = isRevisit;
     }
 
-    public ArrayList<Diagnosis> getDiagnoses() {
-        return diagnoses;
+    public ArrayList<Diagnosis> getDiags() {
+        return diags;
     }
 
-    public void setDiagnoses(ArrayList<Diagnosis> diagnoses) {
-        this.diagnoses = diagnoses;
+    public void setDiags(ArrayList<Diagnosis> diags) {
+        this.diags = diags;
+    }
+
+    public ArrayList<SupplementalDiagnosis> getSupplementalDiags() {
+        return supplementalDiags;
+    }
+
+    public void setSupplementalDiags(ArrayList<SupplementalDiagnosis> supplementalDiags) {
+        this.supplementalDiags = supplementalDiags;
+    }
+
+    public ArrayList<OtherDiagnosis> getOtherDiags() {
+        return otherDiags;
+    }
+
+    public void setOtherDiags(ArrayList<OtherDiagnosis> otherDiags) {
+        this.otherDiags = otherDiags;
     }
 }

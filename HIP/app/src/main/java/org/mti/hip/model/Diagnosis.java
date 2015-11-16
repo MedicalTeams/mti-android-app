@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class Diagnosis {
 
     private String description;
-    private ArrayList<SupplementalDiagnosis> supplementalDiagnoses;
 
     public String getDescription() {
         return description;
@@ -20,11 +19,5 @@ public class Diagnosis {
         this.description = description;
     }
 
-    public ArrayList<SupplementalDiagnosis> getSupplementalDiagnoses() {
-        return supplementalDiagnoses;
-    }
 
-    public void setSupplementalDiagnoses(ArrayList<SupplementalDiagnosis> supplementalDiagnoses) {
-        this.supplementalDiagnoses = supplementalDiagnoses;
-    }
 }

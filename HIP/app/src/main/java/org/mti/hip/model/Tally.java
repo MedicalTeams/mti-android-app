@@ -1,5 +1,7 @@
 package org.mti.hip.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -8,13 +10,5 @@ import java.util.Date;
  */
 public class Tally extends ArrayList<Visit> {
 
-    private Date date;
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 }
