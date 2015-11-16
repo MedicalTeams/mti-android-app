@@ -7,7 +7,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 
+import org.mti.hip.model.Visit;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
+
+import java.util.Date;
 
 public class DiagnosisActivity extends SuperActivity {
 
@@ -18,6 +21,8 @@ public class DiagnosisActivity extends SuperActivity {
     private int chronicDiseaseId = 2;
     private int mentalIllnessId = 3;
     private int injuryId = 4;
+
+    private Visit visit = getStorageManagerInstance().currentVisit();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,8 @@ public class DiagnosisActivity extends SuperActivity {
         expListView.expandGroup(0);
 
         expListView.setOnChildClickListener(listAdapter.getListener());
+
+
 
     }
 
