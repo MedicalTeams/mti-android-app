@@ -12,13 +12,17 @@ import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mti.hip.R;
+import org.mti.hip.SuperActivity;
 import org.mti.hip.model.Diagnosis;
 import org.mti.hip.model.OtherDiagnosis;
 import org.mti.hip.model.SupplementalDiagnosis;
+import org.mti.hip.model.Visit;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -34,9 +38,9 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     private ArrayList<String> injuryList;
     private ArrayList<String> mentalIllnessList;
     private ArrayList<String> injuryLocList;
-    //private ArrayList<OtherDiagnosis> otherDiagnoses;
+    //private ArrayList<OtherDiagnosis> otherDiags;
     private HashMap<String, ArrayList<String>> children = new HashMap<>();
-    private Context context;
+    private SuperActivity context;
     private int diagId = 0;
     private int stiId = 1;
     private int chronicDiseaseId = 2;
@@ -48,7 +52,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     public ExpandableListView.OnChildClickListener listener;
 
 
-    public VisitDiagnosisListAdapter(Context context) {
+    public VisitDiagnosisListAdapter(SuperActivity context) {
         this.context = context;
         primaryDiagList = getPrimaryDiags();
         stiList = getSTIs();
@@ -76,21 +80,35 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         listener = new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Log.d("clicker", String.valueOf(groupPosition));
+//                Log.d("int test", "" + groupPosition + childPosition);
+//                HashMap<Integer, Boolean> checkMap = new HashMap<>();
+//                checkMap.put(groupPosition & childPosition, true);
+                String desc = (String) getChild(groupPosition, childPosition);
+                if(desc.matches(getString(R.string.other))) {
+                    Toast.makeText(context, "Other diag", Toast.LENGTH_SHORT).show();
+                }
                 if(groupPosition == mentalIllnessId) {
                     for (RadioButton button : buttonMap.values()) {
                         button.setChecked(false);
                     }
                     RadioButton button = (RadioButton) v.findViewById(R.id.rb_single_select);
                     button.setChecked(true);
+                    button.setTag(true);
+
                 } else {
+                    // this allows the entire view to be clicked on and toggle check boxes rather
+                    // than requiring the user to tap the box itself
                     CheckBox cb = (CheckBox) v.findViewById(R.id.cb_multi_select);
                     if(cb.isChecked()) {
                         cb.setChecked(false);
+                        cb.setTag(false);
                     } else {
+                        cb.setTag(true);
                         cb.setChecked(true);
                     }
                 }
+                Visit visit = SuperActivity.getStorageManagerInstance().currentVisit();
+
                 return true;
             }
         };
@@ -171,6 +189,10 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 convertView = inflater.inflate(R.layout.list_item_multi_select, null);
                 txtListChild = (TextView) convertView
                         .findViewById(R.id.tv_multi_select);
+                CheckBox cb = (CheckBox) convertView.findViewById(R.id.cb_multi_select);
+                if(cb.getTag() == true) {
+                    cb.setChecked(true);
+                }
             }
 
 //        }
