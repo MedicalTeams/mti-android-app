@@ -20,20 +20,30 @@
         </activity>
         <activity
             android:name=".SignOnActivity"
+            android:label="@string/sign_in"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".DiagnosisActivity"
-            android:label="Visit Entry"
+            android:label="@string/visit_entry"
             android:screenOrientation="portrait" >
         </activity>
         <activity android:name=".SuperActivity" >
         </activity>
-        <activity android:name=".VisitSummaryActivity" >
+        <activity android:name=".VisitSummaryActivity"
+            android:label="@string/visit_summary">
         </activity>
-        <activity android:name=".DashboardActivity" >
+        <activity android:name=".DashboardActivity"
+            android:label="@string/dashboard">
         </activity>
-        <activity android:name=".DemographicEntryActivity" >
+        <activity android:name=".DemographicEntryActivity"
+            android:label="@string/demographics">
+        </activity>
+        <activity android:name=".FacilitySelectionActivity"
+            android:label="@string/select_facility">
+        </activity>
+        <activity android:name=".ClinicianSelectionActivity"
+            android:label="@string/choose_your_name">
         </activity>
     </application>
 

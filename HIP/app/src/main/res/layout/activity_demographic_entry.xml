@@ -21,12 +21,35 @@
     <EditText
         android:inputType="numberSigned"
         android:hint="Age"
-        android:layout_width="fill_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:id="@+id/patient_age"
         android:layout_below="@+id/opd_number"
-        android:layout_marginTop="8dp" />
-<LinearLayout
+        android:layout_marginTop="24dp" />
+    <RadioGroup
+        android:orientation="horizontal"
+        android:layout_alignBottom="@id/patient_age"
+        android:id="@+id/rg_years_or_months"
+        android:layout_toRightOf="@id/patient_age"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:text="Years"
+            android:id="@+id/rb_years"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+        <RadioButton
+            android:text="Months"
+            android:id="@+id/rb_months"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
+
+    <LinearLayout
     android:paddingRight="100dp"
     android:layout_width="match_parent"
     android:layout_below="@id/patient_age"
@@ -41,12 +64,14 @@
         android:layout_height="wrap_content">
         <RadioButton
             android:text="@string/national"
+            android:id="@+id/rb_national"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
         <RadioButton
             android:text="@string/refugee"
+            android:id="@+id/rb_refugee"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -63,10 +88,13 @@
             android:text="@string/visit"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_weight="1"
+
+            android:id="@+id/rb_visit"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
         <RadioButton
             android:text="@string/revisit"
+            android:id="@+id/rb_revisit"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -81,12 +109,14 @@
         android:layout_height="wrap_content">
         <RadioButton
             android:text="@string/male"
+            android:id="@+id/rb_male"
             android:layout_width="0dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_weight="1"
             android:layout_height="wrap_content" />
         <RadioButton
             android:text="@string/female"
+            android:id="@+id/rb_female"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
