@@ -2,6 +2,8 @@ package org.mti.hip.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by r624513 on 11/4/15.
@@ -15,7 +17,7 @@ public class Visit {
     private int opId;
     private int ageMonths;
     private Boolean isRevisit = false;
-    private ArrayList<Diagnosis> diags = new ArrayList<>();
+    private HashSet<Diagnosis> diags = new HashSet<>();
 
     private Date date;
 
@@ -83,11 +85,11 @@ public class Visit {
         this.isRevisit = isRevisit;
     }
 
-    public ArrayList<Diagnosis> getDiags() {
+    public HashSet<Diagnosis> getDiags() {
         return diags;
     }
 
-    public void setDiags(ArrayList<Diagnosis> diags) {
+    public void setDiags(HashSet<Diagnosis> diags) {
         this.diags = diags;
     }
 

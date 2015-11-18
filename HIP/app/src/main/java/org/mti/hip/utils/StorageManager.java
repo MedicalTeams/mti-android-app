@@ -29,8 +29,7 @@ public class StorageManager {
 
     public Visit newVisit() {
         Visit visit = new Visit();
-        visit.setDiags(new ArrayList<Diagnosis>());
-        tally.add(new Visit());
+        tally.add(visit);
 
         return tally.get(tally.size() -1);
     }

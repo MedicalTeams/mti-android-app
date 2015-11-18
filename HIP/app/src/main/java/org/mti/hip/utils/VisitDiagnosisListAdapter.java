@@ -3,6 +3,7 @@ package org.mti.hip.utils;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.util.Range;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import org.mti.hip.model.Visit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created by r624513 on 11/5/15.
@@ -114,16 +116,20 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 //                if(desc.matches(getString(R.string.other))) {
 //                    Toast.makeText(context, "Other diag", Toast.LENGTH_SHORT).show();
 //                }
-                if(groupPosition == mentalIllnessId) {
+                Diagnosis diagnosis = new Diagnosis();
+                diagnosis.setDescription(header);
+                diagnosis.setId(new Random().nextInt());
+
+                if(groupPosition == mentalIllnessId || groupPosition == injuryLocId) {
                     for (RadioButton button : buttonMap.values()) {
                         button.setChecked(false);
+                        visit.getDiags().clear();
                     }
                     ArrayList<SupplementalDiagnosis> list = (ArrayList<SupplementalDiagnosis>) children.get(header);
                     RadioButton button = (RadioButton) v.findViewById(R.id.rb_single_select);
                     button.setChecked(true);
                     button.setTag(true);
-                    Diagnosis diagnosis = new Diagnosis();
-                    diagnosis.setDescription(header);
+
                     diagnosis.getSupplementalDiags().add(list.get(childPosition));
                     // what needs to happen here is the diag of mental illness needs to be added
                     // to the master visit diags
@@ -359,6 +365,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         ArrayList<SupplementalDiagnosis> diags = new ArrayList<>();
         for (String s : list) {
             SupplementalDiagnosis diag = new SupplementalDiagnosis();
+            diag.setId(new Random().nextInt());
             diag.setDescription(s);
             diags.add(diag);
         }
