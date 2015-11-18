@@ -6,25 +6,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.mti.hip.R;
 import org.mti.hip.SuperActivity;
 import org.mti.hip.model.Diagnosis;
-import org.mti.hip.model.OtherDiagnosis;
 import org.mti.hip.model.SupplementalDiagnosis;
 import org.mti.hip.model.Visit;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * Created by r624513 on 11/5/15.
@@ -32,25 +27,52 @@ import java.util.LinkedHashMap;
 public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     private ArrayList<String> listHeaders;
-    private ArrayList<String> primaryDiagList;
-    private ArrayList<String> stiList;
-    private ArrayList<String> chronicDiseaseList;
-    private ArrayList<String> injuryList;
-    private ArrayList<String> mentalIllnessList;
-    private ArrayList<String> injuryLocList;
+    private ArrayList<Diagnosis> primaryDiagList;
+    private ArrayList<SupplementalDiagnosis> stiList;
+    private ArrayList<SupplementalDiagnosis> chronicDiseaseList;
+    private ArrayList<SupplementalDiagnosis> injuryList;
+    private ArrayList<SupplementalDiagnosis> mentalIllnessList;
+    private ArrayList<SupplementalDiagnosis> injuryLocList;
     //private ArrayList<OtherDiagnosis> otherDiags;
-    private HashMap<String, ArrayList<String>> children = new HashMap<>();
+    private HashMap<String, Object> children = new HashMap<>();
     private SuperActivity context;
-    private int diagId = 0;
-    private int stiId = 1;
-    private int chronicDiseaseId = 2;
-    private int mentalIllnessId = 3;
-    private int injuryId = 4;
-    private int injuryLocId = 5;
+    private static final int diagId = 0;
+    private static final int stiId = 1;
+    private static final int chronicDiseaseId = 2;
+    private static final int mentalIllnessId = 3;
+    private static final int injuryId = 4;
+    private static final int injuryLocId = 5;
     private HashMap<Integer, RadioButton> buttonMap = new HashMap<>();
 
     public ExpandableListView.OnChildClickListener listener;
 
+
+    public class ViewHolder
+    {
+        private HashMap<Integer, View> storedViews = new HashMap<Integer, View>();
+
+        public ViewHolder()
+        {
+        }
+
+        /**
+         *
+         * @param view
+         *            The view to add; to reference this view later, simply refer to its id.
+         * @return This instance to allow for chaining.
+         */
+        public ViewHolder addView(View view)
+        {
+            int id = view.getId();
+            storedViews.put(id, view);
+            return this;
+        }
+
+        public View getView(int id)
+        {
+            return storedViews.get(id);
+        }
+    }
 
     public VisitDiagnosisListAdapter(SuperActivity context) {
         this.context = context;
@@ -83,18 +105,33 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 //                Log.d("int test", "" + groupPosition + childPosition);
 //                HashMap<Integer, Boolean> checkMap = new HashMap<>();
 //                checkMap.put(groupPosition & childPosition, true);
-                String desc = (String) getChild(groupPosition, childPosition);
-                if(desc.matches(getString(R.string.other))) {
-                    Toast.makeText(context, "Other diag", Toast.LENGTH_SHORT).show();
-                }
+                Visit visit = SuperActivity.getStorageManagerInstance().currentVisit();
+//                String desc = (String) getChild(groupPosition, childPosition);
+                String header = listHeaders.get(groupPosition);
+
+
+
+//                if(desc.matches(getString(R.string.other))) {
+//                    Toast.makeText(context, "Other diag", Toast.LENGTH_SHORT).show();
+//                }
                 if(groupPosition == mentalIllnessId) {
                     for (RadioButton button : buttonMap.values()) {
                         button.setChecked(false);
                     }
+                    ArrayList<SupplementalDiagnosis> list = (ArrayList<SupplementalDiagnosis>) children.get(header);
                     RadioButton button = (RadioButton) v.findViewById(R.id.rb_single_select);
                     button.setChecked(true);
                     button.setTag(true);
+                    Diagnosis diagnosis = new Diagnosis();
+                    diagnosis.setDescription(header);
+                    diagnosis.getSupplementalDiags().add(list.get(childPosition));
+                    // what needs to happen here is the diag of mental illness needs to be added
+                    // to the master visit diags
+                    // with a child supplemental diag of whatever illness was chosen
 
+                    visit.getDiags().add(diagnosis);
+                    // TODO avoid adding dupes (either through HashMap or extending ArrayList add)
+                    Log.d("Visit test", context.getStorageManagerInstance().writeValueAsString(visit));
                 } else {
                     // this allows the entire view to be clicked on and toggle check boxes rather
                     // than requiring the user to tap the box itself
@@ -107,7 +144,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                         cb.setChecked(true);
                     }
                 }
-                Visit visit = SuperActivity.getStorageManagerInstance().currentVisit();
+
 
                 return true;
             }
@@ -122,7 +159,15 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.children.get(this.listHeaders.get(groupPosition)).size();
+        ArrayList child = null;
+        switch (groupPosition) {
+            case diagId:
+                child = (ArrayList<Diagnosis>) children.get(listHeaders.get(groupPosition));
+                default:
+                    child = (ArrayList<SupplementalDiagnosis>) children.get(listHeaders.get(groupPosition));
+
+        }
+        return child.size();
     }
 
 
@@ -133,7 +178,15 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this.children.get(this.listHeaders.get(groupPosition)).get(childPosition);
+        ArrayList child = null;
+        switch (groupPosition) {
+            case diagId:
+                child = (ArrayList<Diagnosis>) children.get(listHeaders.get(groupPosition));
+            default:
+                child = (ArrayList<SupplementalDiagnosis>) children.get(listHeaders.get(groupPosition));
+
+        }
+        return child.get(childPosition);
     }
 
     @Override
@@ -156,50 +209,69 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this.context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.list_group, null);
+
+        View v = convertView;
+        if (v == null)
+        {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = inflater.inflate(R.layout.list_group, parent, false);
+            ViewHolder holder = new ViewHolder();
+            holder.addView(v.findViewById(R.id.lblListHeader));
+            v.setTag(holder);
         }
 
-        TextView lblListHeader = (TextView) convertView
-                .findViewById(R.id.lblListHeader);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setText(headerTitle);
+        ViewHolder holder = (ViewHolder) v.getTag();
+        TextView tv = (TextView) holder.getView(R.id.lblListHeader);
+        tv.setTypeface(null, Typeface.BOLD);
+        tv.setText(headerTitle);
+        return v;
 
-        return convertView;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final String childText = (String) getChild(groupPosition, childPosition);
+        final SupplementalDiagnosis obj = (SupplementalDiagnosis) getChild(groupPosition, childPosition);
 
-//        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) this.context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        TextView txtListChild;
-        Log.d("exadapter", String.valueOf(groupPosition));
-            if(groupPosition == mentalIllnessId) {  // sti and injury B are single select
+        String childText = obj.getDescription();
+        LayoutInflater inflater = (LayoutInflater) this.context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        TextView tv = null;
+        if (convertView == null) {
+            View selector;
+            ViewHolder holder = new ViewHolder();
+
+            if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {  // sti and injury B are single select
                 convertView = inflater.inflate(R.layout.list_item_single_select, null);
-               txtListChild = (TextView) convertView
-                        .findViewById(R.id.tv_single_select);
-                buttonMap.put(childPosition, (RadioButton) convertView.findViewById(R.id.rb_single_select));
+                tv = (TextView) convertView.findViewById(R.id.tv_single_select);
+
+                selector = convertView.findViewById(R.id.rb_single_select);
+                buttonMap.put(childPosition, (RadioButton) selector);
 
             } else {
                 convertView = inflater.inflate(R.layout.list_item_multi_select, null);
-                txtListChild = (TextView) convertView
+                tv = (TextView) convertView
                         .findViewById(R.id.tv_multi_select);
-                CheckBox cb = (CheckBox) convertView.findViewById(R.id.cb_multi_select);
-                if(cb.getTag() == true) {
-                    cb.setChecked(true);
+                selector = (CheckBox) convertView.findViewById(R.id.cb_multi_select);
+                if (selector.getTag() == true) {
+//                    selector.setChecked(true);
                 }
+
+//                holder.addView(tv);
             }
+            convertView.setTag(holder);
+            holder.addView(tv);
+            holder.addView(selector);
+        }
 
-//        }
+        // Get the stored ViewHolder that also contains our views
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+        if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {
+            tv = (TextView) holder.getView(R.id.tv_single_select);
+        } else {
+            tv = (TextView) holder.getView(R.id.tv_multi_select);
+        }
 
-
-
-        txtListChild.setText(childText);
+        tv.setText(childText);
         return convertView;
 
     }
@@ -209,7 +281,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    private ArrayList<String> getPrimaryDiags() {
+    private ArrayList<Diagnosis> getPrimaryDiags() {
         ArrayList<String> diagStrings = new ArrayList<>();
 
         diagStrings.clear();
@@ -239,10 +311,16 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         diagStrings.add(getString(R.string.diag_pudx));
         diagStrings.add(getString(R.string.other));
 
-        return diagStrings;
+        ArrayList<Diagnosis> diags = new ArrayList<>();
+        for (String s : diagStrings) {
+            Diagnosis diag = new Diagnosis();
+            diag.setDescription(s);
+            diags.add(diag);
+        }
+        return diags;
     }
 
-    private ArrayList<String> getChronicDiseaseList() {
+    private ArrayList<SupplementalDiagnosis> getChronicDiseaseList() {
         ArrayList<String> chronicDiseases = new ArrayList<>();
         chronicDiseases.clear();
         chronicDiseases.add(getString(R.string.chronic_disease_cancer));
@@ -257,10 +335,17 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         chronicDiseases.add(getString(R.string.chronic_disease_respiratory_disease));
         chronicDiseases.add(getString(R.string.other));
 
-        return chronicDiseases;
+
+        ArrayList<SupplementalDiagnosis> diags = new ArrayList<>();
+        for (String s : chronicDiseases) {
+            SupplementalDiagnosis diag = new SupplementalDiagnosis();
+            diag.setDescription(s);
+            diags.add(diag);
+        }
+        return diags;
     }
 
-    private ArrayList<String> getInjuryLocations() {
+    private ArrayList<SupplementalDiagnosis> getInjuryLocations() {
         ArrayList<String> list = new ArrayList<>();
         list.clear();
         list.add(getString(R.string.injury_location_home));
@@ -270,10 +355,17 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         list.add(getString(R.string.injury_location_bush_or_forest));
         list.add(getString(R.string.injury_location_road));
 
-        return list;
+
+        ArrayList<SupplementalDiagnosis> diags = new ArrayList<>();
+        for (String s : list) {
+            SupplementalDiagnosis diag = new SupplementalDiagnosis();
+            diag.setDescription(s);
+            diags.add(diag);
+        }
+        return diags;
     }
 
-    private ArrayList<String> getSTIs() {
+    private ArrayList<SupplementalDiagnosis> getSTIs() {
         ArrayList<String> stis = new ArrayList<>();
 
         stis.clear();
@@ -284,10 +376,16 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         stis.add(getString(R.string.sti_congenital_syphillis));
         stis.add(getString(R.string.other));
 
-        return stis;
+        ArrayList<SupplementalDiagnosis> diags = new ArrayList<>();
+        for (String s : stis) {
+            SupplementalDiagnosis diag = new SupplementalDiagnosis();
+            diag.setDescription(s);
+            diags.add(diag);
+        }
+        return diags;
     }
 
-    private ArrayList<String> getMentalIllnesses() {
+    private ArrayList<SupplementalDiagnosis> getMentalIllnesses() {
         ArrayList<String> list = new ArrayList<>();
         list.clear();
         list.add(getString(R.string.mental_health_epilepsy_seizures));
@@ -298,7 +396,13 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         list.add(getString(R.string.mental_health_medically_unexplained_somatic_complaint));
         list.add(getString(R.string.mental_health_psychotic_disorder));
         list.add(getString(R.string.other));
-        return list;
+        ArrayList<SupplementalDiagnosis> diags = new ArrayList<>();
+        for (String s : list) {
+            SupplementalDiagnosis diag = new SupplementalDiagnosis();
+            diag.setDescription(s);
+            diags.add(diag);
+        }
+        return diags;
 
     }
 
@@ -317,7 +421,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     }
 
 
-    private ArrayList<String> getInjuries() {
+    private ArrayList<SupplementalDiagnosis> getInjuries() {
         ArrayList<String> list = new ArrayList<>();
         list.clear();
         list.add(getString(R.string.injuries_accident));
@@ -328,7 +432,13 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         list.add(getString(R.string.injuries_burn));
         list.add(getString(R.string.injuries_unknown));
         list.add(getString(R.string.other));
-        return list;
+        ArrayList<SupplementalDiagnosis> diags = new ArrayList<>();
+        for (String s : list) {
+            SupplementalDiagnosis diag = new SupplementalDiagnosis();
+            diag.setDescription(s);
+            diags.add(diag);
+        }
+        return diags;
     }
 
     private String getString(int id) {

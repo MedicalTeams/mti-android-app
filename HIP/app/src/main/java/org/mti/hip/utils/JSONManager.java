@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.mti.hip.model.Diagnosis;
+import org.mti.hip.model.SupplementalDiagnosis;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 
@@ -37,7 +38,7 @@ public class JSONManager {
         }
     }
 
-    public void test() {
+    public String getTestJsonString() {
         om = new ObjectMapper();
         Tally tally = new Tally();
         Visit visit = new Visit();
@@ -57,9 +58,10 @@ public class JSONManager {
         tally.add(visit);
 
         try {
-            Log.d("mapper", om.writeValueAsString(tally));
+           return om.writeValueAsString(tally);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

@@ -37,8 +37,6 @@ public class DiagnosisActivity extends SuperActivity {
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
-        expListView.expandGroup(0);
-
         expListView.setOnChildClickListener(listAdapter.getListener());
 
 

@@ -17,15 +17,15 @@
     android:layout_centerHorizontal="true"
     android:src="@drawable/logo" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:id="@+id/cambialogo"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/mtilogo"
-        android:layout_marginTop="75dp"
-        android:visibility="gone"
-        android:src="@drawable/cambialogo" />
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:id="@+id/cambialogo"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_toRightOf="@id/mtilogo"-->
+        <!--android:layout_marginTop="75dp"-->
+        <!--android:visibility="gone"-->
+        <!--android:src="@drawable/cambialogo" />-->
 
     <Button
         android:layout_width="250dp"

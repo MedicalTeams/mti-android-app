@@ -15,9 +15,7 @@ public class Visit {
     private int opId;
     private int ageMonths;
     private Boolean isRevisit = false;
-    private ArrayList<Diagnosis> diags;
-    private ArrayList<SupplementalDiagnosis> supplementalDiags;
-    private ArrayList<OtherDiagnosis> otherDiags;
+    private ArrayList<Diagnosis> diags = new ArrayList<>();
 
     private Date date;
 
@@ -93,19 +91,5 @@ public class Visit {
         this.diags = diags;
     }
 
-    public ArrayList<SupplementalDiagnosis> getSupplementalDiags() {
-        return supplementalDiags;
-    }
 
-    public void setSupplementalDiags(ArrayList<SupplementalDiagnosis> supplementalDiags) {
-        this.supplementalDiags = supplementalDiags;
-    }
-
-    public ArrayList<OtherDiagnosis> getOtherDiags() {
-        return otherDiags;
-    }
-
-    public void setOtherDiags(ArrayList<OtherDiagnosis> otherDiags) {
-        this.otherDiags = otherDiags;
-    }
 }

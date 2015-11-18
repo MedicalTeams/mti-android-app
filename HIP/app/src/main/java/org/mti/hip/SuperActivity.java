@@ -1,20 +1,16 @@
 package org.mti.hip;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
 
-import org.mti.hip.model.Diagnosis;
-import org.mti.hip.model.SupplementalDiagnosis;
 import org.mti.hip.model.User;
+import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSONManager;
 import org.mti.hip.utils.StorageManager;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class SuperActivity extends AppCompatActivity {
@@ -22,6 +18,7 @@ public class SuperActivity extends AppCompatActivity {
     public static String currentUserName;
     private static JSONManager jsonManager;
     private static StorageManager storageManager = getStorageManagerInstance();
+    private static HttpClient httpClient;
     public static String facilityName;
 
 
@@ -41,6 +38,13 @@ public class SuperActivity extends AppCompatActivity {
             storageManager = new StorageManager();
         }
         return storageManager;
+    }
+
+    public static HttpClient getHttpClientInstance() {
+        if (httpClient == null) {
+            httpClient = new HttpClient();
+        }
+        return httpClient;
     }
 
 

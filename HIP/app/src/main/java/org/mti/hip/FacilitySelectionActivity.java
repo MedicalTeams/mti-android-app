@@ -7,8 +7,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.mti.hip.model.User;
-
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class FacilitySelectionActivity extends SuperActivity {
@@ -35,7 +34,16 @@ public class FacilitySelectionActivity extends SuperActivity {
                 startActivity(new Intent(FacilitySelectionActivity.this, ClinicianSelectionActivity.class));
             }
         });
+//        testJson();
+    }
 
+    private void testJson() {
+        String json = getJsonManagerInstance().getTestJsonString();
+        try {
+            getHttpClientInstance().post("/Visit", json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 //    @Override
