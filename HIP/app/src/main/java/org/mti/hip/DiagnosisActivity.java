@@ -41,7 +41,6 @@ public class DiagnosisActivity extends SuperActivity {
         expListView.setOnChildClickListener(listAdapter.getListener());
 
 
-
     }
 
     @Override
@@ -57,7 +56,7 @@ public class DiagnosisActivity extends SuperActivity {
         switch (item.getItemId()) {
             case R.id.action_next:
                 // TODO retrieve each selected item with appropriate switching and populate visit
-                if(valid()) {
+                if (valid()) {
                     startActivity(new Intent(this, VisitSummaryActivity.class));
                 } else {
                     alert.showAlert("Invalid visit", errorMsg);
@@ -69,19 +68,19 @@ public class DiagnosisActivity extends SuperActivity {
     }
 
     private boolean valid() {
-        ArrayList<SupplementalDiagnosis> inJuryLoc = (ArrayList<SupplementalDiagnosis>) listAdapter.getList(injuryLocId);
-        ArrayList<SupplementalDiagnosis> mentalIllness = (ArrayList<SupplementalDiagnosis>) listAdapter.getList(mentalIllnessId);
         ArrayList<Diagnosis> diags;
-        HashSet<SupplementalDiagnosis> suppsSet = new HashSet<>();
+
         ArrayList<SupplementalDiagnosis> supps;
         Visit visit = getStorageManagerInstance().currentVisit();
-        for(int i = 0; i < listAdapter.check_states.size(); i++) {
+        visit.getDiags().clear();
+        for (int i = 0; i < listAdapter.check_states.size(); i++) {
+            // this block = group lists 0-5
+            HashSet<SupplementalDiagnosis> suppsSet = new HashSet<>();
+            suppsSet.clear();
 
+            for (int j = 0; j < listAdapter.check_states.get(i).size(); j++) {
 
-            for(int j = 0; j < listAdapter.check_states.get(i).size(); j++) {
-                // this block = group lists 0-5
-//                suppsSet.clear();
-                if(listAdapter.check_states.get(i).get(j) == 0) {
+                if (listAdapter.check_states.get(i).get(j) == 0) {
                     // these have checked state
                     if (i == diagId) {
                         diags = (ArrayList<Diagnosis>) listAdapter.getList(i);
@@ -92,7 +91,7 @@ public class DiagnosisActivity extends SuperActivity {
                         SupplementalDiagnosis supp = supps.get(j);
                         suppsSet.add(supp);
                         Diagnosis diag = new Diagnosis();
-                        diag.setDescription("Header" + i);
+                        diag.setDescription(String.valueOf(listAdapter.getGroup(i)));
                         diag.setSupplementalDiags(suppsSet);
                         visit.getDiags().add(diag);
                     }
@@ -105,7 +104,6 @@ public class DiagnosisActivity extends SuperActivity {
             }
 
         }
-        Log.d("test123", String.valueOf(getJsonManagerInstance().writeValueAsString(visit)));
         return true;
     }
 }

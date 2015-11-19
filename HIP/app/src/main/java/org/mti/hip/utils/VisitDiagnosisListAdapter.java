@@ -147,8 +147,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                     RadioButton button = (RadioButton) v.findViewById(R.id.rb_single_select);
                     button.setChecked(true);
 //                    SupplementalDiagnosis supp = list.get(childPosition);
-                    Log.d("test", supp.getDescription());
-                    Log.d("test", "" + groupPosition + childPosition);
                     check_states.get(groupPosition).set(childPosition, 0);
                 } else {
                     // this allows the entire view to be clicked on and toggle check boxes rather
@@ -260,7 +258,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         } else {
             final SupplementalDiagnosis obj = (SupplementalDiagnosis) getChild(groupPosition, childPosition);
             childText = obj.getDescription();
-            Log.d("is selected", String.valueOf(selected));
         }
 
 

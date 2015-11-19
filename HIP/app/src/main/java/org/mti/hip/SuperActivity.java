@@ -64,11 +64,6 @@ public class SuperActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_super);
         getSupportActionBar().setSubtitle(buildHeader());
-        try {
-           Log.d("visitdesc", getJsonManagerInstance().writeValueAsString(storageManager.currentVisit()));
-        } catch (Exception ignored){
-
-        }
 
     }
 

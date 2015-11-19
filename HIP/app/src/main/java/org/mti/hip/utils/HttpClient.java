@@ -40,6 +40,8 @@ public class HttpClient {
                         .url("http://clinicwebapp.azurewebsites.net/hip" + endpoint)
                         .post(body)
                         .build();
+//                Log.d("request", request.toString());
+//                Log.d("request json", json);
                 Response response;
                 String responseString = null;
                 try {

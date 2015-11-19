@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ public class VisitSummaryActivity extends SuperActivity {
         setContentView(R.layout.activity_visit_summary);
         Visit visit = getStorageManagerInstance().currentVisit();
         visitJson = getJsonManagerInstance().writeValueAsString(visit);
+        Log.d("visit json", visitJson);
         submit = (Button) findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
