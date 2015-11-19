@@ -1,11 +1,5 @@
 package org.mti.hip.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import org.mti.hip.SuperActivity;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -13,26 +7,26 @@ import java.util.HashSet;
  */
 public class Diagnosis {
 
-    private String description;
+    private String name;
     private int id;
 
-//    private HashMap<Integer, ArrayList<SupplementalDiagnosis>> diagMap = new HashMap<>();
-    private HashSet<SupplementalDiagnosis> supplementalDiags = new HashSet<>();
+//    private HashMap<Integer, ArrayList<Supplemental>> diagMap = new HashMap<>();
+    private HashSet<Supplemental> supplementals = new HashSet<>();
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setName (String name) {
+        this.name = name;
     }
 
-    public HashSet<SupplementalDiagnosis> getSupplementalDiags() {
-        return supplementalDiags;
+    public HashSet<Supplemental> getSupplementals() {
+        return supplementals;
     }
 
-    public void setSupplementalDiags(HashSet<SupplementalDiagnosis> supplementalDiags) {
-        this.supplementalDiags = supplementalDiags;
+    public void setSupplementals(HashSet<Supplemental> supplementals) {
+        this.supplementals = supplementals;
     }
 
 
@@ -44,13 +38,13 @@ public class Diagnosis {
         Diagnosis diagnosis = (Diagnosis) o;
 
         if (id != diagnosis.id) return false;
-        return !(description != null ? !description.equals(diagnosis.description) : diagnosis.description != null);
+        return !(name != null ? !name.equals(diagnosis.name) : diagnosis.name != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = description != null ? description.hashCode() : 0;
+        int result = name != null ? name.hashCode() : 0;
         result = 31 * result + id;
         return result;
     }
@@ -63,11 +57,11 @@ public class Diagnosis {
         this.id = id;
     }
 
-    //    public HashMap<Integer, ArrayList<SupplementalDiagnosis>> getDiagMap() {
+    //    public HashMap<Integer, ArrayList<Supplemental>> getDiagMap() {
 //        return diagMap;
 //    }
 //
-//    public void setDiagMap(HashMap<Integer, ArrayList<SupplementalDiagnosis>> diagMap) {
+//    public void setDiagMap(HashMap<Integer, ArrayList<Supplemental>> diagMap) {
 //        this.diagMap = diagMap;
 //    }
 }

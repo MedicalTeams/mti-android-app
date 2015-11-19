@@ -1,47 +1,65 @@
 package org.mti.hip.model;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by r624513 on 11/4/15.
  */
 public class Visit {
 
-    private String clinician;
-    private String facility;
+            /*
+
+        supplementals (Array[supplemental], optional)
+             }
+             supplemental {
+             id (id),
+             name (string, optional)
+        }
+             */
+
+    public static final int national = 1;
+    public static final int refugee = 2;
+
+
+    private String staffMemberName;
+    private String facilityName;
+    private int facility;
     private char gender;
-    private Boolean isNational;
-    private int opId;
-    private int ageMonths;
+    private int beneficiaryType;
+    private int OPD;
+    private int patientAgeMonths;
     private Boolean isRevisit = false;
-    private HashSet<Diagnosis> diags = new HashSet<>();
+    private HashSet<Diagnosis> patientDiagnosis = new HashSet<>();
+    private int stiContactsTreated;
+    private int injuryLocation;
+    private Date visitDate;
+    private String deviceId;
 
-    private Date date;
 
-    public Date getDate() {
-        return date;
+    public Date getVisitDate() {
+        return visitDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setVisitDate(Date visitDate) {
+        this.visitDate = visitDate;
     }
 
-    public String getClinician() {
-        return clinician;
+    public String getStaffMemberName() {
+        return staffMemberName;
     }
 
-    public void setClinician(String clinician) {
-        this.clinician = clinician;
+    public void setStaffMemberName(String staffMemberName) {
+        this.staffMemberName = staffMemberName;
     }
 
-    public String getFacility() {
+    public int getFacility() {
         return facility;
     }
 
-    public void setFacility(String facility) {
+    public void setFacility(int facility) {
         this.facility = facility;
     }
 
@@ -53,28 +71,28 @@ public class Visit {
         this.gender = gender;
     }
 
-    public Boolean getIsNational() {
-        return isNational;
+    public int getBeneficiaryType() {
+        return beneficiaryType;
     }
 
-    public void setIsNational(Boolean isNational) {
-        this.isNational = isNational;
+    public void setBeneficiaryType(int beneficiaryType) {
+        this.beneficiaryType = beneficiaryType;
     }
 
-    public int getOpId() {
-        return opId;
+    public int getOPD() {
+        return OPD;
     }
 
-    public void setOpId(int opId) {
-        this.opId = opId;
+    public void setOPD(int OPD) {
+        this.OPD = OPD;
     }
 
-    public int getAgeMonths() {
-        return ageMonths;
+    public int getPatientAgeMonths() {
+        return patientAgeMonths;
     }
 
-    public void setAgeMonths(int ageMonths) {
-        this.ageMonths = ageMonths;
+    public void setPatientAgeMonths(int patientAgeMonths) {
+        this.patientAgeMonths = patientAgeMonths;
     }
 
     public Boolean getIsRevisit() {
@@ -85,13 +103,46 @@ public class Visit {
         this.isRevisit = isRevisit;
     }
 
-    public HashSet<Diagnosis> getDiags() {
-        return diags;
+    public HashSet<Diagnosis> getPatientDiagnosis() {
+        return patientDiagnosis;
     }
 
-    public void setDiags(HashSet<Diagnosis> diags) {
-        this.diags = diags;
+    public void setPatientDiagnosis(HashSet<Diagnosis> patientDiagnosis) {
+        this.patientDiagnosis = patientDiagnosis;
     }
 
 
+    public int getStiContactsTreated() {
+        return stiContactsTreated;
+    }
+
+    public void setStiContactsTreated(int stiContactsTreated) {
+        this.stiContactsTreated = stiContactsTreated;
+    }
+
+    public int getInjuryLocation() {
+        return injuryLocation;
+    }
+
+    public void setInjuryLocation(int injuryLocation) {
+        this.injuryLocation = injuryLocation;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    @JsonIgnore
+    public String getFacilityName() {
+        return facilityName;
+    }
+
+    @JsonIgnore
+    public void setFacilityName(String facilityName) {
+        this.facilityName = facilityName;
+    }
 }

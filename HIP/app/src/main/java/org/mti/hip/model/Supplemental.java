@@ -1,22 +1,20 @@
 package org.mti.hip.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * Created by r624513 on 11/4/15.
  */
-public class SupplementalDiagnosis {
+public class Supplemental {
 
-    private String description;
+    private String name;
 
     private int id;
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setName(String description) {
+        this.name = description;
     }
 
     @Override
@@ -24,16 +22,16 @@ public class SupplementalDiagnosis {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SupplementalDiagnosis that = (SupplementalDiagnosis) o;
+        Supplemental that = (Supplemental) o;
 
         if (id != that.id) return false;
-        return !(description != null ? !description.equals(that.description) : that.description != null);
+        return !(name != null ? !name.equals(that.name) : that.name != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = description != null ? description.hashCode() : 0;
+        int result = name != null ? name.hashCode() : 0;
         result = 31 * result + id;
         return result;
     }
