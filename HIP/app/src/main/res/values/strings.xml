@@ -123,6 +123,7 @@
     <string name="prompt_hiv">HIV Counsel needed.</string>
     <string name="prompt_assault">If SGBV consult to goto police</string>
     <string name="prompt_outbreak_potential">Disease with outbreak potential. Refer to weekly alert thresholds.</string>
+    <string name="edit">Edit</string>
     <!-- End: Prompts -->
 
 </resources>

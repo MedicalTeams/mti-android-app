@@ -13,7 +13,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -34,7 +34,7 @@ dependencies {
     compile 'com.android.support:support-v4:23.1.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'io.nlopez.smartlocation:library:3.2.0'
-    compile 'com.commonsware.cwac:merge:1.1.+'
+//    compile 'com.commonsware.cwac:merge:1.1.+'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.4.1'

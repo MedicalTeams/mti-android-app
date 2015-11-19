@@ -1,18 +1,15 @@
 package org.mti.hip.utils;
 
-import android.util.Log;
-
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.mti.hip.model.Diagnosis;
-import org.mti.hip.model.SupplementalDiagnosis;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -24,14 +21,20 @@ public class JSONManager {
     public JSONManager() {
         om = new ObjectMapper();
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//        om.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        om.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     private ObjectMapper om;
 
 
 
-    public void read(String json) {
+    public Object read(String json, Class clazz) {
+        try {
+            return om.readValue(json, clazz);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void writeToJsonString(Object obj) {
@@ -45,19 +48,19 @@ public class JSONManager {
     public String getTestJsonString() {
         Tally tally = new Tally();
         Visit visit = new Visit();
-        visit.setAgeMonths(40);
-        visit.setClinician("Dr. Robert Bobert");
-        visit.setFacility("Nakivale HC");
+        visit.setPatientAgeMonths(40);
+        visit.setStaffMemberName("Dr. Robert Bobert");
+        visit.setFacility(1234);
         visit.setGender('M');
-        visit.setIsNational(true);
+        visit.setBeneficiaryType(0);
         visit.setIsRevisit(false);
-        visit.setOpId(123);
-        visit.setDate(new Date());
+        visit.setOPD(123);
+        visit.setVisitDate(new Date());
         HashSet<Diagnosis> diags = new HashSet<>();
         Diagnosis diag = new Diagnosis();
-        diag.setDescription("Diabetes");
+        diag.setName("Diabetes");
         diags.add(diag);
-        visit.setDiags(diags);
+        visit.setPatientDiagnosis(diags);
         tally.add(visit);
 
         try {
