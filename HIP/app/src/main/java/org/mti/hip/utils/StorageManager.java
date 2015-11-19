@@ -1,20 +1,26 @@
 package org.mti.hip.utils;
 
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.mti.hip.model.Diagnosis;
-import org.mti.hip.model.OtherDiagnosis;
-import org.mti.hip.model.SupplementalDiagnosis;
+import org.apache.commons.io.FileUtils;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by r624513 on 11/4/15.
  */
 public class StorageManager {
+
+    public static final String TALLY_FILENAME = "tally_file";
+    public static final String LOG_TAG = "MTI-HIP";
 
     private Tally tally;
 
@@ -37,13 +43,4 @@ public class StorageManager {
         return tally.get(tally.size() -1);
     }
 
-//    public String writeValueAsString(Object obj) {
-//        String val = null;
-//        try {
-//            val = om.writeValueAsString(obj);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
-//        return val;
-//    }
 }
