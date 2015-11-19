@@ -2,11 +2,14 @@ package org.mti.hip;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.mti.hip.model.Facility;
+import org.mti.hip.model.FacilityWrapper;
 import org.mti.hip.utils.HttpClient;
 
 import java.io.IOException;
@@ -15,29 +18,23 @@ import java.util.ArrayList;
 public class FacilitySelectionActivity extends SuperActivity {
 
     private ListView lv;
+    private ArrayList<Facility> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facility_selection);
         lv = (ListView) findViewById(android.R.id.list);
-        ArrayList<String> list = new ArrayList<>();
-        list.add("Nakivale H/C III");
-        list.add("Juru H/C II");
-        list.add("Kibengo H/C II");
-        list.add("Rubondo H/C II");
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(FacilitySelectionActivity.this, android.R.layout.simple_list_item_1, list);
-        lv.setAdapter(adapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                facilityName = adapter.getItem(position);
-                startActivity(new Intent(FacilitySelectionActivity.this, ClinicianSelectionActivity.class));
-            }
-        });
+
 //        testJson();
         getFacilities();
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
     }
 
     private void testJson() {
@@ -50,11 +47,27 @@ public class FacilitySelectionActivity extends SuperActivity {
     }
 
     private void getFacilities() {
-        try {
-            String facilitiesJson = getHttpClientInstance().get(HttpClient.facilitiesEndpoint);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new NetworkTask(HttpClient.facilitiesEndpoint, NetworkTask.get) {
+
+            @Override
+            public void getResponseString(String response) {
+
+                list = (ArrayList<Facility>) getJsonManagerInstance().read(response, FacilityWrapper.class);
+                // TODO base this list on the "settlement" value matching (which will be a string matcher)
+                final ArrayAdapter<Facility> adapter = new ArrayAdapter<>(FacilitySelectionActivity.this, android.R.layout.simple_list_item_1, list);
+                lv.setAdapter(adapter);
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        facilityName = adapter.getItem(position).getName();
+
+                        // TODO record ID
+                        startActivity(new Intent(FacilitySelectionActivity.this, ClinicianSelectionActivity.class));
+                    }
+                });
+                Log.d("test", list.get(0).getName());
+            }
+        }.execute();
     }
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {

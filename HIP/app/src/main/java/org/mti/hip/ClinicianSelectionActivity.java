@@ -1,7 +1,6 @@
 package org.mti.hip;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,7 +34,11 @@ public class ClinicianSelectionActivity extends SuperActivity {
                 String userName = adapter.getItem(position);
                 currentUserName = userName;
                 new User(userName);
-                startActivity(new Intent(ClinicianSelectionActivity.this, DashboardActivity.class));
+                Intent i = new Intent(ClinicianSelectionActivity.this, DashboardActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                finish();
+
             }
         });
 

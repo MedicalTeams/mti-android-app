@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, FacilitySelectionActivity.class));
+                finish();
             }
         });
 
@@ -48,6 +49,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void initApp() {
         // TODO add network calls for retrieving Constants data from endpoints
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+            }
+        }.execute();
     }
 
 
