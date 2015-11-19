@@ -1,8 +1,10 @@
 package org.mti.hip;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.text.Html;
+import android.text.Spanned;
 import android.widget.EditText;
 
 import org.mti.hip.model.User;
@@ -11,6 +13,7 @@ import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSONManager;
 import org.mti.hip.utils.StorageManager;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -78,6 +81,14 @@ public class SuperActivity extends AppCompatActivity {
         return new SimpleDateFormat("dd-MMM-yyyy").format(new Date());
     }
 
+    public String getFormattedDate(Date input) {
+        return new SimpleDateFormat("dd-MMM-yyyy").format(input);
+    }
+
+    public Spanned bold(String input) {
+        return Html.fromHtml("<b>" + input + "</b>");
+    }
+
     private String buildHeader() {
         StringBuffer sb = new StringBuffer();
         if(facilityName != null) {
@@ -87,6 +98,59 @@ public class SuperActivity extends AppCompatActivity {
             sb.append("  |  " + getCurrentUser().getName());
         }
         return sb.toString();
+    }
+
+    public abstract class NetworkTask extends AsyncTask<Void, Void, String> {
+        Exception e;
+
+        private String body;
+        private String endpoint;
+        private String httpMethod;
+
+        public static final String post = "POST";
+        public static final String get = "GET";
+
+        public NetworkTask(String endpoint, String httpMethod) {
+            this.endpoint = endpoint;
+            this.httpMethod = httpMethod;
+        }
+
+        public NetworkTask(String body, String endpoint, String httpMethod) {
+            this.body = body;
+            this.endpoint = endpoint;
+            this.httpMethod = httpMethod;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String responseString = null;
+            if(httpMethod.equals(post)) {
+                try {
+                    responseString = getHttpClientInstance().post(endpoint, body);
+                } catch (IOException e) {
+                    this.e = e;
+                }
+            } else {
+                try {
+                    responseString = getHttpClientInstance().get(endpoint);
+                } catch (IOException e) {
+                    this.e = e;
+                }
+            }
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String r) {
+            if (e == null) {
+                getResponseString(r);
+            } else {
+                alert.showAlert("Error", e.getMessage());
+            }
+            super.onPostExecute(r);
+        }
+
+        public abstract void getResponseString(String response);
     }
 
 
