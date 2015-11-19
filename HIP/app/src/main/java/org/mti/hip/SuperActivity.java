@@ -1,5 +1,6 @@
 package org.mti.hip;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ public class SuperActivity extends AppCompatActivity {
     private static StorageManager storageManager = getStorageManagerInstance();
     private static HttpClient httpClient;
     public static String facilityName;
+    public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
 
     public static final int diagId = 0;
@@ -34,6 +36,9 @@ public class SuperActivity extends AppCompatActivity {
     public static final int injuryId = 4;
     public static final int injuryLocId = 5;
 
+    private static final String LOCATION_KEY = "locationId";
+    private static final String FACILITY_KEY = "facilityId";
+    private static final String CLINICIAN_KEY = "clinicianName";
 
 
     public User getCurrentUser() {
@@ -151,6 +156,54 @@ public class SuperActivity extends AppCompatActivity {
         }
 
         public abstract void getResponseString(String response);
+    }
+
+    /**
+     * Save the last used location to Shared Preferences
+     * @param locationId
+     */
+    public void writeLastUsedLocation(int locationId) {
+        getPreferences(Context.MODE_PRIVATE).edit().putInt(LOCATION_KEY, locationId).commit();
+    }
+
+    /**
+     * Save the last used facility to Shared Preferences
+     * @param facilityId
+     */
+    public void writeLastUsedFacility(int facilityId) {
+        getPreferences(Context.MODE_PRIVATE).edit().putInt(FACILITY_KEY, facilityId).commit();
+    }
+
+    /**
+     * Save the last used clinician to Shared Preferences
+     * @param clinicianName
+     */
+    public void writeLastUsedClinician(String clinicianName) {
+        getPreferences(Context.MODE_PRIVATE).edit().putString(CLINICIAN_KEY, clinicianName).commit();
+    }
+
+    /**
+     * Read the last used location from Shared Preferences
+     * @return
+     */
+    public int readLastUsedLocation() {
+        return getPreferences(Context.MODE_PRIVATE).getInt(LOCATION_KEY, 0);
+    }
+
+    /**
+     * Read the last used facility from Shared Preferences
+     * @return
+     */
+    public int readLastUsedFacility() {
+        return getPreferences(Context.MODE_PRIVATE).getInt(FACILITY_KEY, 0);
+    }
+
+    /**
+     * Read the last used clinician from Shared Preferences
+     * @return
+     */
+    public String readLastUsedClinician() {
+        return getPreferences(Context.MODE_PRIVATE).getString(CLINICIAN_KEY, "");
     }
 
 
