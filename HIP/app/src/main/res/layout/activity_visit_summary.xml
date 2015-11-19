@@ -7,11 +7,72 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="org.mti.hip.VisitSummaryActivity">
 
-    <TextView
+
+    <LinearLayout
         android:layout_width="wrap_content"
+        android:minHeight="64dp"
+        android:id="@+id/ll_consultation_data"
+        android:layout_toLeftOf="@+id/ll_consultation_edit"
+        android:layout_alignParentLeft="true"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Summary goes here"/>
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/ll_consultation_edit"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/ll_consultation_data"
+        android:layout_alignTop="@id/ll_consultation_data"
+        android:layout_alignParentRight="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/bt_consultation_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#888888"
+        android:layout_margin="12dp"
+        android:layout_below="@id/ll_consultation_data"
+        android:id="@+id/line"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/ll_diag_data"
+        android:minHeight="64dp"
+        android:layout_alignParentLeft="true"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line"
+        android:layout_toLeftOf="@+id/ll_diag_edit"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/ll_diag_edit"
+        android:layout_alignBottom="@id/ll_diag_data"
+        android:layout_alignTop="@id/ll_diag_data"
+        android:gravity="center_vertical"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/bt_diag_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/edit"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/submit"
