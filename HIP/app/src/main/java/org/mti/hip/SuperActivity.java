@@ -22,6 +22,7 @@ public class SuperActivity extends AppCompatActivity {
     private static StorageManager storageManager = getStorageManagerInstance();
     private static HttpClient httpClient;
     public static String facilityName;
+    public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
 
     public static final int diagId = 0;
@@ -84,6 +85,9 @@ public class SuperActivity extends AppCompatActivity {
 
     private String buildHeader() {
         StringBuffer sb = new StringBuffer();
+        if (locationName != null) {
+            sb.append(locationName + "  |  ");
+        }
         if(facilityName != null) {
             sb.append(facilityName + "  |  " + getDateNowString());
         }
