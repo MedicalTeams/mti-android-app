@@ -16,8 +16,6 @@ public class Diagnosis {
     private String description;
     private int id;
 
-    @JsonIgnore
-    private boolean selected;
 //    private HashMap<Integer, ArrayList<SupplementalDiagnosis>> diagMap = new HashMap<>();
     private HashSet<SupplementalDiagnosis> supplementalDiags = new HashSet<>();
 
@@ -27,15 +25,6 @@ public class Diagnosis {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 
     public HashSet<SupplementalDiagnosis> getSupplementalDiags() {

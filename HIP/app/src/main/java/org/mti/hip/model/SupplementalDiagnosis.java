@@ -11,23 +11,12 @@ public class SupplementalDiagnosis {
 
     private int id;
 
-    @JsonIgnore
-    private boolean selected;
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 
     @Override
