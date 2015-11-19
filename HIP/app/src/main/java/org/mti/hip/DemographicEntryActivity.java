@@ -63,10 +63,10 @@ public class DemographicEntryActivity extends SuperActivity {
 
     private boolean valid() {
         if(editTextHasContent(opdNum)) {
-            visit.setOpId(Integer.valueOf(opdNum.getText().toString()));
+            visit.setOPD(Integer.valueOf(opdNum.getText().toString()));
         }
         if(editTextHasContent(age)) {
-            visit.setAgeMonths(Integer.valueOf(age.getText().toString()) * 12);
+            visit.setPatientAgeMonths(Integer.valueOf(age.getText().toString()) * 12);
         }
         if(rbMale.isChecked()) {
             visit.setGender('M');
@@ -74,9 +74,9 @@ public class DemographicEntryActivity extends SuperActivity {
             visit.setGender('F');
         }
         if(rbNational.isChecked()) {
-            visit.setIsNational(true);
+            visit.setBeneficiaryType(0);
         } else {
-            visit.setIsNational(false);
+            visit.setBeneficiaryType(1);
         }
         if(rbVisit.isChecked()) {
             visit.setIsRevisit(false);

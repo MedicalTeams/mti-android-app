@@ -2,20 +2,17 @@ package org.mti.hip;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 
 import org.mti.hip.model.Diagnosis;
-import org.mti.hip.model.SupplementalDiagnosis;
+import org.mti.hip.model.Supplemental;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class DiagnosisActivity extends SuperActivity {
@@ -55,7 +52,6 @@ public class DiagnosisActivity extends SuperActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_next:
-                // TODO retrieve each selected item with appropriate switching and populate visit
                 if (valid()) {
                     startActivity(new Intent(this, VisitSummaryActivity.class));
                 } else {
@@ -68,14 +64,16 @@ public class DiagnosisActivity extends SuperActivity {
     }
 
     private boolean valid() {
+        // TODO make it possible to return false when local selections aren't valid
+        boolean valid = true;
         ArrayList<Diagnosis> diags;
 
-        ArrayList<SupplementalDiagnosis> supps;
+        ArrayList<Supplemental> supps;
         Visit visit = getStorageManagerInstance().currentVisit();
-        visit.getDiags().clear();
+        visit.getPatientDiagnosis().clear();
         for (int i = 0; i < listAdapter.check_states.size(); i++) {
             // this block = group lists 0-5
-            HashSet<SupplementalDiagnosis> suppsSet = new HashSet<>();
+            HashSet<Supplemental> suppsSet = new HashSet<>();
             suppsSet.clear();
 
             for (int j = 0; j < listAdapter.check_states.get(i).size(); j++) {
@@ -85,25 +83,53 @@ public class DiagnosisActivity extends SuperActivity {
                     if (i == diagId) {
                         diags = (ArrayList<Diagnosis>) listAdapter.getList(i);
                         Diagnosis diag = diags.get(j);
-                        visit.getDiags().add(diag);
-                    } else {
+
+                        visit.getPatientDiagnosis().add(diag);
+                    } else if (i == stiId) {
                         supps = listAdapter.getList(i);
-                        SupplementalDiagnosis supp = supps.get(j);
+                        Supplemental supp = supps.get(j);
                         suppsSet.add(supp);
                         Diagnosis diag = new Diagnosis();
-                        diag.setDescription(String.valueOf(listAdapter.getGroup(i)));
-                        diag.setSupplementalDiags(suppsSet);
-                        visit.getDiags().add(diag);
+                        diag.setName(String.valueOf(listAdapter.getGroup(i)));
+                        diag.setSupplementals(suppsSet);
+                        visit.getPatientDiagnosis().add(diag);
+                        valid = checkForStiContactsTreated(diag);
+                    } else {
+                        supps = listAdapter.getList(i);
+                        Supplemental supp = supps.get(j);
+                        suppsSet.add(supp);
+                        Diagnosis diag = new Diagnosis();
+                        diag.setName(String.valueOf(listAdapter.getGroup(i)));
+                        diag.setSupplementals(suppsSet);
+                        visit.getPatientDiagnosis().add(diag);
                     }
                 }
-
-//                if (i != diagId) {
-//
-//                }
-
             }
 
+        }
+        return valid;
+    }
+
+    private boolean checkForStiContactsTreated(Diagnosis diag) {
+        if(visit.getStiContactsTreated() == 0) {
+            errorMsg = "STI Contacts Treated was not entered";
+
+            /* avoid STI trigger
+             {
+    "id": 40,
+    "name": "Opthamalia Neonatorum",
+    "diagnosis": 16
+  },
+  {
+    "id": 41,
+    "name": "Congential Syphilis",
+    "diagnosis": 16
+  },
+             */
+            return false;
         }
         return true;
     }
 }
+
+
