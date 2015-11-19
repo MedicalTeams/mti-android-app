@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.EditText;
 
 import org.mti.hip.model.User;
+import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSONManager;
 import org.mti.hip.utils.StorageManager;
@@ -15,11 +16,21 @@ import java.util.Date;
 
 public class SuperActivity extends AppCompatActivity {
 
+    public static final String EXTRA_MSG = "extramsg";
     public static String currentUserName;
     private static JSONManager jsonManager;
     private static StorageManager storageManager = getStorageManagerInstance();
     private static HttpClient httpClient;
     public static String facilityName;
+    public AlertDialogManager alert = new AlertDialogManager(this);
+
+    public static final int diagId = 0;
+    public static final int stiId = 1;
+    public static final int chronicDiseaseId = 2;
+    public static final int mentalIllnessId = 3;
+    public static final int injuryId = 4;
+    public static final int injuryLocId = 5;
+
 
 
     public User getCurrentUser() {
@@ -54,7 +65,7 @@ public class SuperActivity extends AppCompatActivity {
         setContentView(R.layout.activity_super);
         getSupportActionBar().setSubtitle(buildHeader());
         try {
-           Log.d("visitdesc", storageManager.writeValueAsString(storageManager.currentVisit()));
+           Log.d("visitdesc", getJsonManagerInstance().writeValueAsString(storageManager.currentVisit()));
         } catch (Exception ignored){
 
         }

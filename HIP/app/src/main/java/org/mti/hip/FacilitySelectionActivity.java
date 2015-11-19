@@ -7,6 +7,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.mti.hip.utils.HttpClient;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -35,6 +37,7 @@ public class FacilitySelectionActivity extends SuperActivity {
             }
         });
 //        testJson();
+        getFacilities();
     }
 
     private void testJson() {
@@ -46,6 +49,13 @@ public class FacilitySelectionActivity extends SuperActivity {
         }
     }
 
+    private void getFacilities() {
+        try {
+            String facilitiesJson = getHttpClientInstance().get(HttpClient.facilitiesEndpoint);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        MenuInflater inflater = getMenuInflater();
