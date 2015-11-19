@@ -14,7 +14,6 @@
         android:id="@+id/logo"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:visibility="gone"
         android:layout_marginTop="75dp"
         android:layout_height="100dp" />
 
@@ -31,15 +30,14 @@
         />
 
     <Button
-        android:layout_width="match_parent"
-        android:background="@color/colorPrimaryDark"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sign_out"
         android:id="@+id/bt_sign_out"
         android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentRight="true"
          />
 
 </RelativeLayout>
