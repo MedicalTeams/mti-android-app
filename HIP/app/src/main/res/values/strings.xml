@@ -124,5 +124,6 @@
     <string name="prompt_assault">If SGBV consult to goto police</string>
     <string name="prompt_outbreak_potential">Disease with outbreak potential. Refer to weekly alert thresholds.</string>
     <!-- End: Prompts -->
+    <string name="error_email_address">hip@medicalteams.org</string>
 
 </resources>
