@@ -85,9 +85,6 @@ public class SuperActivity extends AppCompatActivity {
 
     private String buildHeader() {
         StringBuffer sb = new StringBuffer();
-        if (locationName != null) {
-            sb.append(locationName + "  |  ");
-        }
         if(facilityName != null) {
             sb.append(facilityName + "  |  " + getDateNowString());
         }
