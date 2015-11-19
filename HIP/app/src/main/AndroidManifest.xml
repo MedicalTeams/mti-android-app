@@ -47,6 +47,9 @@
         <activity android:name=".ClinicianSelectionActivity"
             android:label="@string/choose_your_name">
         </activity>
+        <activity android:name=".LocationSelectionActivity"
+                  android:label="@string/select_location">
+        </activity>
     </application>
 
 </manifest>
