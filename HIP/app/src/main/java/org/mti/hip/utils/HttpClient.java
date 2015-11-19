@@ -18,6 +18,11 @@ public class HttpClient {
 
     private HttpClient instance;
     private OkHttpClient client;
+    public static final String tallyEndpoint = "/visits/upload";
+    public static final String visitEndpoint = "/facilities/1234/visits";
+    public static final String facilitiesEndpoint = "/facilities";
+    // TODO add constant for facility ID (this will be SET when it is selected
+    // from the Facility Selection screen)
 
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
@@ -32,10 +37,10 @@ public class HttpClient {
             protected String doInBackground(String... params) {
                 RequestBody body = RequestBody.create(JSON, json);
                 Request request = new Request.Builder()
-                        .url("http://clinicwebapp.azurewebsites.net/clinic/1234" + endpoint) // endpoint for demo is "/visit"
+                        .url("http://clinicwebapp.azurewebsites.net/hip" + endpoint)
                         .post(body)
                         .build();
-                Response response = null;
+                Response response;
                 String responseString = null;
                 try {
                     response = client.newCall(request).execute();
@@ -58,4 +63,36 @@ public class HttpClient {
 
     }
 
+    public String get(final String endpoint) throws IOException {
+        final String[] responseString = {null};
+        new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+
+                Request request = new Request.Builder()
+                        .url("http://clinicwebapp.azurewebsites.net/hip" + endpoint)
+                        .build();
+                Response response;
+                String responseString = null;
+                try {
+                    response = client.newCall(request).execute();
+                    responseString = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return responseString;
+
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                responseString[0] = s;
+                super.onPostExecute(s);
+            }
+        }.execute();
+
+
+        return responseString[0];
+    }
 }

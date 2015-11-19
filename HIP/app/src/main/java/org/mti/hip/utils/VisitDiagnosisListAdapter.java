@@ -13,6 +13,8 @@ import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.google.android.gms.common.SupportErrorDialogFragment;
+
 import org.mti.hip.R;
 import org.mti.hip.SuperActivity;
 import org.mti.hip.model.Diagnosis;
@@ -29,14 +31,14 @@ import java.util.Random;
 public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     private ArrayList<String> listHeaders;
+    //private ArrayList<OtherDiagnosis> otherDiags;
+    private HashMap<Integer, ArrayList> children = new HashMap<>();
     private ArrayList<Diagnosis> primaryDiagList;
     private ArrayList<SupplementalDiagnosis> stiList;
     private ArrayList<SupplementalDiagnosis> chronicDiseaseList;
     private ArrayList<SupplementalDiagnosis> injuryList;
     private ArrayList<SupplementalDiagnosis> mentalIllnessList;
     private ArrayList<SupplementalDiagnosis> injuryLocList;
-    //private ArrayList<OtherDiagnosis> otherDiags;
-    private HashMap<String, Object> children = new HashMap<>();
     private SuperActivity context;
     private static final int diagId = 0;
     private static final int stiId = 1;
@@ -44,6 +46,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     private static final int mentalIllnessId = 3;
     private static final int injuryId = 4;
     private static final int injuryLocId = 5;
+   
     private HashMap<Integer, RadioButton> buttonMap = new HashMap<>();
 
     public ExpandableListView.OnChildClickListener listener;
@@ -87,17 +90,31 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         listHeaders = getListHeaders();
 
 
-        children.put(listHeaders.get(diagId), primaryDiagList);
-        children.put(listHeaders.get(stiId), stiList);
-        children.put(listHeaders.get(chronicDiseaseId), chronicDiseaseList);
-        children.put(listHeaders.get(mentalIllnessId), mentalIllnessList);
-        children.put(listHeaders.get(injuryId), injuryList);
-        children.put(listHeaders.get(injuryLocId), injuryLocList);
+
+        children.put(diagId, primaryDiagList);
+        children.put(stiId, stiList);
+        children.put(chronicDiseaseId, chronicDiseaseList);
+        children.put(mentalIllnessId, mentalIllnessList);
+        children.put(injuryId, injuryList);
+        children.put(injuryLocId, injuryLocList);
+
+        setChildrenAndValues();
         setListener();
     }
 
     public ExpandableListView.OnChildClickListener getListener() {
         return listener;
+    }
+    //  set checkbox states
+    public ArrayList<ArrayList<Integer>> check_states = new ArrayList<>();
+    public void setChildrenAndValues() {
+        for(int i = 0; i < children.size(); i++) {
+            ArrayList<Integer> tmp = new ArrayList<>();
+            for(int j = 0; j < children.get(i).size(); j++) {
+                tmp.add(1);
+            }
+            check_states.add(tmp);
+        }
     }
 
     public void setListener() {
@@ -107,46 +124,41 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 //                Log.d("int test", "" + groupPosition + childPosition);
 //                HashMap<Integer, Boolean> checkMap = new HashMap<>();
 //                checkMap.put(groupPosition & childPosition, true);
-                Visit visit = SuperActivity.getStorageManagerInstance().currentVisit();
+//                Visit visit = SuperActivity.getStorageManagerInstance().currentVisit();
 //                String desc = (String) getChild(groupPosition, childPosition);
                 String header = listHeaders.get(groupPosition);
 
-
-
-//                if(desc.matches(getString(R.string.other))) {
-//                    Toast.makeText(context, "Other diag", Toast.LENGTH_SHORT).show();
-//                }
-                Diagnosis diagnosis = new Diagnosis();
-                diagnosis.setDescription(header);
-                diagnosis.setId(new Random().nextInt());
+                Object obj = getChild(groupPosition, childPosition);
+                Diagnosis diag = null;
+                SupplementalDiagnosis supp = null;
+                    if(obj instanceof Diagnosis) {
+                        diag = (Diagnosis) obj;
+                    } else {
+                        supp = (SupplementalDiagnosis) obj;
+                    }
 
                 if(groupPosition == mentalIllnessId || groupPosition == injuryLocId) {
+
                     for (RadioButton button : buttonMap.values()) {
                         button.setChecked(false);
-                        visit.getDiags().clear();
+                        check_states.get(groupPosition).set(childPosition, 1);
                     }
-                    ArrayList<SupplementalDiagnosis> list = (ArrayList<SupplementalDiagnosis>) children.get(header);
+
                     RadioButton button = (RadioButton) v.findViewById(R.id.rb_single_select);
                     button.setChecked(true);
-                    button.setTag(true);
-
-                    diagnosis.getSupplementalDiags().add(list.get(childPosition));
-                    // what needs to happen here is the diag of mental illness needs to be added
-                    // to the master visit diags
-                    // with a child supplemental diag of whatever illness was chosen
-
-                    visit.getDiags().add(diagnosis);
-                    // TODO avoid adding dupes (either through HashMap or extending ArrayList add)
-                    Log.d("Visit test", context.getStorageManagerInstance().writeValueAsString(visit));
+//                    SupplementalDiagnosis supp = list.get(childPosition);
+                    Log.d("test", supp.getDescription());
+                    Log.d("test", "" + groupPosition + childPosition);
+                    check_states.get(groupPosition).set(childPosition, 0);
                 } else {
                     // this allows the entire view to be clicked on and toggle check boxes rather
                     // than requiring the user to tap the box itself
                     CheckBox cb = (CheckBox) v.findViewById(R.id.cb_multi_select);
-                    if(cb.isChecked()) {
+                    if (cb.isChecked()) {
+                        check_states.get(groupPosition).set(childPosition, 1);
                         cb.setChecked(false);
-                        cb.setTag(false);
                     } else {
-                        cb.setTag(true);
+                        check_states.get(groupPosition).set(childPosition, 0);
                         cb.setChecked(true);
                     }
                 }
@@ -168,9 +180,9 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         ArrayList child = null;
         switch (groupPosition) {
             case diagId:
-                child = (ArrayList<Diagnosis>) children.get(listHeaders.get(groupPosition));
+                child = (ArrayList<Diagnosis>) children.get(groupPosition);
                 default:
-                    child = (ArrayList<SupplementalDiagnosis>) children.get(listHeaders.get(groupPosition));
+                    child = (ArrayList<SupplementalDiagnosis>) children.get(groupPosition);
 
         }
         return child.size();
@@ -182,14 +194,18 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         return listHeaders.get(groupPosition);
     }
 
+    public ArrayList getList(int groupPosition) {
+        return children.get(groupPosition);
+    }
+
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         ArrayList child = null;
         switch (groupPosition) {
             case diagId:
-                child = (ArrayList<Diagnosis>) children.get(listHeaders.get(groupPosition));
+                child = (ArrayList<Diagnosis>) children.get(groupPosition);
             default:
-                child = (ArrayList<SupplementalDiagnosis>) children.get(listHeaders.get(groupPosition));
+                child = (ArrayList<SupplementalDiagnosis>) children.get(groupPosition);
 
         }
         return child.get(childPosition);
@@ -236,46 +252,55 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final SupplementalDiagnosis obj = (SupplementalDiagnosis) getChild(groupPosition, childPosition);
+        String childText = null;
+        boolean selected = check_states.get(groupPosition).get(childPosition) == 0;
+        if (groupPosition == diagId) {
+            final Diagnosis obj = (Diagnosis) getChild(groupPosition, childPosition);
+            childText = obj.getDescription();
+        } else {
+            final SupplementalDiagnosis obj = (SupplementalDiagnosis) getChild(groupPosition, childPosition);
+            childText = obj.getDescription();
+            Log.d("is selected", String.valueOf(selected));
+        }
 
-        String childText = obj.getDescription();
+
         LayoutInflater inflater = (LayoutInflater) this.context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TextView tv = null;
-        if (convertView == null) {
+//        if (convertView == null) {
             View selector;
-            ViewHolder holder = new ViewHolder();
+//            ViewHolder holder = new ViewHolder();
 
             if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {  // sti and injury B are single select
                 convertView = inflater.inflate(R.layout.list_item_single_select, null);
                 tv = (TextView) convertView.findViewById(R.id.tv_single_select);
 
-                selector = convertView.findViewById(R.id.rb_single_select);
+                selector = (RadioButton) convertView.findViewById(R.id.rb_single_select);
                 buttonMap.put(childPosition, (RadioButton) selector);
+                ((RadioButton) selector).setChecked(selected);
 
             } else {
                 convertView = inflater.inflate(R.layout.list_item_multi_select, null);
                 tv = (TextView) convertView
                         .findViewById(R.id.tv_multi_select);
-                selector = (CheckBox) convertView.findViewById(R.id.cb_multi_select);
-                if (selector.getTag() == true) {
+                selector = convertView.findViewById(R.id.cb_multi_select);
+                ((CheckBox) selector).setChecked(selected);
 //                    selector.setChecked(true);
-                }
 
 //                holder.addView(tv);
             }
-            convertView.setTag(holder);
-            holder.addView(tv);
-            holder.addView(selector);
-        }
+//            convertView.setTag(holder);
+//            holder.addView(tv);
+//            holder.addView(selector);
+//        }
 
         // Get the stored ViewHolder that also contains our views
-        ViewHolder holder = (ViewHolder) convertView.getTag();
-        if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {
-            tv = (TextView) holder.getView(R.id.tv_single_select);
-        } else {
-            tv = (TextView) holder.getView(R.id.tv_multi_select);
-        }
+//        ViewHolder holder = (ViewHolder) convertView.getTag();
+//        if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {
+//            tv = (TextView) holder.getView(R.id.tv_single_select);
+//        } else {
+//            tv = (TextView) holder.getView(R.id.tv_multi_select);
+//        }
 
         tv.setText(childText);
         return convertView;

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 public class StorageManager {
 
     private Tally tally;
-    private ObjectMapper om = new ObjectMapper();
 
     public StorageManager() {
         tally = new Tally();
@@ -38,13 +37,13 @@ public class StorageManager {
         return tally.get(tally.size() -1);
     }
 
-    public String writeValueAsString(Object obj) {
-        String val = null;
-        try {
-            val = om.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return val;
-    }
+//    public String writeValueAsString(Object obj) {
+//        String val = null;
+//        try {
+//            val = om.writeValueAsString(obj);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        return val;
+//    }
 }

@@ -23,7 +23,8 @@ public class JSONManager {
 
     public JSONManager() {
         om = new ObjectMapper();
-        om.disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
+        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        om.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
     }
 
     private ObjectMapper om;
@@ -42,7 +43,6 @@ public class JSONManager {
     }
 
     public String getTestJsonString() {
-        om = new ObjectMapper();
         Tally tally = new Tally();
         Visit visit = new Visit();
         visit.setAgeMonths(40);
@@ -62,6 +62,15 @@ public class JSONManager {
 
         try {
            return om.writeValueAsString(tally);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String writeValueAsString(Object obj) {
+        try {
+            return om.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
