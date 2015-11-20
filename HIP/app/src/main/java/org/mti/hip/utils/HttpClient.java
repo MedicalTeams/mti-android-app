@@ -18,7 +18,7 @@ public class HttpClient {
     private HttpClient instance;
     private OkHttpClient client;
     public static final String tallyEndpoint = "/visits/upload";
-    public static final String visitEndpoint = "/facilities/1234/visits";
+    public static final String visitEndpoint = "/facilities/11/visits";
     public static final String facilitiesEndpoint = "/facilities";
     public static final String diagnosisEndpoint = "/diagnosis";
     public static final String supplementalEndpoint = "/supplementals";
