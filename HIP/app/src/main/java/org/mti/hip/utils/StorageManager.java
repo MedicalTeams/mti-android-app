@@ -1,6 +1,7 @@
 package org.mti.hip.utils;
 
 import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.util.Log;
 
@@ -96,6 +97,19 @@ public class StorageManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     *
+     * @param context
+     * @return The MAC address of the mobile device
+     */
+    public static String getMacAddress(Context context) {
+        String macAddress = ((WifiManager) (context.getSystemService(Context.WIFI_SERVICE))).getConnectionInfo().getMacAddress();
+        if (macAddress == null) {
+            macAddress = "";
+        }
+        return macAddress;
     }
 
 }
