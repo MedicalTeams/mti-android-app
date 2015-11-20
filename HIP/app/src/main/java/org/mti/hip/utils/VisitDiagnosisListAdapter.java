@@ -14,7 +14,9 @@ import android.widget.TextView;
 import org.mti.hip.R;
 import org.mti.hip.SuperActivity;
 import org.mti.hip.model.Diagnosis;
+import org.mti.hip.model.DiagnosisWrapper;
 import org.mti.hip.model.Supplemental;
+import org.mti.hip.model.SupplementalsWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +43,9 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     private static final int mentalIllnessId = 3;
     private static final int injuryId = 4;
     private static final int injuryLocId = 5;
-   
+
+    private ArrayList<Supplemental> supplementals;
+
     private HashMap<Integer, RadioButton> buttonMap = new HashMap<>();
 
     public ExpandableListView.OnChildClickListener listener;
@@ -49,6 +53,9 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     public VisitDiagnosisListAdapter(SuperActivity context) {
         this.context = context;
+        supplementals = (ArrayList<Supplemental>)
+                context.getJsonManagerInstance().read(context.readString(
+                        context.SUPPLEMENTAL_LIST_KEY), SupplementalsWrapper.class);
         primaryDiagList = getPrimaryDiags();
         stiList = getSTIs();
         chronicDiseaseList = getChronicDiseaseList();
@@ -79,9 +86,30 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         for(int i = 0; i < children.size(); i++) {
             ArrayList<Integer> tmp = new ArrayList<>();
             for(int j = 0; j < children.get(i).size(); j++) {
+//                Log.d("test", String.valueOf(i));
                 tmp.add(1);
             }
             check_states.add(tmp);
+        }
+    }
+
+    public void updateChildrenAndValues() {
+        for(int i = 0; i < children.size(); i++) {
+            ArrayList<Integer> tmp = new ArrayList<>();
+//            check_states.get(i).clear();
+            for(int j = 0; j < children.get(i).size(); j++) {
+                try {
+                    if (check_states.get(i).get(j) == 1) {
+                        tmp.add(1); // not selected
+                    } else {
+                        tmp.add(0); // selected
+                    }
+                } catch (Exception ignored) {
+
+                }
+            }
+
+//            check_states.add(i, tmp);
         }
     }
 
@@ -111,15 +139,34 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                         cb.setChecked(false);
                     } else {
                         processIfIsStiContactsTreated(groupPosition, childPosition);
+//                        processIfIsOther(groupPosition, childPosition);
                         check_states.get(groupPosition).set(childPosition, 0);
                         cb.setChecked(true);
                     }
                 }
-
-
                 return true;
             }
         };
+    }
+
+    private void processIfIsOther(int groupPosition, int childPosition) {
+        if(groupPosition != diagId) {
+            // needs to be supplemental with named "parent" based on accordion
+        } else {
+            // these are primaries
+            ArrayList<Diagnosis> list = getList(groupPosition);
+            if(list.get(childPosition).getName().matches("Other")) {
+                context.alert.showAlert("Enter Diagnosis Name", "name is set as a placeholder for now");
+                Diagnosis diag = new Diagnosis();
+                diag.setName("Placeholder");
+                diag.setId(90210);
+                list.add(diag);
+                children.put(groupPosition, list);
+                updateChildrenAndValues();
+                notifyDataSetChanged();
+            }
+
+        }
     }
 
     private void processIfIsStiContactsTreated(int group, int child) {
@@ -253,67 +300,21 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     }
 
     private ArrayList<Diagnosis> getPrimaryDiags() {
-        ArrayList<String> diagStrings = new ArrayList<>();
+        ArrayList<Diagnosis> diags = (ArrayList<Diagnosis>)
+                context.getJsonManagerInstance().read(context.readString(
+                        context.DIAGNOSIS_LIST_KEY), DiagnosisWrapper.class);
 
-        diagStrings.clear();
-        diagStrings.add(getString(R.string.diag_malaria_suspected));
-        diagStrings.add(getString(R.string.diag_malaria_confirmed));
-        diagStrings.add(getString(R.string.diag_URTI));
-        diagStrings.add(getString(R.string.diag_LRTI));
-        diagStrings.add(getString(R.string.diag_skin_disease));
-        diagStrings.add(getString(R.string.diag_eye_disease));
-        diagStrings.add(getString(R.string.diag_dental_conditions));
-        diagStrings.add(getString(R.string.diag_intestinal_worms));
-        diagStrings.add(getString(R.string.diag_watery_diarrhea));
-        diagStrings.add(getString(R.string.diag_bloody_diarrhea));
-        diagStrings.add(getString(R.string.diag_tubercolosis));
-        diagStrings.add(getString(R.string.diag_acute_flaccid_paralysis_polio));
-        diagStrings.add(getString(R.string.diag_measles));
-        diagStrings.add(getString(R.string.diag_meningitis));
-        diagStrings.add(getString(R.string.diag_hiv_aids));
-//        diagStrings.add(getString(R.string.diag_sti_non_hiv_aids));
-        diagStrings.add(getString(R.string.diag_acute_malnutrition));
-        diagStrings.add(getString(R.string.diag_anemia));
-//        diagStrings.add(getString(R.string.diag_chronic_disease));
-//        diagStrings.add(getString(R.string.diag_mental_illness));
-//        diagStrings.add(getString(R.string.diag_injuries));
-        diagStrings.add(getString(R.string.diag_ear_disease));
-        diagStrings.add(getString(R.string.diag_urinary_tract_infection));
-        diagStrings.add(getString(R.string.diag_pudx));
-        diagStrings.add(getString(R.string.other));
-
-        ArrayList<Diagnosis> diags = new ArrayList<>();
-        for (String s : diagStrings) {
-            Diagnosis diag = new Diagnosis();
-            diag.setName(s);
-            diags.add(diag);
-        }
         return diags;
     }
 
     private ArrayList<Supplemental> getChronicDiseaseList() {
-        ArrayList<String> chronicDiseases = new ArrayList<>();
-        chronicDiseases.clear();
-        chronicDiseases.add(getString(R.string.chronic_disease_cancer));
-        chronicDiseases.add(getString(R.string.chronic_disease_cardiovascular_disease));
-        chronicDiseases.add(getString(R.string.chronic_disease_cerebrovascular_disease));
-        chronicDiseases.add(getString(R.string.chronic_disease_digestive_disorder));
-        chronicDiseases.add(getString(R.string.chronic_disease_endocrine_and_metabolic_disorder));
-        chronicDiseases.add(getString(R.string.chronic_disease_gynaecological_disorder));
-        chronicDiseases.add(getString(R.string.chronic_disease_haemotological_disorder));
-        chronicDiseases.add(getString(R.string.chronic_disease_musculoskeletal_disorder));
-        chronicDiseases.add(getString(R.string.chronic_disease_nervous_system_disorder));
-        chronicDiseases.add(getString(R.string.chronic_disease_respiratory_disease));
-        chronicDiseases.add(getString(R.string.other));
-
-
-        ArrayList<Supplemental> diags = new ArrayList<>();
-        for (String s : chronicDiseases) {
-            Supplemental diag = new Supplemental();
-            diag.setName(s);
-            diags.add(diag);
+        ArrayList<Supplemental> parsedList = new ArrayList<>();
+        for (Supplemental supp : supplementals) {
+           if(supp.getDiagnosis() == 19) {
+               parsedList.add(supp);
+           }
         }
-        return diags;
+        return parsedList;
     }
 
     private ArrayList<Supplemental> getInjuryLocations() {
@@ -338,45 +339,24 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     }
 
     private ArrayList<Supplemental> getSTIs() {
-        ArrayList<String> stis = new ArrayList<>();
-
-        stis.clear();
-        stis.add(getString(R.string.sti_urethral_discharge_syndrome));
-        stis.add(getString(R.string.sti_vaginal_discharge_syndrome));
-        stis.add(getString(R.string.sti_genital_ulcer_disease));
-        stis.add(getString(R.string.sti_opthamalia_neonatorum));
-        stis.add(getString(R.string.sti_congenital_syphillis));
-        stis.add("Contacts Treated");
-        stis.add(getString(R.string.other));
-
-        ArrayList<Supplemental> diags = new ArrayList<>();
-        for (String s : stis) {
-            Supplemental diag = new Supplemental();
-            diag.setName(s);
-            diags.add(diag);
+//        stis.add("Contacts Treated");
+        ArrayList<Supplemental> parsedList = new ArrayList<>();
+        for (Supplemental supp : supplementals) {
+            if(supp.getDiagnosis() == 16) {
+                parsedList.add(supp);
+            }
         }
-        return diags;
+        return parsedList;
     }
 
     private ArrayList<Supplemental> getMentalIllnesses() {
-        ArrayList<String> list = new ArrayList<>();
-        list.clear();
-        list.add(getString(R.string.mental_health_epilepsy_seizures));
-        list.add(getString(R.string.mental_health_alcohol_or_substance_abuse));
-        list.add(getString(R.string.mental_health_mental_retardation_intellectual_disability));
-        list.add(getString(R.string.mental_health_psychotic_disorder));
-        list.add(getString(R.string.mental_health_severe_emotional_disorder));
-        list.add(getString(R.string.mental_health_medically_unexplained_somatic_complaint));
-        list.add(getString(R.string.mental_health_psychotic_disorder));
-        list.add(getString(R.string.other));
-        ArrayList<Supplemental> diags = new ArrayList<>();
-        for (String s : list) {
-            Supplemental diag = new Supplemental();
-            diag.setName(s);
-            diags.add(diag);
+        ArrayList<Supplemental> parsedList = new ArrayList<>();
+        for (Supplemental supp : supplementals) {
+            if(supp.getDiagnosis() == 20) {
+                parsedList.add(supp);
+            }
         }
-        return diags;
-
+        return parsedList;
     }
 
     private ArrayList<String> getListHeaders() {
@@ -395,23 +375,13 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
 
     private ArrayList<Supplemental> getInjuries() {
-        ArrayList<String> list = new ArrayList<>();
-        list.clear();
-        list.add(getString(R.string.injuries_accident));
-        list.add(getString(R.string.injuries_self_harm));
-        list.add(getString(R.string.injuries_assault_with_weapon));
-        list.add(getString(R.string.injuries_assault_no_weapon));
-        list.add(getString(R.string.injuries_animal));
-        list.add(getString(R.string.injuries_burn));
-        list.add(getString(R.string.injuries_unknown));
-        list.add(getString(R.string.other));
-        ArrayList<Supplemental> diags = new ArrayList<>();
-        for (String s : list) {
-            Supplemental diag = new Supplemental();
-            diag.setName(s);
-            diags.add(diag);
+        ArrayList<Supplemental> parsedList = new ArrayList<>();
+        for (Supplemental supp : supplementals) {
+            if(supp.getDiagnosis() == 21) {
+                parsedList.add(supp);
+            }
         }
-        return diags;
+        return parsedList;
     }
 
     private String getString(int id) {

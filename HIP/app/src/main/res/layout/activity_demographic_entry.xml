@@ -122,6 +122,16 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_height="wrap_content" />
     </RadioGroup>
-</LinearLayout>
 
+
+</LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="NOTE:
+Refer to guidelines for definitions of New Visit and Revisit.
+Only ONE visit record should be entered for each patient visit.
+A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp; Revisit criteria) should be recorded as a NEW visit."
+        />
 </RelativeLayout>

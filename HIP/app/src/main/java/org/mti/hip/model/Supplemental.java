@@ -9,6 +9,8 @@ public class Supplemental {
 
     private int id;
 
+    private int diagnosis;
+
     public String getName() {
         return name;
     }
@@ -42,5 +44,13 @@ public class Supplemental {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(int diagnosis) {
+        this.diagnosis = diagnosis;
     }
 }

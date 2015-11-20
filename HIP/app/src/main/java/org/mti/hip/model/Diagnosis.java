@@ -28,8 +28,6 @@ public class Diagnosis {
     public void setSupplementals(HashSet<Supplemental> supplementals) {
         this.supplementals = supplementals;
     }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

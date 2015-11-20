@@ -3,24 +3,25 @@ package org.mti.hip;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+import org.mti.hip.utils.HttpClient;
+
+public class MainActivity extends SuperActivity {
 
     private Button signIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-
-                initApp();
+                if(readString(DIAGNOSIS_LIST_KEY).matches("")) initApp(); // TODO this is dumb right now and assumes all values are initialized if DIAG is
                 return null;
             }
 
@@ -48,20 +49,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initApp() {
-        // TODO add network calls for retrieving Constants data from endpoints
-        new AsyncTask<Void, Void, Void>() {
+        new NetworkTask(HttpClient.diagnosisEndpoint, HttpClient.get) {
 
             @Override
-            protected Void doInBackground(Void... params) {
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
+            public void getResponseString(String response) {
+                writeString(DIAGNOSIS_LIST_KEY, response);
             }
         }.execute();
+
+        new NetworkTask(HttpClient.facilitiesEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(FACILITIES_LIST_KEY, response);
+            }
+        }.execute();
+
+        new NetworkTask(HttpClient.supplementalEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(SUPPLEMENTAL_LIST_KEY, response);
+            }
+        }.execute();
+
+        // TODO settlements and injuryLoc list
+
     }
+
 
 
 

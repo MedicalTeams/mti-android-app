@@ -2,7 +2,6 @@ package org.mti.hip;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -47,27 +46,46 @@ public class FacilitySelectionActivity extends SuperActivity {
     }
 
     private void getFacilities() {
-        new NetworkTask(HttpClient.facilitiesEndpoint, NetworkTask.get) {
+
+        if (readString(FACILITIES_LIST_KEY).matches("")) {
+            runNetworkTask();
+        } else {
+            list = (ArrayList<Facility>) getJsonManagerInstance().read(readString(FACILITIES_LIST_KEY), FacilityWrapper.class);
+            showList();
+        }
+
+
+    }
+
+    private void runNetworkTask() {
+        new NetworkTask(HttpClient.facilitiesEndpoint, HttpClient.get) {
 
             @Override
             public void getResponseString(String response) {
-
                 list = (ArrayList<Facility>) getJsonManagerInstance().read(response, FacilityWrapper.class);
-                // TODO base this list on the "settlement" value matching (which will be a string matcher)
-                final ArrayAdapter<Facility> adapter = new ArrayAdapter<>(FacilitySelectionActivity.this, android.R.layout.simple_list_item_1, list);
-                lv.setAdapter(adapter);
-                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        facilityName = adapter.getItem(position).getName();
-
-                        // TODO record ID
-                        startActivity(new Intent(FacilitySelectionActivity.this, ClinicianSelectionActivity.class));
-                    }
-                });
-                Log.d("test", list.get(0).getName());
+                showList();
             }
         }.execute();
+    }
+
+    private void showList() {
+        ArrayList<Facility> innerList = new ArrayList<>();
+        for(Facility facility : list) {
+            if(facility.getSettlement().contains(locationName)) {
+                innerList.add(facility);
+            }
+        }
+        final ArrayAdapter<Facility> adapter = new ArrayAdapter<>(FacilitySelectionActivity.this, android.R.layout.simple_list_item_1, innerList);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                facilityName = adapter.getItem(position).getName();
+
+                // TODO record ID
+                startActivity(new Intent(FacilitySelectionActivity.this, ClinicianSelectionActivity.class));
+            }
+        });
     }
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {

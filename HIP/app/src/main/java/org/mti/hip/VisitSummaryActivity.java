@@ -61,7 +61,7 @@ public class VisitSummaryActivity extends SuperActivity {
     }
 
     private void test() {
-        new NetworkTask(visitJson, HttpClient.visitEndpoint, NetworkTask.post) {
+        new NetworkTask(visitJson, HttpClient.visitEndpoint, HttpClient.post) {
 
             @Override
             public void getResponseString(String response) {

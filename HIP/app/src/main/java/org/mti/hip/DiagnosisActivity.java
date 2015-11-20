@@ -92,6 +92,7 @@ public class DiagnosisActivity extends SuperActivity {
                         Diagnosis diag = new Diagnosis();
                         diag.setName(String.valueOf(listAdapter.getGroup(i)));
                         diag.setSupplementals(suppsSet);
+                        // TODO manage supp diag id
                         visit.getPatientDiagnosis().add(diag);
                         valid = checkForStiContactsTreated(diag);
                     } else {
@@ -99,6 +100,7 @@ public class DiagnosisActivity extends SuperActivity {
                         Supplemental supp = supps.get(j);
                         suppsSet.add(supp);
                         Diagnosis diag = new Diagnosis();
+                        diag.setId(supp.getDiagnosis());
                         diag.setName(String.valueOf(listAdapter.getGroup(i)));
                         diag.setSupplementals(suppsSet);
                         visit.getPatientDiagnosis().add(diag);

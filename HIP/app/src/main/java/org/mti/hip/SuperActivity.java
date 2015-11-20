@@ -1,5 +1,6 @@
 package org.mti.hip;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ public class SuperActivity extends AppCompatActivity {
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
 
+    private ProgressDialog progressDialog;
+
     public static final int diagId = 0;
     public static final int stiId = 1;
     public static final int chronicDiseaseId = 2;
@@ -39,6 +42,13 @@ public class SuperActivity extends AppCompatActivity {
     private static final String LOCATION_KEY = "locationId";
     private static final String FACILITY_KEY = "facilityId";
     private static final String CLINICIAN_KEY = "clinicianName";
+    public static final String FACILITIES_LIST_KEY = "facilitieskey";
+    public static final String SETTLEMENT_LIST_KEY = "settlementkey";
+    public static final String DIAGNOSIS_LIST_KEY = "diaglistkey";
+    public static final String SUPPLEMENTAL_LIST_KEY = "supplistkey";
+    public static final String CATEGORY_LIST_KEY = "categorylistkey";
+
+    private static final String PREFS_NAME = "HipPrefs";
 
 
     public User getCurrentUser() {
@@ -71,7 +81,10 @@ public class SuperActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_super);
-        getSupportActionBar().setSubtitle(buildHeader());
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(buildHeader());
+        }
+        progressDialog = new ProgressDialog(this);
 
     }
 
@@ -112,9 +125,6 @@ public class SuperActivity extends AppCompatActivity {
         private String endpoint;
         private String httpMethod;
 
-        public static final String post = "POST";
-        public static final String get = "GET";
-
         public NetworkTask(String endpoint, String httpMethod) {
             this.endpoint = endpoint;
             this.httpMethod = httpMethod;
@@ -127,9 +137,29 @@ public class SuperActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute() {
+
+            super.onPreExecute();
+            progressDialog.setMessage("Please wait...");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.show();
+                }
+            });
+
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+
+        }
+
+        @Override
         protected String doInBackground(Void... params) {
             String responseString = null;
-            if(httpMethod.equals(post)) {
+            if(httpMethod.equals(HttpClient.post)) {
                 try {
                     responseString = getHttpClientInstance().post(endpoint, body);
                 } catch (IOException e) {
@@ -147,6 +177,7 @@ public class SuperActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String r) {
+            progressDialog.dismiss();
             if (e == null) {
                 getResponseString(r);
             } else {
@@ -163,7 +194,7 @@ public class SuperActivity extends AppCompatActivity {
      * @param locationId
      */
     public void writeLastUsedLocation(int locationId) {
-        getPreferences(Context.MODE_PRIVATE).edit().putInt(LOCATION_KEY, locationId).commit();
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putInt(LOCATION_KEY, locationId).commit();
     }
 
     /**
@@ -171,7 +202,7 @@ public class SuperActivity extends AppCompatActivity {
      * @param facilityId
      */
     public void writeLastUsedFacility(int facilityId) {
-        getPreferences(Context.MODE_PRIVATE).edit().putInt(FACILITY_KEY, facilityId).commit();
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putInt(FACILITY_KEY, facilityId).commit();
     }
 
     /**
@@ -179,7 +210,7 @@ public class SuperActivity extends AppCompatActivity {
      * @param clinicianName
      */
     public void writeLastUsedClinician(String clinicianName) {
-        getPreferences(Context.MODE_PRIVATE).edit().putString(CLINICIAN_KEY, clinicianName).commit();
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(CLINICIAN_KEY, clinicianName).commit();
     }
 
     /**
@@ -187,7 +218,7 @@ public class SuperActivity extends AppCompatActivity {
      * @return
      */
     public int readLastUsedLocation() {
-        return getPreferences(Context.MODE_PRIVATE).getInt(LOCATION_KEY, 0);
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getInt(LOCATION_KEY, 0);
     }
 
     /**
@@ -195,15 +226,22 @@ public class SuperActivity extends AppCompatActivity {
      * @return
      */
     public int readLastUsedFacility() {
-        return getPreferences(Context.MODE_PRIVATE).getInt(FACILITY_KEY, 0);
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getInt(FACILITY_KEY, 0);
     }
 
+    public void writeString(String key, String value) {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(key, value).commit();
+    }
+
+    public String readString(String key) {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(key, "");
+    }
     /**
      * Read the last used clinician from Shared Preferences
      * @return
      */
     public String readLastUsedClinician() {
-        return getPreferences(Context.MODE_PRIVATE).getString(CLINICIAN_KEY, "");
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(CLINICIAN_KEY, "");
     }
 
 

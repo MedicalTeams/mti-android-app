@@ -46,7 +46,6 @@ public class DashboardActivity extends SuperActivity {
             }
         });
 
-
     }
 
     @Override

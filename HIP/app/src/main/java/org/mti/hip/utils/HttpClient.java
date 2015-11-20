@@ -20,6 +20,15 @@ public class HttpClient {
     public static final String tallyEndpoint = "/visits/upload";
     public static final String visitEndpoint = "/facilities/1234/visits";
     public static final String facilitiesEndpoint = "/facilities";
+    public static final String diagnosisEndpoint = "/diagnosis";
+    public static final String supplementalEndpoint = "/supplementals";
+    public static final String settlementEndpoint = "/settlements";
+    public static final String categoriesEndpoint = "/categories";
+    public static final String injuryLocationsEndpoint = "/injurylocations";
+
+    public static final String post = "POST";
+    public static final String get = "GET";
+
     // TODO add constant for facility ID (this will be SET when it is selected
     // from the Facility Selection screen)
  /*

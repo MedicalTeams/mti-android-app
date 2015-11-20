@@ -23,19 +23,9 @@ public class LocationSelectionActivity extends SuperActivity {
         setContentView(R.layout.activity_location_selection);
         lv = (ListView) findViewById(R.id.location_list);
         ArrayList<String> locationList = new ArrayList<>();
-        locationList.add("Adjumani");
-        locationList.add("Ikafe");
-        locationList.add("Imvepi");
-        locationList.add("Kiryandongo");
-        locationList.add("Kyaka II");
-        locationList.add("Kyangwali");
-        locationList.add("Madi Okollo");
         locationList.add("Nakivale");
-        locationList.add("Nyakabande");
         locationList.add("Oruchinga");
-        locationList.add("Palorinya");
         locationList.add("Rhino Camp");
-        locationList.add("Rwamwanja");
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(LocationSelectionActivity.this, android.R.layout.simple_list_item_1, locationList);
         lv.setAdapter(adapter);
