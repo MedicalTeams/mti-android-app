@@ -1,6 +1,5 @@
 package org.mti.hip.utils;
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -10,48 +9,35 @@ import android.net.NetworkInfo;
  */
 public class NetworkConnectivityManager {
 
-    ConnectivityManager connectivityManager;
-    NetworkInfo activeNetwork;
-
-    /**
-     * Constructor
-     *
-     * @param context
-     */
-    public NetworkConnectivityManager(Context context) {
-        activeNetwork = connectivityManager.getActiveNetworkInfo();
-        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-    }
-
     /**
      *
      * @return true if network is available
      */
-    public Boolean isConnected() {
+    public static Boolean isConnected(NetworkInfo activeNetwork) {
         return ((activeNetwork != null) && (activeNetwork.isConnectedOrConnecting()));
     }
 
     /**
      *
-     * @return true if the devide is connected to a WiFi network
+     * @return true if the device is connected to a WiFi network
      */
-    public Boolean isWifi() {
+    public static Boolean isWifi(NetworkInfo activeNetwork) {
         return (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI);
     }
 
     /**
      *
-     * @return true if the devide is connected to a Mobile network
+     * @return true if the device is connected to a Mobile network
      */
-    public Boolean isMobile() {
+    public static Boolean isMobile(NetworkInfo activeNetwork) {
         return (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
     }
 
     /**
      *
-     * @return true if the devide is connected to a WiMax network
+     * @return true if the device is connected to a WiMax network
      */
-    public Boolean isWiMax() {
+    public static Boolean isWiMax(NetworkInfo activeNetwork) {
         return (activeNetwork.getType() == ConnectivityManager.TYPE_WIMAX);
     }
 
