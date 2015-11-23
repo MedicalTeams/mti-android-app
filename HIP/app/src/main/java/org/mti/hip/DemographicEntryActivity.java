@@ -66,7 +66,9 @@ public class DemographicEntryActivity extends SuperActivity {
             visit.setOPD(Integer.valueOf(opdNum.getText().toString()));
         }
         if(editTextHasContent(age)) {
+            // TODO wire in years/months
             visit.setPatientAgeMonths(Integer.valueOf(age.getText().toString()) * 12);
+
         }
         if(rbMale.isChecked()) {
             visit.setGender('M');

@@ -21,10 +21,10 @@ public class ClinicianSelectionActivity extends SuperActivity {
         setContentView(R.layout.activity_clinician_selection);
         lv = (ListView) findViewById(android.R.id.list);
         ArrayList<String> list = new ArrayList<>();
-        list.add("Ainomugisha Daser");
+        list.add("007");
+        list.add("Testy McTesterson");
         list.add("Businge Robert");
         list.add("Aguma Godfrey");
-        list.add("Ayao Jackline");
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(ClinicianSelectionActivity.this, android.R.layout.simple_list_item_1, list);
         lv.setAdapter(adapter);

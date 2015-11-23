@@ -41,7 +41,7 @@
             android:label="@string/dashboard">
         </activity>
         <activity android:name=".DemographicEntryActivity"
-            android:label="@string/demographics">
+            android:label="@string/consultation">
         </activity>
         <activity android:name=".FacilitySelectionActivity"
             android:label="@string/select_facility">
