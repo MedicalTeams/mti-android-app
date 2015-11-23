@@ -1,12 +1,17 @@
 package org.mti.hip.utils;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -14,21 +19,20 @@ import android.widget.TextView;
 import org.mti.hip.R;
 import org.mti.hip.SuperActivity;
 import org.mti.hip.model.Diagnosis;
-import org.mti.hip.model.DiagnosisWrapper;
+import org.mti.hip.model.InjuryLocation;
 import org.mti.hip.model.Supplemental;
-import org.mti.hip.model.SupplementalsWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Created by r624513 on 11/5/15.
  */
 public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
+    private String customOtherName;
+    private HashMap<Integer, Integer> selectableOthers = new HashMap<>();
     private ArrayList<String> listHeaders;
-    //private ArrayList<OtherDiagnosis> otherDiags;
     private HashMap<Integer, ArrayList> children = new HashMap<>();
     private ArrayList<Diagnosis> primaryDiagList;
     private ArrayList<Supplemental> stiList;
@@ -44,26 +48,35 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     private static final int injuryId = 4;
     private static final int injuryLocId = 5;
 
+    private static final int primaryOtherId = 23;
+    private static final int chronicOtherId = 54;
+
+    public static int stiContactsTreated = 0;
+    public static int customContactsTreatedId = -1;
+
+    private ArrayList<Integer> removedDiagHeaders = new ArrayList<>();
+
     private ArrayList<Supplemental> supplementals;
 
-    private HashMap<Integer, RadioButton> buttonMap = new HashMap<>();
+    private HashMap<Integer, ArrayList<RadioButton>> buttonMap = new HashMap();
 
     public ExpandableListView.OnChildClickListener listener;
 
-
     public VisitDiagnosisListAdapter(SuperActivity context) {
         this.context = context;
-        supplementals = (ArrayList<Supplemental>)
-                context.getJsonManagerInstance().read(context.readString(
-                        context.SUPPLEMENTAL_LIST_KEY), SupplementalsWrapper.class);
+
+        stiContactsTreated = 0;
+        removedDiagHeaders.add(16);
+        removedDiagHeaders.add(19);
+        removedDiagHeaders.add(20);
+        removedDiagHeaders.add(21);
+        supplementals = (ArrayList<Supplemental>) context.getObjectFromPrefsKey(context.SUPPLEMENTAL_LIST_KEY);
         primaryDiagList = getPrimaryDiags();
         stiList = getSTIs();
         chronicDiseaseList = getChronicDiseaseList();
         mentalIllnessList = getMentalIllnesses();
         injuryList = getInjuries();
         injuryLocList = getInjuryLocations();
-        listHeaders = getListHeaders();
-
 
 
         children.put(diagId, primaryDiagList);
@@ -80,66 +93,78 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     public ExpandableListView.OnChildClickListener getListener() {
         return listener;
     }
+
     //  set checkbox states
     public ArrayList<ArrayList<Integer>> check_states = new ArrayList<>();
+
     public void setChildrenAndValues() {
-        for(int i = 0; i < children.size(); i++) {
+        for (int i = 0; i < children.size(); i++) {
             ArrayList<Integer> tmp = new ArrayList<>();
-            for(int j = 0; j < children.get(i).size(); j++) {
+            for (int j = 0; j < children.get(i).size(); j++) {
 //                Log.d("test", String.valueOf(i));
                 tmp.add(1);
             }
             check_states.add(tmp);
         }
+
+        buttonMap.put(injuryLocId, new ArrayList<RadioButton>());
+        buttonMap.put(mentalIllnessId, new ArrayList<RadioButton>());
     }
 
-    public void updateChildrenAndValues() {
-        for(int i = 0; i < children.size(); i++) {
-            ArrayList<Integer> tmp = new ArrayList<>();
-//            check_states.get(i).clear();
-            for(int j = 0; j < children.get(i).size(); j++) {
-                try {
-                    if (check_states.get(i).get(j) == 1) {
-                        tmp.add(1); // not selected
-                    } else {
-                        tmp.add(0); // selected
-                    }
-                } catch (Exception ignored) {
-
-                }
-            }
-
-//            check_states.add(i, tmp);
-        }
+    public void updateChildrenAndValues(int groupPosition, int childPosition) {
+        check_states.get(groupPosition).add(childPosition - 1, 0);
     }
 
     public void setListener() {
         listener = new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                if(groupPosition == mentalIllnessId || groupPosition == injuryLocId) {
-                    for(int i = 0; i < buttonMap.size();i++) {
-                            RadioButton button = buttonMap.get(i);
-                            button.setChecked(false);
+                if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {
+                    RadioButton button = (RadioButton) v.findViewById(R.id.rb_single_select);
+                    boolean check = false;
+
+                    // TODO refactor. Works but is messy.
+
+                    if (check_states.get(groupPosition).get(childPosition) == 0) {
+                        // we've touched the same one twice
+                        button.setChecked(false);
+                    } else {
+                        check = true; // this currently has to "jump over" the next block of IFs
+                        // but should be refactored
                     }
-                    for(int i = 0; i < check_states.get(groupPosition).size();i++) {
+
+                    //clear all selections and state for radio buttons
+                    for (int i = 0; i < buttonMap.get(groupPosition).size(); i++) {
+                        RadioButton allButtons = buttonMap.get(groupPosition).get(i);
+                        allButtons.setChecked(false);
+                    }
+                    for (int i = 0; i < check_states.get(groupPosition).size(); i++) {
                         check_states.get(groupPosition).set(i, 1);
-                }
+                    }
 
-                RadioButton button = (RadioButton) v.findViewById(R.id.rb_single_select);
-                button.setChecked(true);
-                check_states.get(groupPosition).set(childPosition, 0);
-            } else {
+                    // conditionally add new selection and state
 
+                    button.setChecked(check);
+                    if (check) {
+                        check_states.get(groupPosition).set(childPosition, 0);
+                    }
+                } else {
+
+                    CheckBox cb = (CheckBox) v.findViewById(R.id.cb_multi_select);
+
+                    // this prevents others and sti contacts from being added to checked state
+                    boolean isOther = processIfIsOther(groupPosition, childPosition);
+                    boolean isStiContacts = processIfIsStiContactsTreated(groupPosition, childPosition);
+                    if (isOther || isStiContacts) {
+                        return true;
+                    }
                     // this allows the entire view to be clicked on and toggle check boxes rather
                     // than requiring the user to tap the box itself
-                    CheckBox cb = (CheckBox) v.findViewById(R.id.cb_multi_select);
+
                     if (cb.isChecked()) {
                         check_states.get(groupPosition).set(childPosition, 1);
                         cb.setChecked(false);
                     } else {
-                        processIfIsStiContactsTreated(groupPosition, childPosition);
-//                        processIfIsOther(groupPosition, childPosition);
                         check_states.get(groupPosition).set(childPosition, 0);
                         cb.setChecked(true);
                     }
@@ -149,33 +174,129 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         };
     }
 
-    private void processIfIsOther(int groupPosition, int childPosition) {
-        if(groupPosition != diagId) {
-            // needs to be supplemental with named "parent" based on accordion
-        } else {
-            // these are primaries
-            ArrayList<Diagnosis> list = getList(groupPosition);
-            if(list.get(childPosition).getName().matches("Other")) {
-                context.alert.showAlert("Enter Diagnosis Name", "name is set as a placeholder for now");
-                Diagnosis diag = new Diagnosis();
-                diag.setName("Placeholder");
-                diag.setId(90210);
-                list.add(diag);
-                children.put(groupPosition, list);
-                updateChildrenAndValues();
-                notifyDataSetChanged();
+    private boolean processIfIsStiContactsTreated(int group, int child) {
+        if (group == stiId) {
+            Supplemental supp = (Supplemental) getChild(group, child);
+            if (supp.getId() == customContactsTreatedId) {
+                showStiContactsDialog(supp);
+                return true;
             }
-
         }
+        return false;
     }
 
-    private void processIfIsStiContactsTreated(int group, int child) {
-        if(group != diagId) {
-            Supplemental supp = (Supplemental) getChild(group, child);
-            if (supp.getName().matches("Contacts Treated")) {
-                context.alert.showAlert("Soon", "");
+    private boolean processIfIsOther(final int groupPosition, int childPosition) {
+        if (!selectableOthers.containsValue(childPosition)) {
+            return false;
+        }
+        Object obj = getList(groupPosition).get(childPosition);
+        Diagnosis diag;
+        Supplemental supp;
+        if (obj instanceof Diagnosis) {
+            diag = (Diagnosis) obj;
+            if (diag.getId() == primaryOtherId) {
+                addOtherDiag(false, primaryOtherId, groupPosition);
+                return true;
+            }
+        } else if (obj instanceof Supplemental) {
+            supp = (Supplemental) obj;
+            if (supp.getId() == chronicOtherId) {
+                addOtherDiag(true, chronicOtherId, groupPosition);
+                return true;
             }
         }
+
+        return false;
+
+    }
+
+    public void showStiContactsDialog(final Supplemental supp) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        LayoutInflater inflater = context.getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_edittext, null);
+        TextView tv = (TextView) view.findViewById(R.id.dialog_message_text);
+        tv.setText(context.getString(R.string.tooltip_morbidity_sti_contacts));
+        final EditText et = (EditText) view.findViewById(R.id.et_dialog);
+        et.setInputType(InputType.TYPE_CLASS_NUMBER);
+        et.setHint("Number of Contacts Treated");
+        alert.setView(view);
+        alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (context.editTextHasContent(et)) {
+                    String input = et.getText().toString();
+                    stiContactsTreated = Integer.valueOf(input);
+                    supp.setName(context.parseStiContactsTreated(stiContactsTreated));
+                }
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = alert.create();
+        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    private void addOtherDiag(final boolean isSupplemental, final int id, final int groupPosition) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        LayoutInflater inflater = context.getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_edittext, null);
+        TextView tv = (TextView) view.findViewById(R.id.dialog_message_text);
+        tv.setText("Please enter the name of your diagnosis");
+        final EditText et = (EditText) view.findViewById(R.id.et_dialog);
+        et.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        et.setHint("Diagnosis name");
+        customOtherName = "";
+        alert.setView(view);
+        alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                customOtherName = String.valueOf(et.getText());
+                dialog.dismiss();
+            }
+        });
+        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (customOtherName.matches("")) return;
+                if (isSupplemental) {
+                    ArrayList<Supplemental> list = getList(groupPosition);
+                    Supplemental supp = new Supplemental();
+                    supp.setId(id);
+                    supp.setDiagnosis(19);
+                    supp.setName(customOtherName);
+                    list.add(supp);
+
+                } else {
+                    ArrayList<Diagnosis> list = getList(groupPosition);
+                    Diagnosis diag = new Diagnosis();
+                    diag.setName(customOtherName);
+                    diag.setId(id);
+                    list.add(diag);
+                }
+
+
+                updateChildrenAndValues(groupPosition, children.get(groupPosition).size());
+                notifyDataSetChanged();
+            }
+        });
+        final AlertDialog dialog = alert.create();
+        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+        dialog.show();
     }
 
     @Override
@@ -190,8 +311,8 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         switch (groupPosition) {
             case diagId:
                 child = (ArrayList<Diagnosis>) children.get(groupPosition);
-                default:
-                    child = (ArrayList<Supplemental>) children.get(groupPosition);
+            default:
+                child = (ArrayList<Supplemental>) children.get(groupPosition);
 
         }
         return child.size();
@@ -226,7 +347,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     }
 
 
-
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         return childPosition;
@@ -242,8 +362,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         String headerTitle = (String) getGroup(groupPosition);
 
         View v = convertView;
-        if (v == null)
-        {
+        if (v == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.list_group, parent, false);
         }
@@ -255,39 +374,69 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     }
 
+    public HashMap<Integer, Integer> getSelectableOthers() {
+        return selectableOthers;
+    }
+
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         String childText = null;
+        int id;
         boolean selected = check_states.get(groupPosition).get(childPosition) == 0;
         if (groupPosition == diagId) {
             final Diagnosis obj = (Diagnosis) getChild(groupPosition, childPosition);
             childText = obj.getName();
+            id = obj.getId();
         } else {
             final Supplemental obj = (Supplemental) getChild(groupPosition, childPosition);
             childText = obj.getName();
+            id = obj.getId();
         }
 
 
         LayoutInflater inflater = (LayoutInflater) this.context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TextView tv = null;
-            View selector;
+        View selector;
 
-            if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {  // sti and injury B are single select
-                convertView = inflater.inflate(R.layout.list_item_single_select, null);
-                tv = (TextView) convertView.findViewById(R.id.tv_single_select);
+        if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {  // sti and injury B are single select
+            convertView = inflater.inflate(R.layout.list_item_single_select, null);
+            tv = (TextView) convertView.findViewById(R.id.tv_single_select);
 
-                selector = convertView.findViewById(R.id.rb_single_select);
-                buttonMap.put(childPosition, (RadioButton) selector);
-                ((RadioButton) selector).setChecked(selected);
+            selector = convertView.findViewById(R.id.rb_single_select);
+            buttonMap.get(groupPosition).add((RadioButton) selector);
+            ((RadioButton) selector).setChecked(selected);
 
-            } else {
-                convertView = inflater.inflate(R.layout.list_item_multi_select, null);
-                tv = (TextView) convertView
-                        .findViewById(R.id.tv_multi_select);
-                selector = convertView.findViewById(R.id.cb_multi_select);
-                ((CheckBox) selector).setChecked(selected);
-            }
+        } else {
+            convertView = inflater.inflate(R.layout.list_item_multi_select, null);
+            tv = (TextView) convertView
+                    .findViewById(R.id.tv_multi_select);
+            selector = convertView.findViewById(R.id.cb_multi_select);
+
+            ((CheckBox) selector).setChecked(selected);
+        }
+        if (id == chronicOtherId || id == primaryOtherId || id == customContactsTreatedId) {
+
+            // IMPORTANT
+
+            /* All "others" have the same id, but we only want the
+                first entry of "other" to trigger the dialog. Without
+                the following code, a user could tap on the new custom
+                entries and that would make the dialog appear. The code
+                prevents new entries from being added into the selectableOthers
+                HashMap if they have already been entered when the list is
+                shown by getChildView
+            */
+
+            if (!selectableOthers.containsKey(groupPosition))
+                selectableOthers.put(groupPosition, childPosition);
+
+            // this code hides the CheckBox widget
+            if (selectableOthers.containsValue(childPosition))
+                selector.setVisibility(View.INVISIBLE);
+
+        }
+
 
         tv.setText(childText);
         return convertView;
@@ -300,88 +449,90 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     }
 
     private ArrayList<Diagnosis> getPrimaryDiags() {
-        ArrayList<Diagnosis> diags = (ArrayList<Diagnosis>)
-                context.getJsonManagerInstance().read(context.readString(
-                        context.DIAGNOSIS_LIST_KEY), DiagnosisWrapper.class);
+        ArrayList<Diagnosis> diags = (ArrayList<Diagnosis>) context.getObjectFromPrefsKey(context.DIAGNOSIS_LIST_KEY);
 
-        return diags;
+        ArrayList<Diagnosis> displayList = new ArrayList<>();
+
+        listHeaders = new ArrayList<>();
+        listHeaders.clear();
+        listHeaders.add(getString(R.string.header_diagnosis));
+
+        for (Diagnosis diagnosis : diags) {
+            if (removedDiagHeaders.contains(diagnosis.getId())) {
+                // the diagnosis is not allowed
+                listHeaders.add(diagnosis.getName());
+            } else if (!displayList.contains(diagnosis)) {
+                displayList.add(diagnosis);
+            }
+        }
+
+        listHeaders.add(getString(R.string.header_injury_location));
+
+
+        return displayList;
     }
 
     private ArrayList<Supplemental> getChronicDiseaseList() {
         ArrayList<Supplemental> parsedList = new ArrayList<>();
         for (Supplemental supp : supplementals) {
-           if(supp.getDiagnosis() == 19) {
-               parsedList.add(supp);
-           }
+            if (supp.getDiagnosis() == 19) {
+                parsedList.add(supp);
+            }
         }
         return parsedList;
-    }
-
-    private ArrayList<Supplemental> getInjuryLocations() {
-        ArrayList<String> list = new ArrayList<>();
-        list.clear();
-        list.add(getString(R.string.injury_location_home));
-        list.add(getString(R.string.injury_location_school));
-        list.add(getString(R.string.injury_location_camp));
-        list.add(getString(R.string.injury_location_field_or_garden));
-        list.add(getString(R.string.injury_location_bush_or_forest));
-        list.add(getString(R.string.injury_location_road));
-
-
-        ArrayList<Supplemental> diags = new ArrayList<>();
-        for (String s : list) {
-            Supplemental diag = new Supplemental();
-            diag.setId(new Random().nextInt());
-            diag.setName(s);
-            diags.add(diag);
-        }
-        return diags;
     }
 
     private ArrayList<Supplemental> getSTIs() {
 //        stis.add("Contacts Treated");
         ArrayList<Supplemental> parsedList = new ArrayList<>();
         for (Supplemental supp : supplementals) {
-            if(supp.getDiagnosis() == 16) {
+            if (supp.getDiagnosis() == 16) {
                 parsedList.add(supp);
             }
         }
+        Supplemental supp = new Supplemental();
+        supp.setName(context.getString(R.string.contacts_treated));
+        supp.setId(customContactsTreatedId);
+
+        parsedList.add(supp);
+
         return parsedList;
     }
 
     private ArrayList<Supplemental> getMentalIllnesses() {
         ArrayList<Supplemental> parsedList = new ArrayList<>();
         for (Supplemental supp : supplementals) {
-            if(supp.getDiagnosis() == 20) {
+            if (supp.getDiagnosis() == 20) {
                 parsedList.add(supp);
             }
         }
         return parsedList;
     }
-
-    private ArrayList<String> getListHeaders() {
-
-        ArrayList<String> headers = new ArrayList<>();
-
-        headers.clear();
-        headers.add(getString(R.string.header_diagnosis));
-        headers.add(getString(R.string.header_sti));
-        headers.add(getString(R.string.header_chronic_disease));
-        headers.add(getString(R.string.header_mental_illness));
-        headers.add(getString(R.string.header_injuries));
-        headers.add(getString(R.string.header_injury_location));
-        return headers;
-    }
-
 
     private ArrayList<Supplemental> getInjuries() {
         ArrayList<Supplemental> parsedList = new ArrayList<>();
         for (Supplemental supp : supplementals) {
-            if(supp.getDiagnosis() == 21) {
+            if (supp.getDiagnosis() == 21) {
                 parsedList.add(supp);
             }
         }
         return parsedList;
+    }
+
+
+    private ArrayList<Supplemental> getInjuryLocations() {
+        ArrayList<InjuryLocation> list = (ArrayList<InjuryLocation>) context.getObjectFromPrefsKey(context.INJURY_LOCATIONS_KEY);
+
+
+        ArrayList<Supplemental> diags = new ArrayList<>();
+        for (InjuryLocation injuryLocation : list) {
+            Supplemental diag = new Supplemental();
+            diag.setId(injuryLocation.getId());
+            diag.setName(injuryLocation.getName());
+            diag.setDiagnosis(injuryLocation.getDiagnosis());
+            diags.add(diag);
+        }
+        return diags;
     }
 
     private String getString(int id) {

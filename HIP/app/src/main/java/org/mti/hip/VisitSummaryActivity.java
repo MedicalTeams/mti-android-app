@@ -10,9 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.mti.hip.model.Diagnosis;
+import org.mti.hip.model.InjuryLocation;
 import org.mti.hip.model.Supplemental;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
+
+import java.util.ArrayList;
 
 public class VisitSummaryActivity extends SuperActivity {
 
@@ -20,11 +23,15 @@ public class VisitSummaryActivity extends SuperActivity {
     private String visitJson;
     private LinearLayout consultationData;
     private LinearLayout diagData;
+    private ArrayList<InjuryLocation> injuryLocations;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        injuryLocations = (ArrayList<InjuryLocation>) getObjectFromPrefsKey(INJURY_LOCATIONS_KEY);
+
         setContentView(R.layout.activity_visit_summary);
         Visit visit = getStorageManagerInstance().currentVisit();
         consultationData = (LinearLayout) findViewById(R.id.ll_consultation_data);
@@ -45,6 +52,24 @@ public class VisitSummaryActivity extends SuperActivity {
 
             diagData.addView(tv);
         }
+
+        if(visit.getInjuryLocation() != 0) {
+            TextView tv = new TextView(VisitSummaryActivity.this);
+            // server is 1 based list is 0 based
+            String injuryLocationName = injuryLocations.get(visit.getInjuryLocation() - 1).getName();
+            tv.setText("Injury Location: " + bold(injuryLocationName));
+            diagData.addView(tv);
+        }
+
+        if(visit.getStiContactsTreated() != 0) {
+            TextView tv = new TextView(VisitSummaryActivity.this);
+
+            // TODO refactor. Spagetti code surrounding getting/setting this in various classes
+            tv.setText(parseStiContactsTreated(visit.getStiContactsTreated()));
+            diagData.addView(tv);
+        }
+
+
 
         visitJson = getJsonManagerInstance().writeValueAsString(visit);
 
@@ -91,6 +116,7 @@ public class VisitSummaryActivity extends SuperActivity {
         TextView isNational = new TextView(c);
         TextView isRevisit = new TextView(c);
         age.append(String.valueOf(ageVal));
+        // TODO highlight if age is months
         date.setText(getFormattedDate(visit.getVisitDate()));
 
         if(visit.getGender() == 'M') {
