@@ -174,7 +174,15 @@ public class SuperActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     this.e = e;
                 }
-            } else {
+            }
+            else if (httpMethod.equals(HttpClient.put)) {
+                try {
+                    responseString = getHttpClientInstance().put(endpoint, body);
+                } catch (IOException e) {
+                    this.e = e;
+                }
+            }
+            else {
                 try {
                     responseString = getHttpClientInstance().get(endpoint);
                 } catch (IOException e) {
