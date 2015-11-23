@@ -2,6 +2,7 @@ package org.mti.hip.utils;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -110,6 +111,15 @@ public class StorageManager {
             macAddress = "";
         }
         return macAddress;
+    }
+
+    /**
+     *
+     * @return The serial number of the android device
+     */
+    public static String getSerialNumber() {
+        String serialNumber = Build.SERIAL;
+        return (serialNumber == null) ? "" : serialNumber;
     }
 
 }
