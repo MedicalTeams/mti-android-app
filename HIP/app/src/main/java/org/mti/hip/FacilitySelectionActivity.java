@@ -18,13 +18,14 @@ public class FacilitySelectionActivity extends SuperActivity {
 
     private ListView lv;
     private ArrayList<Facility> list;
+    private String settlementMatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facility_selection);
         lv = (ListView) findViewById(android.R.id.list);
-
+        settlementMatcher = readLastUsedLocation();
 
 //        testJson();
         getFacilities();
@@ -34,15 +35,6 @@ public class FacilitySelectionActivity extends SuperActivity {
     protected void onResume() {
 
         super.onResume();
-    }
-
-    private void testJson() {
-        String json = getJsonManagerInstance().getTestJsonString();
-        try {
-            getHttpClientInstance().post("/Visit", json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void getFacilities() {
@@ -80,8 +72,9 @@ public class FacilitySelectionActivity extends SuperActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                facilityName = adapter.getItem(position).getName();
-
+                Facility facility = adapter.getItem(position);
+                facilityName = facility.getName();
+                writeLastUsedFacility(facility.getId());
                 // TODO record ID
                 startActivity(new Intent(FacilitySelectionActivity.this, ClinicianSelectionActivity.class));
             }

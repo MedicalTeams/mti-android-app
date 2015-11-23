@@ -7,6 +7,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.mti.hip.model.Facility;
+import org.mti.hip.model.FacilityWrapper;
+import org.mti.hip.model.Settlement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,34 +20,40 @@ import java.util.List;
 public class LocationSelectionActivity extends SuperActivity {
 
     private ListView lv;
+    private ArrayList<Settlement> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_selection);
         lv = (ListView) findViewById(R.id.location_list);
-        ArrayList<String> locationList = new ArrayList<>();
-        locationList.add("Nakivale");
-        locationList.add("Oruchinga");
-        locationList.add("Rhino Camp");
+        getList();
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(LocationSelectionActivity.this, android.R.layout.simple_list_item_1, locationList);
+
+    }
+
+    private void getList() {
+//        if (readString(FACILITIES_LIST_KEY).matches("")) {
+//            runNetworkTask();
+//        } else {
+            list = (ArrayList<Settlement>) getObjectFromPrefsKey(SETTLEMENT_LIST_KEY);
+            showList();
+//        }
+    }
+
+    private void showList() {
+        final ArrayAdapter<Settlement> adapter = new ArrayAdapter<>(LocationSelectionActivity.this, android.R.layout.simple_list_item_1, list);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                locationName = adapter.getItem(position);
+                String name = adapter.getItem(position).getName();
+                writeLastUsedLocation(name);
+                locationName = name;
                 startActivity(new Intent(LocationSelectionActivity.this, FacilitySelectionActivity.class));
             }
         });
     }
 
-    /**
-     *
-     * @return
-     */
-    private List<String> getLocations() {
-        //// TODO: 11/19/2015 obtain locations from endpoint
-        return null;
-    }
+
 }

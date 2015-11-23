@@ -42,6 +42,7 @@ public class DashboardActivity extends SuperActivity {
                 visit.setStaffMemberName(currentUserName);
                 visit.setDeviceId("MAC");
                 visit.setFacilityName(facilityName);
+                visit.setFacility(readLastUsedFacility());
                 startActivity(new Intent(DashboardActivity.this, DemographicEntryActivity.class));
             }
         });

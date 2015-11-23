@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import org.mti.hip.SuperActivity;
 import org.mti.hip.model.Diagnosis;
+import org.mti.hip.model.SettlementWrapper;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 
@@ -45,32 +47,6 @@ public class JSONManager {
         }
     }
 
-    public String getTestJsonString() {
-        Tally tally = new Tally();
-        Visit visit = new Visit();
-        visit.setPatientAgeMonths(40);
-        visit.setStaffMemberName("Dr. Robert Bobert");
-        visit.setFacility(1234);
-        visit.setGender('M');
-        visit.setBeneficiaryType(0);
-        visit.setIsRevisit(false);
-        visit.setOPD(123);
-        visit.setVisitDate(new Date());
-        HashSet<Diagnosis> diags = new HashSet<>();
-        Diagnosis diag = new Diagnosis();
-        diag.setName("Diabetes");
-        diags.add(diag);
-        visit.setPatientDiagnosis(diags);
-        tally.add(visit);
-
-        try {
-           return om.writeValueAsString(tally);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public String writeValueAsString(Object obj) {
         try {
             return om.writeValueAsString(obj);
@@ -79,4 +55,5 @@ public class JSONManager {
         }
         return null;
     }
+
 }

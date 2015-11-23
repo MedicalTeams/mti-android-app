@@ -1,27 +1,43 @@
 package org.mti.hip;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.mti.hip.utils.HttpClient;
+import org.w3c.dom.Text;
 
 public class MainActivity extends SuperActivity {
 
     private Button signIn;
+    private TextView version;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        version = (TextView) findViewById(R.id.tv_version);
+        version.setText("Version code: " + String.valueOf(pInfo.versionCode));
+
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                if(readString(DIAGNOSIS_LIST_KEY).matches("")) initApp(); // TODO this is dumb right now and assumes all values are initialized if DIAG is
+//                if(readString(DIAGNOSIS_LIST_KEY).matches(""))// TODO this is dumb right now and assumes all values are initialized if DIAG is
+                    initApp();
                 return null;
             }
 
@@ -45,7 +61,6 @@ public class MainActivity extends SuperActivity {
     private void toggleProgressOverlay() {
         // TODO toggle visibility of Sign In button and progress
         // spinner (block sign in until Async Task is done)
-        // Async Task will probably end up being replaced with OkHttp callback
     }
 
     private void initApp() {
@@ -73,7 +88,21 @@ public class MainActivity extends SuperActivity {
             }
         }.execute();
 
-        // TODO settlements and injuryLoc list
+        new NetworkTask(HttpClient.settlementEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(SETTLEMENT_LIST_KEY, response);
+            }
+        }.execute();
+
+        new NetworkTask(HttpClient.injuryLocationsEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(SuperActivity.INJURY_LOCATIONS_KEY, response);
+            }
+        }.execute();
 
     }
 

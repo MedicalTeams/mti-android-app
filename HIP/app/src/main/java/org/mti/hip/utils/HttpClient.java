@@ -23,7 +23,6 @@ public class HttpClient {
     public static final String diagnosisEndpoint = "/diagnosis";
     public static final String supplementalEndpoint = "/supplementals";
     public static final String settlementEndpoint = "/settlements";
-    public static final String categoriesEndpoint = "/categories";
     public static final String injuryLocationsEndpoint = "/injurylocations";
 
     public static final String post = "POST";

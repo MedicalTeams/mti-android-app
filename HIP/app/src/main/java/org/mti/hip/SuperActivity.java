@@ -2,6 +2,7 @@ package org.mti.hip;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,11 @@ import android.text.Html;
 import android.text.Spanned;
 import android.widget.EditText;
 
+import org.mti.hip.model.DiagnosisWrapper;
+import org.mti.hip.model.FacilityWrapper;
+import org.mti.hip.model.InjuryLocationWrapper;
+import org.mti.hip.model.SettlementWrapper;
+import org.mti.hip.model.SupplementalsWrapper;
 import org.mti.hip.model.User;
 import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
@@ -29,7 +35,6 @@ public class SuperActivity extends AppCompatActivity {
     public static String facilityName;
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
-
     private ProgressDialog progressDialog;
 
     public static final int diagId = 0;
@@ -46,10 +51,21 @@ public class SuperActivity extends AppCompatActivity {
     public static final String SETTLEMENT_LIST_KEY = "settlementkey";
     public static final String DIAGNOSIS_LIST_KEY = "diaglistkey";
     public static final String SUPPLEMENTAL_LIST_KEY = "supplistkey";
-    public static final String CATEGORY_LIST_KEY = "categorylistkey";
+    public static final String INJURY_LOCATIONS_KEY = "injurylockey";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setContentView(R.layout.activity_super);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(buildHeader());
+        }
+        progressDialog = new ProgressDialog(this);
+
+    }
 
     private static final String PREFS_NAME = "HipPrefs";
-
 
     public User getCurrentUser() {
         return User.userMap.get(currentUserName);
@@ -69,23 +85,12 @@ public class SuperActivity extends AppCompatActivity {
         return storageManager;
     }
 
+
     public static HttpClient getHttpClientInstance() {
         if (httpClient == null) {
             httpClient = new HttpClient();
         }
         return httpClient;
-    }
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_super);
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(buildHeader());
-        }
-        progressDialog = new ProgressDialog(this);
-
     }
 
     public boolean editTextHasContent(EditText et) {
@@ -116,6 +121,10 @@ public class SuperActivity extends AppCompatActivity {
             sb.append("  |  " + getCurrentUser().getName());
         }
         return sb.toString();
+    }
+
+    public String parseStiContactsTreated(int contactsTreated) {
+        return getString(R.string.contacts_treated).concat(": " + contactsTreated);
     }
 
     public abstract class NetworkTask extends AsyncTask<Void, Void, String> {
@@ -180,7 +189,7 @@ public class SuperActivity extends AppCompatActivity {
             progressDialog.dismiss();
             if (e == null) {
                 getResponseString(r);
-            } else {
+            } else if(!isCancelled()){
                 alert.showAlert("Error", e.getMessage());
             }
             super.onPostExecute(r);
@@ -193,8 +202,8 @@ public class SuperActivity extends AppCompatActivity {
      * Save the last used location to Shared Preferences
      * @param locationId
      */
-    public void writeLastUsedLocation(int locationId) {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putInt(LOCATION_KEY, locationId).commit();
+    public void writeLastUsedLocation(String locationId) {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(LOCATION_KEY, locationId).commit();
     }
 
     /**
@@ -217,8 +226,8 @@ public class SuperActivity extends AppCompatActivity {
      * Read the last used location from Shared Preferences
      * @return
      */
-    public int readLastUsedLocation() {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getInt(LOCATION_KEY, 0);
+    public String readLastUsedLocation() {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(LOCATION_KEY, "");
     }
 
     /**
@@ -244,6 +253,15 @@ public class SuperActivity extends AppCompatActivity {
         return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(CLINICIAN_KEY, "");
     }
 
+    public Object getObjectFromPrefsKey(String key) {
+        Class clazz = null;
+        if(key.matches(SETTLEMENT_LIST_KEY)) clazz = SettlementWrapper.class;
+        if(key.matches(INJURY_LOCATIONS_KEY)) clazz = InjuryLocationWrapper.class;
+        if(key.matches(DIAGNOSIS_LIST_KEY)) clazz = DiagnosisWrapper.class;
+        if(key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = SupplementalsWrapper.class;
+        if(key.matches(FACILITIES_LIST_KEY)) clazz = FacilityWrapper.class;
+        return getJsonManagerInstance().read(readString(key), clazz);
+    }
 
 
 }
