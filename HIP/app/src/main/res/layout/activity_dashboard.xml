@@ -29,6 +29,14 @@
         android:layout_centerHorizontal="true"
         />
 
+    <TextView
+        android:id="@+id/dashboard_connectivity_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="500dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

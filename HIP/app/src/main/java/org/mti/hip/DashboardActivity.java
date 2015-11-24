@@ -1,19 +1,25 @@
 package org.mti.hip;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mti.hip.model.Visit;
+import org.mti.hip.utils.NetworkConnectivityManager;
 
 import java.util.Date;
 
 public class DashboardActivity extends SuperActivity {
 
     private int backPressCount;
+    private Boolean isConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,19 @@ public class DashboardActivity extends SuperActivity {
     protected void onResume() {
         super.onResume();
         backPressCount = 0;
+        isConnected = isConnected();
+        TextView connectivityStatus = (TextView) findViewById(R.id.dashboard_connectivity_status);
+        if (isConnected) {
+            connectivityStatus.setText(R.string.is_online);
+        } else {
+            connectivityStatus.setText(R.string.is_offline);
+        }
+    }
+
+    private Boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return NetworkConnectivityManager.isConnected(activeNetwork);
     }
 
     @Override

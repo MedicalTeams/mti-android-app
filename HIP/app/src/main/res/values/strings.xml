@@ -43,5 +43,8 @@
     <string name="error_email_address">hip@medicalteams.org</string>
     <string name="consultation">Consultation</string>
     <string name="contacts_treated">Contacts Treated</string>
+    <!-- Connectivity status messages -->
+    <string name="is_online">You are currently ON-LINE</string>
+    <string name="is_offline">You are currently OFF-LINE</string>
 
 </resources>
