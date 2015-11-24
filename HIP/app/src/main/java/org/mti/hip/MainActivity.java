@@ -74,9 +74,7 @@ public class MainActivity extends SuperActivity {
 
     private void initApp() {
 
-//        String serialNumber = StorageManager.getSerialNumber();
-        //// TODO: 11/23/2015 Uncomment the above statement (and delete the one below) when the DB issue with uuid length is fixed by Paul Roe
-        String serialNumber = String.valueOf(System.currentTimeMillis());
+        String serialNumber = StorageManager.getSerialNumber();
         String description = "Device serial number last created/updated on " + new Date();
         String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, appVersion, description);
         new NetworkTask(jsonBody, HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.put) {
