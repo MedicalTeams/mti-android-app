@@ -68,7 +68,11 @@ public class DashboardActivity extends SuperActivity {
         }
     }
 
-    private Boolean isConnected() {
+    /**
+     *
+     * @return True if the device is connected to the internet, False otherwise
+     */
+    Boolean isConnected() {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         return NetworkConnectivityManager.isConnected(activeNetwork);

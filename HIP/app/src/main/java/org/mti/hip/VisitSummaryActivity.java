@@ -2,6 +2,8 @@ package org.mti.hip;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,7 @@ import org.mti.hip.model.InjuryLocation;
 import org.mti.hip.model.Supplemental;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
+import org.mti.hip.utils.NetworkConnectivityManager;
 
 import java.util.ArrayList;
 
@@ -24,6 +27,7 @@ public class VisitSummaryActivity extends SuperActivity {
     private LinearLayout consultationData;
     private LinearLayout diagData;
     private ArrayList<InjuryLocation> injuryLocations;
+    private Boolean isConnected;
 
 
     @Override
@@ -155,6 +159,22 @@ public class VisitSummaryActivity extends SuperActivity {
 
 
 
+    }
+
+    /**
+     *
+     * @return True if the device is connected to the internet, False otherwise
+     */
+    Boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return NetworkConnectivityManager.isConnected(activeNetwork);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isConnected = isConnected();
     }
 
 
