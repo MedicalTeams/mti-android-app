@@ -1,6 +1,5 @@
 package org.mti.hip;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -35,7 +34,7 @@ public class ConsultationActivity extends SuperActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_demographic_entry);
+        setContentView(R.layout.activity_consultation);
         opdNum = (EditText) findViewById(R.id.opd_number);
         age = (EditText) findViewById(R.id.patient_age);
         rbMale = (RadioButton) findViewById(R.id.rb_male);
