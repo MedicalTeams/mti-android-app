@@ -2,6 +2,7 @@ package org.mti.hip;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,6 +22,7 @@ import org.mti.hip.model.User;
 import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSONManager;
+import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.NetworkConnectivityManager;
 import org.mti.hip.utils.StorageManager;
 
@@ -65,6 +67,10 @@ public class SuperActivity extends AppCompatActivity {
             getSupportActionBar().setSubtitle(buildHeader());
         }
         progressDialog = new ProgressDialog(this);
+
+        IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        NetworkBroadcastReceiver networkBroadcastReceiver = new NetworkBroadcastReceiver();
+        registerReceiver(networkBroadcastReceiver, intentFilter);
 
     }
 
@@ -283,6 +289,8 @@ public class SuperActivity extends AppCompatActivity {
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         return NetworkConnectivityManager.isConnected(activeNetwork);
     }
+
+
 
 
 }

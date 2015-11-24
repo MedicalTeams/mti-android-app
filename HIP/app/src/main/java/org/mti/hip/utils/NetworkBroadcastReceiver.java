@@ -3,13 +3,15 @@ package org.mti.hip.utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Created by r625361 on 11/19/2015.
  */
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
+
+    private static final String LOG_TAG = "MTI-HIP";
 
     /**
      * This method is called when the BroadcastReceiver is receiving an Intent
@@ -48,15 +50,17 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        if (NetworkConnectivityManager.isConnected(activeNetwork)) {
-            //// TODO: 11/19/2015 Create an Intent and invoke context.startService(Intent) to upload data asynchronously when network comes back online
+        Log.e(LOG_TAG, "action: " + intent.getAction());
+        Log.e(LOG_TAG, "component: " + intent.getComponent());
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            for (String key: extras.keySet()) {
+                Log.v(LOG_TAG, "key [" + key + "]: " +
+                        extras.get(key));
+            }
         }
-        else
-        {
-            //// TODO: 11/19/2015 do something if network goes offline
+        else {
+            Log.v(LOG_TAG, "no extras");
         }
-
     }
 }
