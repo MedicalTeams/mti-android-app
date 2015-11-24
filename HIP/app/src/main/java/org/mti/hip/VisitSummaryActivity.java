@@ -41,11 +41,11 @@ public class VisitSummaryActivity extends SuperActivity {
         TextView diagHeader = new TextView(VisitSummaryActivity.this);
         diagHeader.setText(bold("Diagnosis Summary"));
         diagData.addView(diagHeader);
-        for(Diagnosis diag : visit.getPatientDiagnosis()) {
+        for (Diagnosis diag : visit.getPatientDiagnosis()) {
             Supplemental supplementalDiagnosis = null;
             TextView tv = new TextView(VisitSummaryActivity.this);
             tv.setText(bold(diag.getName()));
-            for(Supplemental supp : diag.getSupplementals()) {
+            for (Supplemental supp : diag.getSupplementals()) {
                 supplementalDiagnosis = supp;
                 tv.append("\n - " + supplementalDiagnosis.getName());
             }
@@ -53,7 +53,7 @@ public class VisitSummaryActivity extends SuperActivity {
             diagData.addView(tv);
         }
 
-        if(visit.getInjuryLocation() != 0) {
+        if (visit.getInjuryLocation() != 0) {
             TextView tv = new TextView(VisitSummaryActivity.this);
             // server is 1 based list is 0 based
             String injuryLocationName = injuryLocations.get(visit.getInjuryLocation() - 1).getName();
@@ -61,14 +61,13 @@ public class VisitSummaryActivity extends SuperActivity {
             diagData.addView(tv);
         }
 
-        if(visit.getStiContactsTreated() != 0) {
+        if (visit.getStiContactsTreated() != 0) {
             TextView tv = new TextView(VisitSummaryActivity.this);
 
             // TODO refactor. Spagetti code surrounding getting/setting this in various classes
             tv.setText(parseStiContactsTreated(visit.getStiContactsTreated()));
             diagData.addView(tv);
         }
-
 
 
         visitJson = getJsonManagerInstance().writeValueAsString(visit);
@@ -101,44 +100,59 @@ public class VisitSummaryActivity extends SuperActivity {
 
     private void addVisitData(Visit visit) {
         Context c = VisitSummaryActivity.this;
-        int ageVal = visit.getPatientAgeMonths() /12;
+
+        int ageVal = visit.getPatientAgeMonths();
+        String ageString;
+        if (visit.isAgeMonths()) {
+            ageString = String.valueOf(ageVal);
+        } else {
+            ageString = String.valueOf(ageVal / 12);
+        }
         TextView age = new TextView(c);
         age.setText("Age: ");
+        age.append(ageString);
+
         TextView gender = new TextView(c);
         gender.setText("Gender: ");
-        TextView staffMember = new TextView(c);
-        staffMember.setText("Staff member: ");
-        TextView facility = new TextView(c);
-        facility.setText("Facility: ");
-        TextView date = new TextView(c);
-        TextView opId = new TextView(c);
-        opId.setText("OPD ID: ");
-        TextView isNational = new TextView(c);
-        TextView isRevisit = new TextView(c);
-        age.append(String.valueOf(ageVal));
-        // TODO highlight if age is months
-        date.setText(getFormattedDate(visit.getVisitDate()));
-
-        if(visit.getGender() == 'M') {
+        if (visit.getGender() == 'M') {
             gender.append(getString(R.string.male));
         } else {
             gender.append(getString(R.string.female));
         }
 
-        if(visit.getIsRevisit()) {
-            isRevisit.append("Revisit");
+        TextView staffMember = new TextView(c);
+        staffMember.setText("Staff member: ");
+        staffMember.append(visit.getStaffMemberName());
+
+        TextView facility = new TextView(c);
+        facility.setText("Centre: ");
+        facility.append(visit.getFacilityName());
+
+        TextView date = new TextView(c);
+        date.setText(getFormattedDate(visit.getVisitDate()));
+
+        TextView opId = new TextView(c);
+        opId.setText("OPD ID: ");
+        if (visit.getOPD() != 0) {
+            opId.append(String.valueOf(visit.getOPD()));
         } else {
-            isRevisit.append("Regular visit");
+            opId.append("Not recorded");
         }
 
-        if(visit.getBeneficiaryType() == Visit.national) {
+        TextView isNational = new TextView(c);
+
+        if (visit.getBeneficiaryType() == Visit.national) {
             isNational.append("National");
         } else {
             isNational.append("Refugee");
         }
 
-        facility.append(visit.getFacilityName());
-        staffMember.append(visit.getStaffMemberName());
+        TextView isRevisit = new TextView(c);
+        if (visit.getIsRevisit()) {
+            isRevisit.append("Revisit");
+        } else {
+            isRevisit.append("Regular visit");
+        }
 
         consultationData.addView(date);
         consultationData.addView(facility);
@@ -151,8 +165,6 @@ public class VisitSummaryActivity extends SuperActivity {
         consultationData.addView(gender);
         consultationData.addView(isNational);
         consultationData.addView(isRevisit);
-
-
 
 
     }

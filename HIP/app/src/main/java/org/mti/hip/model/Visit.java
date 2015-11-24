@@ -23,7 +23,7 @@ public class Visit {
     public static final int national = 1;
     public static final int refugee = 2;
 
-
+    private boolean isAgeMonths;
     private String staffMemberName;
     private String facilityName;
     private int facility;
@@ -144,5 +144,15 @@ public class Visit {
     @JsonIgnore
     public void setFacilityName(String facilityName) {
         this.facilityName = facilityName;
+    }
+
+    @JsonIgnore
+    public boolean isAgeMonths() {
+        return isAgeMonths;
+    }
+
+    @JsonIgnore
+    public void setIsAgeMonths(boolean isAgeMonths) {
+        this.isAgeMonths = isAgeMonths;
     }
 }
