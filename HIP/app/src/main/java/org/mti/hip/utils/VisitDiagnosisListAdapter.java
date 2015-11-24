@@ -58,7 +58,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     private ArrayList<Supplemental> supplementals;
 
-    private HashMap<Integer, ArrayList<RadioButton>> buttonMap = new HashMap();
+    private HashMap<Integer, ArrayList<RadioButton>> buttonMap = new HashMap<>();
 
     public ExpandableListView.OnChildClickListener listener;
 
@@ -70,7 +70,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         removedDiagHeaders.add(19);
         removedDiagHeaders.add(20);
         removedDiagHeaders.add(21);
-        supplementals = (ArrayList<Supplemental>) context.getObjectFromPrefsKey(context.SUPPLEMENTAL_LIST_KEY);
+        supplementals = (ArrayList<Supplemental>) context.getObjectFromPrefsKey(SuperActivity.SUPPLEMENTAL_LIST_KEY);
         primaryDiagList = getPrimaryDiags();
         stiList = getSTIs();
         chronicDiseaseList = getChronicDiseaseList();
@@ -449,7 +449,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     }
 
     private ArrayList<Diagnosis> getPrimaryDiags() {
-        ArrayList<Diagnosis> diags = (ArrayList<Diagnosis>) context.getObjectFromPrefsKey(context.DIAGNOSIS_LIST_KEY);
+        ArrayList<Diagnosis> diags = (ArrayList<Diagnosis>) context.getObjectFromPrefsKey(SuperActivity.DIAGNOSIS_LIST_KEY);
 
         ArrayList<Diagnosis> displayList = new ArrayList<>();
 
@@ -521,7 +521,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
 
     private ArrayList<Supplemental> getInjuryLocations() {
-        ArrayList<InjuryLocation> list = (ArrayList<InjuryLocation>) context.getObjectFromPrefsKey(context.INJURY_LOCATIONS_KEY);
+        ArrayList<InjuryLocation> list = (ArrayList<InjuryLocation>) context.getObjectFromPrefsKey(SuperActivity.INJURY_LOCATIONS_KEY);
 
 
         ArrayList<Supplemental> diags = new ArrayList<>();

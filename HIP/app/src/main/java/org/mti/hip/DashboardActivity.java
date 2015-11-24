@@ -29,7 +29,7 @@ public class DashboardActivity extends SuperActivity {
         findViewById(R.id.bt_sign_out).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(DashboardActivity.this, MainActivity.class);
+                Intent i = new Intent(DashboardActivity.this, LocationSelectionActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 finish();
@@ -49,7 +49,7 @@ public class DashboardActivity extends SuperActivity {
                 visit.setDeviceId("MAC");
                 visit.setFacilityName(facilityName);
                 visit.setFacility(readLastUsedFacility());
-                startActivity(new Intent(DashboardActivity.this, DemographicEntryActivity.class));
+                startActivity(new Intent(DashboardActivity.this, ConsultationActivity.class));
             }
         });
 

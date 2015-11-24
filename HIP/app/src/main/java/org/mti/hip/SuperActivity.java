@@ -19,6 +19,7 @@ import org.mti.hip.model.InjuryLocationWrapper;
 import org.mti.hip.model.SettlementWrapper;
 import org.mti.hip.model.SupplementalsWrapper;
 import org.mti.hip.model.User;
+import org.mti.hip.model.UserWrapper;
 import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSONManager;
@@ -57,6 +58,7 @@ public class SuperActivity extends AppCompatActivity {
     public static final String DIAGNOSIS_LIST_KEY = "diaglistkey";
     public static final String SUPPLEMENTAL_LIST_KEY = "supplistkey";
     public static final String INJURY_LOCATIONS_KEY = "injurylockey";
+    public static final String USER_LIST_KEY = "userlistkey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +77,6 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     private static final String PREFS_NAME = "HipPrefs";
-
-    public User getCurrentUser() {
-        return User.userMap.get(currentUserName);
-    }
 
     public static JSONManager getJsonManagerInstance() {
         if (jsonManager == null) {
@@ -103,10 +101,7 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     public boolean editTextHasContent(EditText et) {
-        if (et.getText().toString().isEmpty()) {
-            return false;
-        }
-        return true;
+        return !et.getText().toString().isEmpty();
     }
 
     public String getDateNowString() {
@@ -126,8 +121,8 @@ public class SuperActivity extends AppCompatActivity {
         if(facilityName != null) {
             sb.append(facilityName + "  |  " + getDateNowString());
         }
-        if(getCurrentUser() != null) {
-            sb.append("  |  " + getCurrentUser().getName());
+        if(currentUserName != null) {
+            sb.append("  |  " + currentUserName);
         }
         return sb.toString();
     }
@@ -277,6 +272,7 @@ public class SuperActivity extends AppCompatActivity {
         if(key.matches(DIAGNOSIS_LIST_KEY)) clazz = DiagnosisWrapper.class;
         if(key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = SupplementalsWrapper.class;
         if(key.matches(FACILITIES_LIST_KEY)) clazz = FacilityWrapper.class;
+        if(key.matches(USER_LIST_KEY)) clazz = UserWrapper.class;
         return getJsonManagerInstance().read(readString(key), clazz);
     }
 
