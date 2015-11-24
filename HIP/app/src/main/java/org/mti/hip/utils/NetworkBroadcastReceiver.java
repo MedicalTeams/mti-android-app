@@ -3,8 +3,11 @@ package org.mti.hip.utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
+
+import org.mti.hip.SuperActivity;
 
 /**
  * Created by r625361 on 11/19/2015.
@@ -50,17 +53,13 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(LOG_TAG, "action: " + intent.getAction());
-        Log.e(LOG_TAG, "component: " + intent.getComponent());
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            for (String key: extras.keySet()) {
-                Log.v(LOG_TAG, "key [" + key + "]: " +
-                        extras.get(key));
-            }
+            Boolean isConnected = !(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false));
+            SuperActivity.setIsConnected(isConnected);
         }
         else {
-            Log.v(LOG_TAG, "no extras");
+            Log.e(LOG_TAG, "no extras");
         }
     }
 }

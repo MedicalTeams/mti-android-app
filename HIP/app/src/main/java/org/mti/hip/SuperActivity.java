@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +17,11 @@ import org.mti.hip.model.FacilityWrapper;
 import org.mti.hip.model.InjuryLocationWrapper;
 import org.mti.hip.model.SettlementWrapper;
 import org.mti.hip.model.SupplementalsWrapper;
-import org.mti.hip.model.User;
 import org.mti.hip.model.UserWrapper;
 import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSONManager;
 import org.mti.hip.utils.NetworkBroadcastReceiver;
-import org.mti.hip.utils.NetworkConnectivityManager;
 import org.mti.hip.utils.StorageManager;
 
 import java.io.IOException;
@@ -42,6 +39,9 @@ public class SuperActivity extends AppCompatActivity {
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
     private ProgressDialog progressDialog;
+    private IntentFilter intentFilter;
+    private NetworkBroadcastReceiver networkBroadcastReceiver;
+    private static boolean isConnected;
 
     public static final int diagId = 0;
     public static final int stiId = 1;
@@ -70,9 +70,6 @@ public class SuperActivity extends AppCompatActivity {
         }
         progressDialog = new ProgressDialog(this);
 
-        IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-        NetworkBroadcastReceiver networkBroadcastReceiver = new NetworkBroadcastReceiver();
-        registerReceiver(networkBroadcastReceiver, intentFilter);
 
     }
 
@@ -280,10 +277,27 @@ public class SuperActivity extends AppCompatActivity {
      *
      * @return True if the device is connected to the internet, False otherwise
      */
-    protected Boolean isConnected() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        return NetworkConnectivityManager.isConnected(activeNetwork);
+    public static Boolean isConnected() {
+        return isConnected;
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(networkBroadcastReceiver);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        networkBroadcastReceiver = new NetworkBroadcastReceiver();
+        registerReceiver(networkBroadcastReceiver, intentFilter);
+        super.onResume();
+    }
+
+
+    public static void setIsConnected(boolean isConnected) {
+        SuperActivity.isConnected = isConnected;
     }
 
 
