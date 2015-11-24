@@ -1,5 +1,7 @@
 package org.mti.hip.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.mti.hip.SuperActivity;
 
 import java.util.HashMap;
@@ -9,18 +11,35 @@ import java.util.HashMap;
  */
 public class User {
 
-    public static HashMap<String, User> userMap = new HashMap<>();
     private String name;
     // other fields might include "hasSeenVisitInstructions" or such things
 
-
-    public User(String name) {
-        userMap.put(name, this);
-        this.name = name;
-        SuperActivity.currentUserName = name;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @JsonIgnore
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return !(name != null ? !name.equals(user.name) : user.name != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }

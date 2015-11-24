@@ -17,10 +17,10 @@
     <string name="refugee">Refugee</string>
     <string name="revisit">Revisit</string>
     <string name="visit">Visit</string>
-    <string name="create_new_visit">Create New Visit</string>
-    <string name="choose_your_name">Choose Your Name</string>
-    <string name="select_facility">Select Facility</string>
-    <string name="select_location">Select Location Camp</string>
+    <string name="create_new_visit">Enter Visit Record</string>
+    <string name="choose_your_name">Choose your name</string>
+    <string name="select_facility">Select your Health Centre</string>
+    <string name="select_location">Select your Location</string>
     <string name="demographics">Demographics</string>
     <string name="dashboard">Dashboard</string>
     <string name="visit_summary">Visit Summary</string>
@@ -28,7 +28,10 @@
     <string name="submit">Submit</string>
     <string name="sign_out">Sign Out</string>
     <!-- Start: Tool Tips -->
-    <string name="tooltip_morbidity_revisit">Definition: Use "new" if same patient returns for different illness. Use "revisit" if patient returns for same illness</string>
+    <string name="tooltip_morbidity_revisit">"NOTE:
+Refer to guidelines for definitions of New Visit and Revisit.
+Only ONE visit record should be entered for each patient visit.
+A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp; Revisit criteria) should be recorded as a NEW visit."</string>
     <string name="tooltip_morbidity_endocrine_metabolic">Includes DM</string>
     <string name="tooltip_morbidity_sti_contacts">Record the number of contacts treated for the primary patient. Also ensure a visit record is completed for each contact treated.</string>
     <string name="tooltip_opd_number">Enter patient OPD number if available</string>
@@ -43,5 +46,16 @@
     <string name="error_email_address">hip@medicalteams.org</string>
     <string name="consultation">Consultation</string>
     <string name="contacts_treated">Contacts Treated</string>
+    <string name="error_status_type">You must select a Status type - National or Refugee</string>
+    <string name="error_age">You must enter an age in years or months</string>
+    <string name="error_age_range">Please enter a number between 1–150</string>
+    <string name="error_age_range_months">Please enter a number between 1–11</string>
+    <string name="error_visit_type">You must select a visit type - New Visit or Revisit</string>
+    <string name="error_gender">You must select a Sex - Male or Female</string>
+    <string name="powered_by">HIP powered by</string>
+    <string name="edit_location_slash_name">Edit Location/Name</string>
+    <string name="and">and</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="add_new_staff_member">Add New Staff Member</string>
 
 </resources>

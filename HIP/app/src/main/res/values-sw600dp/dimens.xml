@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="activity_horizontal_margin">64dp</dimen>
+    <dimen name="title_font">38sp</dimen>
+</resources>

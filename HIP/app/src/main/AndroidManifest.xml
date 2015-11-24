@@ -40,7 +40,7 @@
         <activity android:name=".DashboardActivity"
             android:label="@string/dashboard">
         </activity>
-        <activity android:name=".DemographicEntryActivity"
+        <activity android:name=".ConsultationActivity"
             android:label="@string/consultation">
         </activity>
         <activity android:name=".FacilitySelectionActivity"
