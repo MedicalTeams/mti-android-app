@@ -3,6 +3,8 @@ package org.mti.hip;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +21,7 @@ import org.mti.hip.model.User;
 import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSONManager;
+import org.mti.hip.utils.NetworkConnectivityManager;
 import org.mti.hip.utils.StorageManager;
 
 import java.io.IOException;
@@ -269,6 +272,16 @@ public class SuperActivity extends AppCompatActivity {
         if(key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = SupplementalsWrapper.class;
         if(key.matches(FACILITIES_LIST_KEY)) clazz = FacilityWrapper.class;
         return getJsonManagerInstance().read(readString(key), clazz);
+    }
+
+    /**
+     *
+     * @return True if the device is connected to the internet, False otherwise
+     */
+    protected Boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return NetworkConnectivityManager.isConnected(activeNetwork);
     }
 
 
