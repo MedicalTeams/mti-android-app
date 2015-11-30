@@ -62,7 +62,7 @@ public class DashboardActivity extends SuperActivity {
 
         // TODO delete Tally from disk after 7 days?
 
-        if(!tallyJsonIn.matches("")) {
+        if(tallyJsonIn != null) {
             // make object from string
             Tally tally = (Tally) getJsonManagerInstance().read(tallyJsonIn, Tally.class);
             getStorageManagerInstance().setTally(tally);
