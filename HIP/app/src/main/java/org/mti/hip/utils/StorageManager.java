@@ -7,12 +7,10 @@ import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
 import org.mti.hip.model.Tally;
-import org.mti.hip.model.User;
 import org.mti.hip.model.Visit;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Created by r624513 on 11/4/15.
@@ -25,11 +23,6 @@ public class StorageManager {
     private Tally tally;
 
     public StorageManager() {
-        tally = new Tally();
-    }
-
-    public Tally getTally() {
-        return tally;
     }
 
     public Visit newVisit() {
@@ -37,6 +30,14 @@ public class StorageManager {
         tally.add(visit);
 
         return tally.get(tally.size() -1);
+    }
+
+    public void setTally(Tally tally) {
+        this.tally = tally;
+    }
+
+    public Tally getTally() {
+        return tally;
     }
 
     public Visit currentVisit() {
@@ -48,7 +49,7 @@ public class StorageManager {
      * @param context
      * @return
      */
-    public String readFileToString(Context context) {
+    public String readTallyToJsonString(Context context) {
         if (isExternalStorageReadable()) {
             File file = new File(context.getExternalFilesDir(null), TALLY_FILENAME);
             try {
@@ -68,7 +69,7 @@ public class StorageManager {
      * @param jsonString
      * @param context
      */
-    public void writeStringToFile(String jsonString, Context context) {
+    public void writeTallyJsonToFile(String jsonString, Context context) {
         if (isExternalStorageWritable()) {
             File file = new File(context.getExternalFilesDir(null), TALLY_FILENAME);
             try {

@@ -57,5 +57,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="and">and</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="add_new_staff_member">Add New Staff Member</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

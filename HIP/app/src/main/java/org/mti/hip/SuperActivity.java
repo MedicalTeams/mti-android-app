@@ -35,7 +35,7 @@ public class SuperActivity extends AppCompatActivity {
     public static String facilityName;
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
-    private ProgressDialog progressDialog;
+    public ProgressDialog progressDialog;
 
     public static final int diagId = 0;
     public static final int stiId = 1;
@@ -63,7 +63,13 @@ public class SuperActivity extends AppCompatActivity {
             getSupportActionBar().setSubtitle(buildHeader());
         }
         progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(true);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private static final String PREFS_NAME = "HipPrefs";

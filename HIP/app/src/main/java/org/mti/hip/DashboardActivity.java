@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 
 import java.util.Date;
@@ -32,7 +34,7 @@ public class DashboardActivity extends SuperActivity {
 
 
         if (getIntent().getStringExtra(EXTRA_MSG) != null) {
-            Toast.makeText(this, getIntent().getStringExtra(EXTRA_MSG), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getIntent().getStringExtra(EXTRA_MSG), Toast.LENGTH_LONG).show();
         }
         findViewById(R.id.new_visit).setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -53,6 +55,54 @@ public class DashboardActivity extends SuperActivity {
     protected void onResume() {
         super.onResume();
         backPressCount = 0;
+        // make tally string from file
+
+        // Rearrange to make this not overwrite the old one every time!
+        String tallyJsonIn = getStorageManagerInstance().readTallyToJsonString(this);
+
+        // TODO delete Tally from disk after 7 days?
+
+        if(!tallyJsonIn.matches("")) {
+            // make object from string
+            Tally tally = (Tally) getJsonManagerInstance().read(tallyJsonIn, Tally.class);
+            getStorageManagerInstance().setTally(tally);
+            if (!tally.isEmpty()) {
+                writeTallyToDisk(tally);
+            }
+        } else { // no tally stored on disk so make a new one
+            getStorageManagerInstance().setTally(new Tally());
+        }
+
+
+    }
+
+    private void writeTallyToDisk(Tally tally) {
+
+        // TODO refactor this is messy (also... App sends "isSent" to the server and this should eventually be removed but will require some other serialization method
+
+        // TODO deal with isSent
+        // make tally string
+        String tallyJsonOut = getJsonManagerInstance().writeValueAsString(tally);
+
+        // write to file
+        getStorageManagerInstance().writeTallyJsonToFile(tallyJsonOut, this);
+
+        // make tally string from file
+        String tallyJsonIn = getStorageManagerInstance().readTallyToJsonString(this);
+
+        // make object from string
+        Tally tallyFromJson = (Tally) getJsonManagerInstance().read(tallyJsonIn, Tally.class);
+        int sent = 0;
+        int total = 0;
+        for (Visit visit : tallyFromJson) {
+            total++;
+            if(visit.isSent()) {
+                sent++;
+            }
+         }
+
+        TextView status = (TextView) findViewById(R.id.tv_tally_status);
+        status.setText("You have sent " + sent + "/" + total + " visits");
     }
 
     @Override

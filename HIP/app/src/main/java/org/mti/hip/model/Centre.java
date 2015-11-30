@@ -7,13 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class Centre {
 
-    /*
-    {
-    "id": 27,
-    "name": "Reception centre",
-    "settlement": "Nyumanzi",
-     */
-
     private int id;
     private String name;
     private String settlement;

@@ -17,16 +17,12 @@ public class CentreSelectionActivity extends SuperActivity {
 
     private ListView lv;
     private ArrayList<Centre> list;
-    private String settlementMatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_centre_selection);
         lv = (ListView) findViewById(android.R.id.list);
-        settlementMatcher = readLastUsedLocation();
-
-//        testJson();
         getFacilities();
     }
 
@@ -79,23 +75,5 @@ public class CentreSelectionActivity extends SuperActivity {
             }
         });
     }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_next, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.action_next:
-//
-//                return true;
-//            default:
-//                return false;
-//        }
-//    }
-
 
 }

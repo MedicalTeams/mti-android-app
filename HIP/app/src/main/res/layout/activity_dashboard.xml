@@ -46,5 +46,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_tally_status"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_centerInParent="true"
+        />
+
 
 </RelativeLayout>

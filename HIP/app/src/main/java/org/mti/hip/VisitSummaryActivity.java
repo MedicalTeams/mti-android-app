@@ -1,5 +1,6 @@
 package org.mti.hip;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,26 +15,36 @@ import org.mti.hip.model.InjuryLocation;
 import org.mti.hip.model.Supplemental;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
+import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
 import java.util.ArrayList;
 
 public class VisitSummaryActivity extends SuperActivity {
 
     private Button submit;
+    private Button editDiags;
+    private Button editConsultation;
     private String visitJson;
     private LinearLayout consultationData;
     private LinearLayout diagData;
     private ArrayList<InjuryLocation> injuryLocations;
+    private Visit visit;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_visit_summary);
+
+        editDiags = (Button) findViewById(R.id.bt_diag_edit);
+        editConsultation = (Button) findViewById(R.id.bt_consultation_edit);
+        editDiags.setOnClickListener(editDiagListener);
+        editConsultation.setOnClickListener(editConsultationListener);
 
         injuryLocations = (ArrayList<InjuryLocation>) getObjectFromPrefsKey(INJURY_LOCATIONS_KEY);
 
-        setContentView(R.layout.activity_visit_summary);
-        Visit visit = getStorageManagerInstance().currentVisit();
+
+        visit = getStorageManagerInstance().currentVisit();
         consultationData = (LinearLayout) findViewById(R.id.ll_consultation_data);
 
         addVisitData(visit);
@@ -77,25 +88,91 @@ public class VisitSummaryActivity extends SuperActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                sendVisit();
-                test();
+                sendVisit();
 
             }
         });
     }
 
-    private void test() {
+    private View.OnClickListener editDiagListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
+        }
+    };
+
+    private View.OnClickListener editConsultationListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(VisitSummaryActivity.this, ConsultationActivity.class);
+            // bring Consultation to the top of the stack
+            i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(i);
+            finish();
+        }
+    };
+
+    private void sendVisit() {
+        final ProgressDialog progDiag = progressDialog;
+        progDiag.setCancelable(false);
+
+        // TODO test cancelable
+
         new NetworkTask(visitJson, HttpClient.visitEndpoint, HttpClient.post) {
+
 
             @Override
             public void getResponseString(String response) {
-                Log.d("Visit response string", response);
-                Intent i = new Intent(VisitSummaryActivity.this, DashboardActivity.class);
-                i.putExtra(EXTRA_MSG, "Visit submitted");
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
+               processSuccessfulResponse(response);
             }
+
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+            }
+
+
+
+            @Override
+            protected void onPostExecute(String r) {
+                progDiag.dismiss();
+                if (super.e == null) {
+                    getResponseString(r);
+                } else if(!isCancelled()){
+                   processUnsuccesfulResponse(r);
+                }
+            }
+
+
+
         }.execute();
+    }
+
+    private void processSuccessfulResponse(String r) {
+        Log.d("Visit response string", r);
+        visit.setSent(true);
+        startDashboard("Visit submitted");
+    }
+
+    private void processUnsuccesfulResponse(String r) {
+        if(r != null) {
+            Log.e("Visit error string", r);
+        }
+        visit.setSent(false);
+        startDashboard("VISIT DID NOT SEND. Soon you will be able to resend failed visits.");
+    }
+
+    private void startDashboard(String message) {
+
+        String tallyJsonOut = getJsonManagerInstance().writeValueAsString(getStorageManagerInstance().getTally());
+
+        getStorageManagerInstance().writeTallyJsonToFile(tallyJsonOut, this);
+
+        VisitDiagnosisListAdapter.check_states.clear();
+        Intent i = new Intent(VisitSummaryActivity.this, DashboardActivity.class);
+        i.putExtra(EXTRA_MSG, message);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
     }
 
     private void addVisitData(Visit visit) {
