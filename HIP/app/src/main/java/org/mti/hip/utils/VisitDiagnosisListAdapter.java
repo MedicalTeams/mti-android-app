@@ -58,7 +58,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     private ArrayList<Supplemental> supplementals;
 
-    private HashMap<Integer, ArrayList<RadioButton>> buttonMap = new HashMap<>();
+    private static HashMap<Integer, ArrayList<RadioButton>> buttonMap = new HashMap<>();
 
     public ExpandableListView.OnChildClickListener listener;
 
@@ -70,6 +70,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         removedDiagHeaders.add(19);
         removedDiagHeaders.add(20);
         removedDiagHeaders.add(21);
+
         supplementals = (ArrayList<Supplemental>) context.getObjectFromPrefsKey(SuperActivity.SUPPLEMENTAL_LIST_KEY);
         primaryDiagList = getPrimaryDiags();
         stiList = getSTIs();
@@ -78,7 +79,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         injuryList = getInjuries();
         injuryLocList = getInjuryLocations();
 
-
         children.put(diagId, primaryDiagList);
         children.put(stiId, stiList);
         children.put(chronicDiseaseId, chronicDiseaseList);
@@ -86,7 +86,12 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         children.put(injuryId, injuryList);
         children.put(injuryLocId, injuryLocList);
 
-        setChildrenAndValues();
+
+
+        if(check_states.isEmpty()) {
+
+            setChildrenAndValues();
+        }
         setListener();
     }
 
@@ -95,13 +100,13 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     }
 
     //  set checkbox states
-    public ArrayList<ArrayList<Integer>> check_states = new ArrayList<>();
+    public static ArrayList<ArrayList<Integer>> check_states = new ArrayList<>();
+    // TODO refactor to not be static (currently only referenced from a few places)
 
     public void setChildrenAndValues() {
         for (int i = 0; i < children.size(); i++) {
             ArrayList<Integer> tmp = new ArrayList<>();
             for (int j = 0; j < children.get(i).size(); j++) {
-//                Log.d("test", String.valueOf(i));
                 tmp.add(1);
             }
             check_states.add(tmp);

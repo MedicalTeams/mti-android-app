@@ -10,16 +10,7 @@ import java.util.HashSet;
  */
 public class Visit {
 
-            /*
-
-        supplementals (Array[supplemental], optional)
-             }
-             supplemental {
-             id (id),
-             name (string, optional)
-        }
-             */
-
+    private boolean sent;
     public static final int national = 1;
     public static final int refugee = 2;
 
@@ -154,5 +145,13 @@ public class Visit {
     @JsonIgnore
     public void setIsAgeMonths(boolean isAgeMonths) {
         this.isAgeMonths = isAgeMonths;
+    }
+
+    public boolean isSent() {
+        return sent;
+    }
+
+    public void setSent(boolean sent) {
+        this.sent = sent;
     }
 }

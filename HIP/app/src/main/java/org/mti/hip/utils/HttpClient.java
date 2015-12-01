@@ -24,9 +24,13 @@ public class HttpClient {
     public static final String supplementalEndpoint = "/supplementals";
     public static final String settlementEndpoint = "/settlements";
     public static final String injuryLocationsEndpoint = "/injurylocations";
+    public static final String devicesEndpoint = "/devices";
+
+    public static final String hipWebUrl = "http://clinicwebapp.azurewebsites.net/hip";
 
     public static final String post = "POST";
     public static final String get = "GET";
+    public static final String put = "PUT";
 
     // TODO add constant for facility ID (this will be SET when it is selected
     // from the Centre Selection screen)
@@ -52,7 +56,7 @@ GET /supplementals
     public String post(final String endpoint, final String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
-                .url("http://clinicwebapp.azurewebsites.net/hip" + endpoint)
+                .url(hipWebUrl + endpoint)
                 .post(body)
                 .build();
         Response response;
@@ -64,7 +68,7 @@ GET /supplementals
 
     public String get(final String endpoint) throws IOException {
         Request request = new Request.Builder()
-                .url("http://clinicwebapp.azurewebsites.net/hip" + endpoint)
+                .url(hipWebUrl + endpoint)
                 .build();
         Response response;
 
@@ -81,6 +85,21 @@ GET /supplementals
             Log.e("parsed response error", response.code() + " " + responseString);
             throw new IOException("There was an issue with the network request");
         }
+        return responseString;
+    }
+
+    public String put(final String endpoint, final String json) throws IOException {
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(hipWebUrl + endpoint)
+                .put(body)
+                .build();
+        Log.v("mti","request.toString() = " + request.toString());
+        Response response;
+        String responseString = null;
+        response = client.newCall(request).execute();
+        responseString = parseResponse(response);
+        Log.v("mti", "responseString = " + responseString);
         return responseString;
     }
 

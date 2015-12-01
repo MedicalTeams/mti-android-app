@@ -3,19 +3,24 @@ package org.mti.hip;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import org.mti.hip.utils.HttpClient;
+import org.mti.hip.utils.JSONManager;
+import org.mti.hip.utils.StorageManager;
 import org.w3c.dom.Text;
+
+import java.util.Date;
 
 public class MainActivity extends SuperActivity {
 
     private Button signIn;
     private TextView version;
+    private String appVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,23 +35,24 @@ public class MainActivity extends SuperActivity {
             e.printStackTrace();
         }
         version = (TextView) findViewById(R.id.tv_version);
-        version.setText("Version code: " + String.valueOf(pInfo.versionCode));
+        appVersion = String.valueOf(pInfo.versionCode);
+        version.setText("Version code: " + appVersion);
 
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
+//        new AsyncTask<Void, Void, Void>() {
+//
+//            @Override
+//            protected Void doInBackground(Void... params) {
 //                if(readString(DIAGNOSIS_LIST_KEY).matches(""))// TODO this is dumb right now and assumes all values are initialized if DIAG is
                     initApp();
-                return null;
-            }
+//                return null;
+//            }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-            }
-        }.execute();
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//
+//            }
+//        }.execute();
         signIn = (Button) findViewById(R.id.sign_in);
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +70,17 @@ public class MainActivity extends SuperActivity {
     }
 
     private void initApp() {
+
+        String serialNumber = StorageManager.getSerialNumber();
+        String description = "Device serial number last created/updated on " + new Date();
+        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, appVersion, description);
+        new NetworkTask(jsonBody, HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.put) {
+
+            @Override
+            public void getResponseString(String response) {
+            }
+        }.execute();
+
         new NetworkTask(HttpClient.diagnosisEndpoint, HttpClient.get) {
 
             @Override
@@ -105,9 +122,6 @@ public class MainActivity extends SuperActivity {
         }.execute();
 
     }
-
-
-
 
 
 }

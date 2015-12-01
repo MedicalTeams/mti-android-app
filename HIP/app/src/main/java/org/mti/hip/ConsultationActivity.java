@@ -1,5 +1,7 @@
 package org.mti.hip;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import org.mti.hip.model.Visit;
+import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
 public class ConsultationActivity extends SuperActivity {
 
@@ -29,6 +32,8 @@ public class ConsultationActivity extends SuperActivity {
     private StringBuilder errorBuilder;
     private Button validationToggle;
     private boolean validate = false;
+    private int backPressCount;
+    private boolean editMode;
 
 
     @Override
@@ -48,6 +53,18 @@ public class ConsultationActivity extends SuperActivity {
         rbMonths = (RadioButton) findViewById(R.id.rb_months);
 
         setupDebugButton();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        editMode = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        editMode = false;
     }
 
     private void setupDebugButton() {
@@ -79,9 +96,9 @@ public class ConsultationActivity extends SuperActivity {
             case R.id.action_next:
                 errorBuilder = new StringBuilder();
                 if (valid() && validate) {
-                    startActivity(new Intent(this, DiagnosisActivity.class));
+                    startDiagnosisActivity();
                 } else if(!validate) {
-                    startActivity(new Intent(this, DiagnosisActivity.class)); // debug bypass of validator
+                    startDiagnosisActivity(); // debug bypass of validator
                 } else {
                     alert.showAlert("Errors found", errorBuilder.toString());
                 }
@@ -89,6 +106,12 @@ public class ConsultationActivity extends SuperActivity {
             default:
                 return false;
         }
+    }
+
+    private void startDiagnosisActivity() {
+        Intent i = new Intent(this, DiagnosisActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(i);
     }
 
     private boolean valid() {
@@ -135,9 +158,9 @@ public class ConsultationActivity extends SuperActivity {
             valid = false;
         }
         if (rbNational.isChecked()) {
-            visit.setBeneficiaryType(0);
+            visit.setBeneficiaryType(Visit.national);
         } else if (rbRefugee.isChecked()) {
-            visit.setBeneficiaryType(1);
+            visit.setBeneficiaryType(Visit.refugee);
         } else {
             addErrorString(R.string.error_status_type);
            valid = false;
@@ -156,5 +179,26 @@ public class ConsultationActivity extends SuperActivity {
     private void addErrorString(int id) {
         errorBuilder.append(getString(id));
         errorBuilder.append("\n");
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage("Are you sure you want to delete this visit?");
+        alert.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                VisitDiagnosisListAdapter.check_states.clear();
+                finish();
+                dialog.dismiss();
+            }
+        });
+        alert.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alert.show();
     }
 }

@@ -1,5 +1,6 @@
 package org.mti.hip;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,26 +15,39 @@ import org.mti.hip.model.InjuryLocation;
 import org.mti.hip.model.Supplemental;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
+import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
 import java.util.ArrayList;
 
 public class VisitSummaryActivity extends SuperActivity {
 
     private Button submit;
+    private Button editDiags;
+    private Button editConsultation;
     private String visitJson;
     private LinearLayout consultationData;
     private LinearLayout diagData;
     private ArrayList<InjuryLocation> injuryLocations;
+    private Visit visit;
+    private ArrayList<String> prompts = new ArrayList<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_visit_summary);
+
+
+
+        editDiags = (Button) findViewById(R.id.bt_diag_edit);
+        editConsultation = (Button) findViewById(R.id.bt_consultation_edit);
+        editDiags.setOnClickListener(editDiagListener);
+        editConsultation.setOnClickListener(editConsultationListener);
 
         injuryLocations = (ArrayList<InjuryLocation>) getObjectFromPrefsKey(INJURY_LOCATIONS_KEY);
 
-        setContentView(R.layout.activity_visit_summary);
-        Visit visit = getStorageManagerInstance().currentVisit();
+
+        visit = getStorageManagerInstance().currentVisit();
         consultationData = (LinearLayout) findViewById(R.id.ll_consultation_data);
 
         addVisitData(visit);
@@ -45,8 +59,10 @@ public class VisitSummaryActivity extends SuperActivity {
             Supplemental supplementalDiagnosis = null;
             TextView tv = new TextView(VisitSummaryActivity.this);
             tv.setText(bold(diag.getName()));
+            checkForDiagPrompt(diag);
             for (Supplemental supp : diag.getSupplementals()) {
                 supplementalDiagnosis = supp;
+                checkForSupplementalPrompt(supp);
                 tv.append("\n - " + supplementalDiagnosis.getName());
             }
 
@@ -69,6 +85,7 @@ public class VisitSummaryActivity extends SuperActivity {
             diagData.addView(tv);
         }
 
+        addAlerts();
 
         visitJson = getJsonManagerInstance().writeValueAsString(visit);
 
@@ -77,25 +94,123 @@ public class VisitSummaryActivity extends SuperActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                sendVisit();
-                test();
+                sendVisit();
 
             }
         });
     }
 
-    private void test() {
+    private View.OnClickListener editDiagListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
+        }
+    };
+
+    private View.OnClickListener editConsultationListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(VisitSummaryActivity.this, ConsultationActivity.class);
+            // bring Consultation to the top of the stack
+            i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(i);
+            finish();
+        }
+    };
+
+    private void sendVisit() {
+        final ProgressDialog progDiag = progressDialog;
+        progDiag.setCancelable(false);
+
+        // TODO test cancelable
+
         new NetworkTask(visitJson, HttpClient.visitEndpoint, HttpClient.post) {
+
 
             @Override
             public void getResponseString(String response) {
-                Log.d("Visit response string", response);
-                Intent i = new Intent(VisitSummaryActivity.this, DashboardActivity.class);
-                i.putExtra(EXTRA_MSG, "Visit submitted");
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
+               processSuccessfulResponse(response);
             }
+
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+            }
+
+
+
+            @Override
+            protected void onPostExecute(String r) {
+                progDiag.dismiss();
+                if (super.e == null) {
+                    getResponseString(r);
+                } else if(!isCancelled()){
+                   processUnsuccesfulResponse(r);
+                }
+            }
+
+
+
         }.execute();
+    }
+
+    private void processSuccessfulResponse(String r) {
+        Log.d("Visit response string", r);
+        visit.setSent(true);
+        startDashboard("Visit submitted");
+    }
+
+    private void processUnsuccesfulResponse(String r) {
+        if(r != null) {
+            Log.e("Visit error string", r);
+        }
+        visit.setSent(false);
+        startDashboard("VISIT DID NOT SEND. Soon you will be able to resend failed visits.");
+    }
+
+    private void startDashboard(String message) {
+
+        String tallyJsonOut = getJsonManagerInstance().writeValueAsString(getStorageManagerInstance().getTally());
+
+        getStorageManagerInstance().writeTallyJsonToFile(tallyJsonOut, this);
+
+        VisitDiagnosisListAdapter.check_states.clear();
+        Intent i = new Intent(VisitSummaryActivity.this, DashboardActivity.class);
+        i.putExtra(EXTRA_MSG, message);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+    }
+
+    private void checkForDiagPrompt(Diagnosis diag) {
+        int id = diag.getId();
+        if(id == 3 || id == 4 || id == 9 || id == 10 || id == 14) {
+            addDiagPrompt(diag, getString(R.string.prompt_outbreak_potential));
+        } else if (id == 12 || id == 13) {
+        // TODO add cholera once it is in the service
+            addDiagPrompt(diag, getString(R.string.prompt_threshold_reached));
+        } else if (id == 15) {
+            addDiagPrompt(diag, getString(R.string.prompt_hiv));
+        }
+
+    }
+
+    private void checkForSupplementalPrompt(Supplemental diag) {
+        int id = diag.getId();
+
+        if (id == 65 || id == 66) {
+            addSupplementalDiagPrompt(diag, getString(R.string.prompt_assault));
+        }
+
+
+
+    }
+
+    private void addDiagPrompt(Diagnosis diag, String string) {
+        prompts.add(diag.getName() + ": " + string);
+    }
+
+    private void addSupplementalDiagPrompt(Supplemental diag, String string) {
+        prompts.add(diag.getName() + ": " + string);
     }
 
     private void addVisitData(Visit visit) {
@@ -120,15 +235,15 @@ public class VisitSummaryActivity extends SuperActivity {
             gender.append(getString(R.string.female));
         }
 
-        TextView staffMember = new TextView(c);
+        TextView staffMember = (TextView) findViewById(R.id.tv_summary_staff_member);
         staffMember.setText("Staff member: ");
         staffMember.append(visit.getStaffMemberName());
 
-        TextView facility = new TextView(c);
+        TextView facility = (TextView) findViewById(R.id.tv_summary_centre);
         facility.setText("Centre: ");
         facility.append(visit.getFacilityName());
 
-        TextView date = new TextView(c);
+        TextView date = (TextView) findViewById(R.id.tv_summary_date);
         date.setText(getFormattedDate(visit.getVisitDate()));
 
         TextView opId = new TextView(c);
@@ -154,9 +269,6 @@ public class VisitSummaryActivity extends SuperActivity {
             isRevisit.append("Regular visit");
         }
 
-        consultationData.addView(date);
-        consultationData.addView(facility);
-        consultationData.addView(staffMember);
         TextView consultHeader = new TextView(VisitSummaryActivity.this);
         consultHeader.setText(bold("Consultation Summary"));
         consultationData.addView(consultHeader);
@@ -167,6 +279,18 @@ public class VisitSummaryActivity extends SuperActivity {
         consultationData.addView(isRevisit);
 
 
+    }
+
+    private void addAlerts() {
+        LinearLayout ll = (LinearLayout) findViewById(R.id.ll_summary_alerts);
+        if(prompts.isEmpty()) {
+            ll.setVisibility(View.GONE);
+        }
+        for(String alert : prompts) {
+            TextView tv = new TextView(this);
+            tv.setText(alert);
+            ll.addView(tv);
+        }
     }
 
 

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -112,7 +111,6 @@ public class ClinicianSelectionActivity extends SuperActivity {
     protected void onPause() {
         super.onPause();
         String obj = getJsonManagerInstance().writeValueAsString(userList);
-        Log.d("list", obj);
         writeString(USER_LIST_KEY, obj);
     }
 

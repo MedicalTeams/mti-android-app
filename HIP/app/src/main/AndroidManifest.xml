@@ -7,11 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
-    <receiver android:name="NetworkBroadcastReceiver">
-        <intent-filter>
-            <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-        </intent-filter>
-    </receiver>
 
     <application
         android:allowBackup="true"
@@ -37,6 +32,7 @@
         <activity
             android:name=".DiagnosisActivity"
             android:label="@string/visit_entry"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" >
         </activity>
         <activity android:name=".SuperActivity" >
@@ -48,6 +44,7 @@
             android:label="@string/dashboard">
         </activity>
         <activity android:name=".ConsultationActivity"
+            android:launchMode="singleTop"
             android:label="@string/consultation">
         </activity>
         <activity android:name=".CentreSelectionActivity"
