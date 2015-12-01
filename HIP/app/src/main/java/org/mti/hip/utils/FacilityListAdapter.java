@@ -1,6 +1,7 @@
 package org.mti.hip.utils;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,8 @@ public class FacilityListAdapter extends ArrayAdapter<Centre> {
         }
         else {
             if (facilityId == lastUsedCentreId) {
-                tvLastUsed.setText("Last Used");
+                tvLastUsed.setText(R.string.last_used);
+                tvLastUsed.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
             } else {
                 tvLastUsed.setText("");
             }

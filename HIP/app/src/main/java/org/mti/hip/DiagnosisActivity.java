@@ -77,15 +77,15 @@ public class DiagnosisActivity extends SuperActivity {
         if(!checkForStiContactsTreated()) {
             return false;
         }
-        for (int i = 0; i < listAdapter.check_states.size(); i++) {
+        for (int i = 0; i < VisitDiagnosisListAdapter.check_states.size(); i++) {
             // this block = group lists 0-5
             ArrayList<Supplemental> suppsSet = new ArrayList<>();
             suppsSet.clear();
 
-            for (int j = 0; j < listAdapter.check_states.get(i).size(); j++) {
+            for (int j = 0; j < VisitDiagnosisListAdapter.check_states.get(i).size(); j++) {
                 // this block is all check boxes
 
-                if (listAdapter.check_states.get(i).get(j) == 0) {
+                if (VisitDiagnosisListAdapter.check_states.get(i).get(j) == 0) {
                     // these have checked state
                     hadSomethingChecked = true;
                     if (listAdapter.getSelectableOthers().containsValue(j)) {
@@ -138,7 +138,7 @@ public class DiagnosisActivity extends SuperActivity {
         //1110-1101 is valid
         //0001-1111 is not valid since all the zeros are in the first list
         boolean canProceed = false;
-        ArrayList<ArrayList<Integer>> checks = listAdapter.check_states;
+        ArrayList<ArrayList<Integer>> checks = VisitDiagnosisListAdapter.check_states;
         if(isCompletelyUnchecked(checks.get(injuryId)) && isCompletelyUnchecked(checks.get(injuryLocId))) {
             canProceed = true;
         }
@@ -157,7 +157,7 @@ public class DiagnosisActivity extends SuperActivity {
 
         // TODO refactor. This got kinda ugly but it's bullet proof for now so I'm leaving it alone.
 
-        ArrayList<Integer> checks = listAdapter.check_states.get(stiId);
+        ArrayList<Integer> checks = VisitDiagnosisListAdapter.check_states.get(stiId);
         if(!checks.contains(0)) {
             return true; // skipping if it doesn't contain any values
         }

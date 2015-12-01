@@ -60,6 +60,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="and">and</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="add_new_staff_member">Add New Staff Member</string>
+    <string name="last_used">Last Used</string>
     <!-- Connectivity status messages -->
     <string name="is_online">You are currently ON-LINE</string>
     <string name="is_offline">You are currently OFF-LINE</string>

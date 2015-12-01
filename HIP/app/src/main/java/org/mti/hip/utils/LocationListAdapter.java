@@ -1,6 +1,7 @@
 package org.mti.hip.utils;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,10 +40,10 @@ public class LocationListAdapter extends ArrayAdapter<Settlement> {
         // Populate the data into the template view using the data object
         if (null == lastUsedLocation) {
             tvLastUsed.setText("");
-        }
-        else {
+        } else {
             if (settlementName.equalsIgnoreCase(lastUsedLocation)) {
-                tvLastUsed.setText("Last Used");
+                tvLastUsed.setText(R.string.last_used);
+                tvLastUsed.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
             } else {
                 tvLastUsed.setText("");
             }
