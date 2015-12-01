@@ -1,9 +1,7 @@
 package org.mti.hip;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,8 +13,6 @@ import org.mti.hip.model.Visit;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashSet;
 
 public class DiagnosisActivity extends SuperActivity {
 
@@ -33,13 +29,11 @@ public class DiagnosisActivity extends SuperActivity {
         // get the listview
         expListView = (ExpandableListView) findViewById(R.id.visitdiaglist);
 
-
         listAdapter = new VisitDiagnosisListAdapter(this);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
         expListView.setOnChildClickListener(listAdapter.getListener());
-
 
     }
 

@@ -32,6 +32,7 @@
         <activity
             android:name=".DiagnosisActivity"
             android:label="@string/visit_entry"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" >
         </activity>
         <activity android:name=".SuperActivity" >
@@ -43,9 +44,10 @@
             android:label="@string/dashboard">
         </activity>
         <activity android:name=".ConsultationActivity"
+            android:launchMode="singleTop"
             android:label="@string/consultation">
         </activity>
-        <activity android:name=".FacilitySelectionActivity"
+        <activity android:name=".CentreSelectionActivity"
             android:label="@string/select_facility">
         </activity>
         <activity android:name=".ClinicianSelectionActivity"

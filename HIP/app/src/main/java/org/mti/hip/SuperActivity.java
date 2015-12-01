@@ -12,8 +12,8 @@ import android.text.Html;
 import android.text.Spanned;
 import android.widget.EditText;
 
+import org.mti.hip.model.CentreWrapper;
 import org.mti.hip.model.DiagnosisWrapper;
-import org.mti.hip.model.FacilityWrapper;
 import org.mti.hip.model.InjuryLocationWrapper;
 import org.mti.hip.model.SettlementWrapper;
 import org.mti.hip.model.SupplementalsWrapper;
@@ -69,8 +69,14 @@ public class SuperActivity extends AppCompatActivity {
             getSupportActionBar().setSubtitle(buildHeader());
         }
         progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(true);
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private static final String PREFS_NAME = "HipPrefs";
@@ -268,7 +274,7 @@ public class SuperActivity extends AppCompatActivity {
         if(key.matches(INJURY_LOCATIONS_KEY)) clazz = InjuryLocationWrapper.class;
         if(key.matches(DIAGNOSIS_LIST_KEY)) clazz = DiagnosisWrapper.class;
         if(key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = SupplementalsWrapper.class;
-        if(key.matches(FACILITIES_LIST_KEY)) clazz = FacilityWrapper.class;
+        if(key.matches(FACILITIES_LIST_KEY)) clazz = CentreWrapper.class;
         if(key.matches(USER_LIST_KEY)) clazz = UserWrapper.class;
         return getJsonManagerInstance().read(readString(key), clazz);
     }

@@ -1,12 +1,10 @@
 package org.mti.hip;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,11 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mti.hip.model.User;
-import org.mti.hip.utils.StorageManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class ClinicianSelectionActivity extends SuperActivity {
@@ -113,7 +108,6 @@ public class ClinicianSelectionActivity extends SuperActivity {
     protected void onPause() {
         super.onPause();
         String obj = getJsonManagerInstance().writeValueAsString(userList);
-        Log.d("list", obj);
         writeString(USER_LIST_KEY, obj);
     }
 

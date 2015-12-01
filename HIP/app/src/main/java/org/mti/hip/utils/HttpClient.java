@@ -33,7 +33,7 @@ public class HttpClient {
     public static final String put = "PUT";
 
     // TODO add constant for facility ID (this will be SET when it is selected
-    // from the Facility Selection screen)
+    // from the Centre Selection screen)
  /*
  Default Show/Hide List Operations Expand Operations
 GET /facilities/{facilityId}/visits Get facility visits

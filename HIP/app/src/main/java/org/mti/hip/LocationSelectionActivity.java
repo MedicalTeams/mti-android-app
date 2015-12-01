@@ -7,12 +7,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.mti.hip.model.Facility;
-import org.mti.hip.model.FacilityWrapper;
 import org.mti.hip.model.Settlement;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by r625361 on 11/19/2015.
@@ -50,7 +47,7 @@ public class LocationSelectionActivity extends SuperActivity {
                 String name = adapter.getItem(position).getName();
                 writeLastUsedLocation(name);
                 locationName = name;
-                startActivity(new Intent(LocationSelectionActivity.this, FacilitySelectionActivity.class));
+                startActivity(new Intent(LocationSelectionActivity.this, CentreSelectionActivity.class));
             }
         });
     }

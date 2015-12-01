@@ -3,7 +3,6 @@ package org.mti.hip;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,23 +38,21 @@ public class MainActivity extends SuperActivity {
         appVersion = String.valueOf(pInfo.versionCode);
         version.setText("Version code: " + appVersion);
 
-
-
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
+//        new AsyncTask<Void, Void, Void>() {
+//
+//            @Override
+//            protected Void doInBackground(Void... params) {
 //                if(readString(DIAGNOSIS_LIST_KEY).matches(""))// TODO this is dumb right now and assumes all values are initialized if DIAG is
                     initApp();
-                return null;
-            }
+//                return null;
+//            }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-            }
-        }.execute();
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//
+//            }
+//        }.execute();
         signIn = (Button) findViewById(R.id.sign_in);
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,9 +122,6 @@ public class MainActivity extends SuperActivity {
         }.execute();
 
     }
-
-
-
 
 
 }

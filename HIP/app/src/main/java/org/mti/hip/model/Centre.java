@@ -5,14 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * Created by r624513 on 11/19/15.
  */
-public class Facility {
-
-    /*
-    {
-    "id": 27,
-    "name": "Reception centre",
-    "settlement": "Nyumanzi",
-     */
+public class Centre {
 
     private int id;
     private String name;

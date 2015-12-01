@@ -27,6 +27,8 @@
     <string name="visit_entry">Visit Entry</string>
     <string name="submit">Submit</string>
     <string name="sign_out">Sign Out</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <!-- Start: Tool Tips -->
     <string name="tooltip_morbidity_revisit">"NOTE:
 Refer to guidelines for definitions of New Visit and Revisit.
@@ -60,5 +62,6 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <!-- Connectivity status messages -->
     <string name="is_online">You are currently ON-LINE</string>
     <string name="is_offline">You are currently OFF-LINE</string>
+    
 
 </resources>
