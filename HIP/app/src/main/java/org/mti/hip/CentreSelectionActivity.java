@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import org.mti.hip.model.Centre;
 import org.mti.hip.model.CentreWrapper;
+import org.mti.hip.utils.FacilityListAdapter;
 import org.mti.hip.utils.HttpClient;
 
 import java.util.ArrayList;
@@ -62,8 +63,9 @@ public class CentreSelectionActivity extends SuperActivity {
                 innerList.add(facility);
             }
         }
-        final ArrayAdapter<Centre> adapter = new ArrayAdapter<>(CentreSelectionActivity.this, android.R.layout.simple_list_item_1, innerList);
-        lv.setAdapter(adapter);
+        //final ArrayAdapter<Centre> adapter = new ArrayAdapter<>(CentreSelectionActivity.this, android.R.layout.simple_list_item_1, innerList);
+        final ArrayAdapter<Centre> adapter = new FacilityListAdapter(CentreSelectionActivity.this, innerList, readLastUsedFacility());
+                lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
