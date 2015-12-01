@@ -2,9 +2,7 @@ package org.mti.hip;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +19,6 @@ import org.mti.hip.model.UserWrapper;
 import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSONManager;
-import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.StorageManager;
 
 import java.io.IOException;
@@ -38,9 +35,7 @@ public class SuperActivity extends AppCompatActivity {
     public static String facilityName;
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
-    private ProgressDialog progressDialog;
-    private IntentFilter intentFilter;
-    private NetworkBroadcastReceiver networkBroadcastReceiver;
+    public ProgressDialog progressDialog;
     private static boolean isConnected;
 
     public static final int diagId = 0;
@@ -286,21 +281,6 @@ public class SuperActivity extends AppCompatActivity {
     public static Boolean isConnected() {
         return isConnected;
     }
-
-    @Override
-    protected void onPause() {
-        unregisterReceiver(networkBroadcastReceiver);
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        networkBroadcastReceiver = new NetworkBroadcastReceiver();
-        registerReceiver(networkBroadcastReceiver, intentFilter);
-        super.onResume();
-    }
-
 
     public static void setIsConnected(boolean isConnected) {
         SuperActivity.isConnected = isConnected;
