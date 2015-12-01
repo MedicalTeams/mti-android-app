@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import org.mti.hip.model.Settlement;
+import org.mti.hip.utils.LocationListAdapter;
 
 import java.util.ArrayList;
 
@@ -39,7 +40,8 @@ public class LocationSelectionActivity extends SuperActivity {
     }
 
     private void showList() {
-        final ArrayAdapter<Settlement> adapter = new ArrayAdapter<>(LocationSelectionActivity.this, android.R.layout.simple_list_item_1, list);
+//        final ArrayAdapter<Settlement> adapter = new ArrayAdapter<>(LocationSelectionActivity.this, android.R.layout.simple_list_item_1, list);
+        final ArrayAdapter<Settlement> adapter = new LocationListAdapter(LocationSelectionActivity.this, list, readLastUsedLocation());
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

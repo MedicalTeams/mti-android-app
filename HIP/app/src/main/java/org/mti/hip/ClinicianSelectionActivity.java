@@ -1,6 +1,5 @@
 package org.mti.hip;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,11 +17,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mti.hip.model.User;
-import org.mti.hip.utils.StorageManager;
+import org.mti.hip.utils.ClinicianListAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class ClinicianSelectionActivity extends SuperActivity {
@@ -83,6 +80,7 @@ public class ClinicianSelectionActivity extends SuperActivity {
 
                 User user = adapter.getItem(position);
                 currentUserName = user.getName();
+                writeLastUsedClinician(currentUserName);
                 Intent i = new Intent(ClinicianSelectionActivity.this, DashboardActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
@@ -103,7 +101,8 @@ public class ClinicianSelectionActivity extends SuperActivity {
         }
 
         ArrayList<User> uiList = new ArrayList<>(userList);
-        adapter = new ArrayAdapter<>(ClinicianSelectionActivity.this, android.R.layout.simple_list_item_1, uiList);
+        //adapter = new ArrayAdapter<>(ClinicianSelectionActivity.this, android.R.layout.simple_list_item_1, uiList);
+        adapter = new ClinicianListAdapter(ClinicianSelectionActivity.this, uiList, readLastUsedClinician());
         lv.setAdapter(adapter);
 
 
