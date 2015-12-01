@@ -23,7 +23,9 @@ import org.mti.hip.utils.StorageManager;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class SuperActivity extends AppCompatActivity {
 
@@ -43,6 +45,8 @@ public class SuperActivity extends AppCompatActivity {
     public static final int mentalIllnessId = 3;
     public static final int injuryId = 4;
     public static final int injuryLocId = 5;
+    public static final int tallyFileSyncOverdueThresholdDays = 1;
+    public static final int serverConstantsSyncOverdueThresholdDays = 1;
 
     private static final String LOCATION_KEY = "locationId";
     private static final String FACILITY_KEY = "facilityId";
@@ -53,6 +57,8 @@ public class SuperActivity extends AppCompatActivity {
     public static final String SUPPLEMENTAL_LIST_KEY = "supplistkey";
     public static final String INJURY_LOCATIONS_KEY = "injurylockey";
     public static final String USER_LIST_KEY = "userlistkey";
+    public static final String LAST_TALLY_FILE_SYNC_TIME_KEY = "lastTallyFileSyncTimeKey";
+    public static final String LAST_SERVER_CONSTANTS_SYNC_TIME_KEY = "lastServerConstantsSyncTimeKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,6 +258,63 @@ public class SuperActivity extends AppCompatActivity {
     public String readLastUsedClinician() {
         return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(CLINICIAN_KEY, "");
     }
+
+    /**
+     * Save the last date/time (as UTC milliseconds from the epoch) at which the tally file was successfully sent up to the server
+     */
+    public void writeLastTallyFileSyncTime() {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_TALLY_FILE_SYNC_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
+    }
+
+    /**
+     *
+     * @return The last date/time (as UTC milliseconds from the epoch) at which the tally file was successfully sent up to the server
+     */
+    public Long readLastTallyFileSyncTime() {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_TALLY_FILE_SYNC_TIME_KEY, 0L);
+    }
+
+    /**
+     *
+     * @return true if the last time the tally file was successfully sent up to the server was too long ago
+     */
+    public boolean isTallyFileSyncOverdue() {
+        Long diffMillis = Calendar.getInstance().getTimeInMillis() - readLastTallyFileSyncTime();
+        int diffDays = (int) TimeUnit.MILLISECONDS.toDays(diffMillis);
+        if (diffDays >= tallyFileSyncOverdueThresholdDays) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Save the last date/time (as UTC milliseconds from the epoch) at which the constants were successfully downloaded from the server
+     */
+    public void writeLastServerConstantsSyncTime() {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_SERVER_CONSTANTS_SYNC_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
+    }
+
+    /**
+     *
+     * @return The last date/time (as UTC milliseconds from the epoch) at which the constants were successfully downloaded from the server
+     */
+    public Long readLastServerConstantsSyncTime() {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_SERVER_CONSTANTS_SYNC_TIME_KEY, 0L);
+    }
+
+    /**
+     *
+     * @return true if the last time the constants were successfully downloaded from the server was too long ago
+     */
+    public boolean isServerConstantsSyncOverdue() {
+        Long diffMillis = Calendar.getInstance().getTimeInMillis() - readLastServerConstantsSyncTime();
+        int diffDays = (int) TimeUnit.MILLISECONDS.toDays(diffMillis);
+        if (diffDays >= serverConstantsSyncOverdueThresholdDays) {
+            return true;
+        }
+        return false;
+    }
+
 
     public Object getObjectFromPrefsKey(String key) {
         Class clazz = null;
