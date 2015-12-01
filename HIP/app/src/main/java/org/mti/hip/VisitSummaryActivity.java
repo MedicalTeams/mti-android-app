@@ -29,12 +29,15 @@ public class VisitSummaryActivity extends SuperActivity {
     private LinearLayout diagData;
     private ArrayList<InjuryLocation> injuryLocations;
     private Visit visit;
+    private ArrayList<String> prompts = new ArrayList<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_summary);
+
+
 
         editDiags = (Button) findViewById(R.id.bt_diag_edit);
         editConsultation = (Button) findViewById(R.id.bt_consultation_edit);
@@ -56,8 +59,10 @@ public class VisitSummaryActivity extends SuperActivity {
             Supplemental supplementalDiagnosis = null;
             TextView tv = new TextView(VisitSummaryActivity.this);
             tv.setText(bold(diag.getName()));
+            checkForDiagPrompt(diag);
             for (Supplemental supp : diag.getSupplementals()) {
                 supplementalDiagnosis = supp;
+                checkForSupplementalPrompt(supp);
                 tv.append("\n - " + supplementalDiagnosis.getName());
             }
 
@@ -80,6 +85,7 @@ public class VisitSummaryActivity extends SuperActivity {
             diagData.addView(tv);
         }
 
+        addAlerts();
 
         visitJson = getJsonManagerInstance().writeValueAsString(visit);
 
@@ -175,6 +181,38 @@ public class VisitSummaryActivity extends SuperActivity {
         startActivity(i);
     }
 
+    private void checkForDiagPrompt(Diagnosis diag) {
+        int id = diag.getId();
+        if(id == 3 || id == 4 || id == 9 || id == 10 || id == 14) {
+            addDiagPrompt(diag, getString(R.string.prompt_outbreak_potential));
+        } else if (id == 12 || id == 13) {
+        // TODO add cholera once it is in the service
+            addDiagPrompt(diag, getString(R.string.prompt_threshold_reached));
+        } else if (id == 15) {
+            addDiagPrompt(diag, getString(R.string.prompt_hiv));
+        }
+
+    }
+
+    private void checkForSupplementalPrompt(Supplemental diag) {
+        int id = diag.getId();
+
+        if (id == 65 || id == 66) {
+            addSupplementalDiagPrompt(diag, getString(R.string.prompt_assault));
+        }
+
+
+
+    }
+
+    private void addDiagPrompt(Diagnosis diag, String string) {
+        prompts.add(diag.getName() + ": " + string);
+    }
+
+    private void addSupplementalDiagPrompt(Supplemental diag, String string) {
+        prompts.add(diag.getName() + ": " + string);
+    }
+
     private void addVisitData(Visit visit) {
         Context c = VisitSummaryActivity.this;
 
@@ -197,15 +235,15 @@ public class VisitSummaryActivity extends SuperActivity {
             gender.append(getString(R.string.female));
         }
 
-        TextView staffMember = new TextView(c);
+        TextView staffMember = (TextView) findViewById(R.id.tv_summary_staff_member);
         staffMember.setText("Staff member: ");
         staffMember.append(visit.getStaffMemberName());
 
-        TextView facility = new TextView(c);
+        TextView facility = (TextView) findViewById(R.id.tv_summary_centre);
         facility.setText("Centre: ");
         facility.append(visit.getFacilityName());
 
-        TextView date = new TextView(c);
+        TextView date = (TextView) findViewById(R.id.tv_summary_date);
         date.setText(getFormattedDate(visit.getVisitDate()));
 
         TextView opId = new TextView(c);
@@ -231,9 +269,6 @@ public class VisitSummaryActivity extends SuperActivity {
             isRevisit.append("Regular visit");
         }
 
-        consultationData.addView(date);
-        consultationData.addView(facility);
-        consultationData.addView(staffMember);
         TextView consultHeader = new TextView(VisitSummaryActivity.this);
         consultHeader.setText(bold("Consultation Summary"));
         consultationData.addView(consultHeader);
@@ -244,6 +279,18 @@ public class VisitSummaryActivity extends SuperActivity {
         consultationData.addView(isRevisit);
 
 
+    }
+
+    private void addAlerts() {
+        LinearLayout ll = (LinearLayout) findViewById(R.id.ll_summary_alerts);
+        if(prompts.isEmpty()) {
+            ll.setVisibility(View.GONE);
+        }
+        for(String alert : prompts) {
+            TextView tv = new TextView(this);
+            tv.setText(alert);
+            ll.addView(tv);
+        }
     }
 
 

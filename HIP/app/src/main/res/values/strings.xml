@@ -41,8 +41,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <!-- End: Tool Tips -->
     <!-- Start: Prompts -->
     <string name="prompt_hiv">HIV Counsel needed.</string>
-    <string name="prompt_assault">If SGBV consult to goto police</string>
+    <string name="prompt_assault">If SGBV consult to go to police.</string>
     <string name="prompt_outbreak_potential">Disease with outbreak potential. Refer to weekly alert thresholds.</string>
+    <string name="prompt_threshold_reached">Weekly outbreak threshold reached.  Report to clinic.</string>
     <string name="edit">Edit</string>
     <!-- End: Prompts -->
     <string name="error_email_address">hip@medicalteams.org</string>
