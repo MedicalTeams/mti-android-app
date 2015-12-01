@@ -7,11 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
-    <receiver android:name="NetworkBroadcastReceiver">
-        <intent-filter>
-            <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-        </intent-filter>
-    </receiver>
 
     <application
         android:allowBackup="true"

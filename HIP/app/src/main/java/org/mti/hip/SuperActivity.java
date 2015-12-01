@@ -36,6 +36,7 @@ public class SuperActivity extends AppCompatActivity {
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
     public ProgressDialog progressDialog;
+    private static boolean isConnected;
 
     public static final int diagId = 0;
     public static final int stiId = 1;
@@ -64,6 +65,7 @@ public class SuperActivity extends AppCompatActivity {
         }
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(true);
+
 
     }
 
@@ -174,7 +176,15 @@ public class SuperActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     this.e = e;
                 }
-            } else {
+            }
+            else if (httpMethod.equals(HttpClient.put)) {
+                try {
+                    responseString = getHttpClientInstance().put(endpoint, body);
+                } catch (IOException e) {
+                    this.e = e;
+                }
+            }
+            else {
                 try {
                     responseString = getHttpClientInstance().get(endpoint);
                 } catch (IOException e) {
@@ -263,6 +273,20 @@ public class SuperActivity extends AppCompatActivity {
         if(key.matches(USER_LIST_KEY)) clazz = UserWrapper.class;
         return getJsonManagerInstance().read(readString(key), clazz);
     }
+
+    /**
+     *
+     * @return True if the device is connected to the internet, False otherwise
+     */
+    public static Boolean isConnected() {
+        return isConnected;
+    }
+
+    public static void setIsConnected(boolean isConnected) {
+        SuperActivity.isConnected = isConnected;
+    }
+
+
 
 
 }

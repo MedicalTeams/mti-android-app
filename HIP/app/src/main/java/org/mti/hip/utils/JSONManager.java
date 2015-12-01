@@ -56,4 +56,20 @@ public class JSONManager {
         return null;
     }
 
+    /**
+     *
+     * @param serialNumber
+     * @param appVersion
+     * @param description
+     * @return The JSON format body of the PUT method for sending device serial number to endpoint
+     */
+    public static String getJsonToPutDevice(String serialNumber, String appVersion, String description) {
+        String jsonBody = "{" +
+                " \"uuid\": \"" + serialNumber + "\", " +
+                "\"appVersion\": \"" + appVersion + "\", " +
+                "\"description\": \"" + description + "\" " +
+                "}";
+        return jsonBody;
+    }
+
 }

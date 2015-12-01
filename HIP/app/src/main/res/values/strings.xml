@@ -27,6 +27,8 @@
     <string name="visit_entry">Visit Entry</string>
     <string name="submit">Submit</string>
     <string name="sign_out">Sign Out</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <!-- Start: Tool Tips -->
     <string name="tooltip_morbidity_revisit">"NOTE:
 Refer to guidelines for definitions of New Visit and Revisit.
@@ -39,8 +41,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <!-- End: Tool Tips -->
     <!-- Start: Prompts -->
     <string name="prompt_hiv">HIV Counsel needed.</string>
-    <string name="prompt_assault">If SGBV consult to goto police</string>
+    <string name="prompt_assault">If SGBV consult to go to police.</string>
     <string name="prompt_outbreak_potential">Disease with outbreak potential. Refer to weekly alert thresholds.</string>
+    <string name="prompt_threshold_reached">Weekly outbreak threshold reached.  Report to clinic.</string>
     <string name="edit">Edit</string>
     <!-- End: Prompts -->
     <string name="error_email_address">hip@medicalteams.org</string>
@@ -57,7 +60,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="and">and</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="add_new_staff_member">Add New Staff Member</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+    <!-- Connectivity status messages -->
+    <string name="is_online">You are currently ON-LINE</string>
+    <string name="is_offline">You are currently OFF-LINE</string>
+    
 
 </resources>
