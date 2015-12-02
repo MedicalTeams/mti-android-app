@@ -74,7 +74,7 @@ public class SuperActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private static final String PREFS_NAME = "HipPrefs";
+    protected static final String PREFS_NAME = "HipPrefs";
 
     public static JSONManager getJsonManagerInstance() {
         if (jsonManager == null) {
@@ -262,6 +262,7 @@ public class SuperActivity extends AppCompatActivity {
     public String readLastUsedClinician() {
         return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(CLINICIAN_KEY, "");
     }
+
 
     public Object getObjectFromPrefsKey(String key) {
         Class clazz = null;
