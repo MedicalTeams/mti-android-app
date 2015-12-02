@@ -70,8 +70,8 @@ public class CentreSelectionActivity extends SuperActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Centre facility = adapter.getItem(position);
-                facilityName = facility.getName();
                 writeLastUsedFacility(facility.getId());
+                writeLastUsedFacilityName(facility.getName());
                 // TODO record ID
                 startActivity(new Intent(CentreSelectionActivity.this, ClinicianSelectionActivity.class));
             }

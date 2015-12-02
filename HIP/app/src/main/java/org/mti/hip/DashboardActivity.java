@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
+import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.StorageManager;
 
@@ -110,6 +111,48 @@ public class DashboardActivity extends SuperActivity {
     protected void onPause() {
         unregisterReceiver(networkBroadcastReceiver);
         super.onPause();
+    }
+
+    private void getServerConstants() {
+        new NetworkTask(HttpClient.diagnosisEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(DIAGNOSIS_LIST_KEY, response);
+            }
+        }.execute();
+
+        new NetworkTask(HttpClient.facilitiesEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(FACILITIES_LIST_KEY, response);
+            }
+        }.execute();
+
+        new NetworkTask(HttpClient.supplementalEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(SUPPLEMENTAL_LIST_KEY, response);
+            }
+        }.execute();
+
+        new NetworkTask(HttpClient.settlementEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(SETTLEMENT_LIST_KEY, response);
+            }
+        }.execute();
+
+        new NetworkTask(HttpClient.injuryLocationsEndpoint, HttpClient.get) {
+
+            @Override
+            public void getResponseString(String response) {
+                writeString(SuperActivity.INJURY_LOCATIONS_KEY, response);
+            }
+        }.execute();
     }
 
 

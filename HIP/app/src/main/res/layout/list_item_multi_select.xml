@@ -18,4 +18,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/colorAccent"
+        android:id="@+id/tooltip_multi_select"
+        android:layout_weight="1"
+        android:visibility="invisible"
+        android:scaleType="fitEnd"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_tooltip"/>
+
 </LinearLayout>

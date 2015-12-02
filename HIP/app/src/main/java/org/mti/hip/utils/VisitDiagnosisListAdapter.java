@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -399,6 +400,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         }
 
 
+
         LayoutInflater inflater = (LayoutInflater) this.context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TextView tv = null;
@@ -419,6 +421,11 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
             selector = convertView.findViewById(R.id.cb_multi_select);
 
             ((CheckBox) selector).setChecked(selected);
+            Log.d("id", String.valueOf(id));
+            if(groupPosition == chronicDiseaseId && id == 47) {
+                setupEndochrineTooltip(convertView);
+            }
+
         }
         if (id == chronicOtherId || id == primaryOtherId || id == customContactsTreatedId) {
 
@@ -446,6 +453,17 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         tv.setText(childText);
         return convertView;
 
+    }
+
+    private void setupEndochrineTooltip(View convertView) {
+        View tooltip = convertView.findViewById(R.id.tooltip_multi_select);
+        tooltip.setVisibility(View.VISIBLE);
+        tooltip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.alert.showAlert("Info", context.getString(R.string.tooltip_morbidity_endocrine_metabolic));
+            }
+        });
     }
 
     @Override

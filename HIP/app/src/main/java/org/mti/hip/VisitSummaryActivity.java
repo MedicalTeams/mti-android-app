@@ -13,6 +13,7 @@ import android.widget.TextView;
 import org.mti.hip.model.Diagnosis;
 import org.mti.hip.model.InjuryLocation;
 import org.mti.hip.model.Supplemental;
+import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
@@ -30,6 +31,9 @@ public class VisitSummaryActivity extends SuperActivity {
     private ArrayList<InjuryLocation> injuryLocations;
     private Visit visit;
     private ArrayList<String> prompts = new ArrayList<>();
+    private String tallyJson;
+    private String tallyToSendJson;
+    private Tally tally;
 
 
     @Override
@@ -37,8 +41,15 @@ public class VisitSummaryActivity extends SuperActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_summary);
 
-
-
+        tallyJson = getJsonManagerInstance().writeValueAsString(getStorageManagerInstance().getTally());
+        tally = (Tally) getJsonManagerInstance().read(tallyJson, Tally.class);
+        Tally tallyToSend = new Tally();
+        for(Visit visit : tally) {
+            if(!visit.isSent()) {
+                tallyToSend.add(visit);
+            }
+        }
+        tallyToSendJson = getJsonManagerInstance().writeValueAsString(tallyToSend);
         editDiags = (Button) findViewById(R.id.bt_diag_edit);
         editConsultation = (Button) findViewById(R.id.bt_consultation_edit);
         editDiags.setOnClickListener(editDiagListener);
@@ -145,7 +156,7 @@ public class VisitSummaryActivity extends SuperActivity {
                 if (super.e == null) {
                     getResponseString(r);
                 } else if(!isCancelled()){
-                   processUnsuccesfulResponse(r);
+                   processUnsuccessfulResponse(r);
                 }
             }
 
@@ -156,11 +167,15 @@ public class VisitSummaryActivity extends SuperActivity {
 
     private void processSuccessfulResponse(String r) {
         Log.d("Visit response string", r);
-        visit.setSent(true);
+
+//        for(Visit visit : tally) {
+            visit.setSent(true);
+            // TODO make this handle possible failures on the service (currently in-progress with Paul Roe)
+//        }
         startDashboard("Visit submitted");
     }
 
-    private void processUnsuccesfulResponse(String r) {
+    private void processUnsuccessfulResponse(String r) {
         if(r != null) {
             Log.e("Visit error string", r);
         }
@@ -170,9 +185,9 @@ public class VisitSummaryActivity extends SuperActivity {
 
     private void startDashboard(String message) {
 
-        String tallyJsonOut = getJsonManagerInstance().writeValueAsString(getStorageManagerInstance().getTally());
 
-        getStorageManagerInstance().writeTallyJsonToFile(tallyJsonOut, this);
+
+        getStorageManagerInstance().writeTallyJsonToFile(tallyJson, this);
 
         VisitDiagnosisListAdapter.check_states.clear();
         Intent i = new Intent(VisitSummaryActivity.this, DashboardActivity.class);

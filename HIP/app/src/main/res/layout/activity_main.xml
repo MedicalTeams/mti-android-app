@@ -40,16 +40,24 @@
         <!--android:src="@drawable/cambialogo" />-->
 
         <Button
-            android:id="@+id/sign_in"
+            android:id="@+id/register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/logo"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="24dp"
             android:padding="24dp"
-            android:text="@string/sign_in"
+            android:text="@string/register_device"
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/progress"
+        android:layout_alignTop="@id/register"/>
 
 
 

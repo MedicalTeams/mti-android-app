@@ -48,6 +48,7 @@ public class SuperActivity extends AppCompatActivity {
     private static final String LOCATION_KEY = "locationId";
     private static final String FACILITY_KEY = "facilityId";
     private static final String CLINICIAN_KEY = "clinicianName";
+    private static final String FACILITY_NAME_KEY = "facnamekey";
     public static final String FACILITIES_LIST_KEY = "facilitieskey";
     public static final String SETTLEMENT_LIST_KEY = "settlementkey";
     public static final String DIAGNOSIS_LIST_KEY = "diaglistkey";
@@ -58,13 +59,15 @@ public class SuperActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        facilityName = readLastUsedFacilityName();
+        currentUserName = readLastUsedClinician();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_super);
         if(getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(buildHeader());
         }
         progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(true);
+        progressDialog.setCancelable(false);
 
 
     }
@@ -116,10 +119,10 @@ public class SuperActivity extends AppCompatActivity {
 
     private String buildHeader() {
         StringBuffer sb = new StringBuffer();
-        if(facilityName != null) {
+        if(!facilityName.matches("")) {
             sb.append(facilityName + "  |  " + getDateNowString());
         }
-        if(currentUserName != null) {
+        if(!currentUserName.matches("")) {
             sb.append("  |  " + currentUserName);
         }
         return sb.toString();
@@ -225,6 +228,14 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     /**
+     * Save the last used facility name to Shared Preferences
+     * @param name
+     */
+    public void writeLastUsedFacilityName(String name) {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(FACILITY_NAME_KEY, name).commit();
+    }
+
+    /**
      * Save the last used clinician to Shared Preferences
      * @param clinicianName
      */
@@ -248,19 +259,27 @@ public class SuperActivity extends AppCompatActivity {
         return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getInt(FACILITY_KEY, 0);
     }
 
-    public void writeString(String key, String value) {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(key, value).commit();
-    }
-
-    public String readString(String key) {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(key, "");
-    }
     /**
      * Read the last used clinician from Shared Preferences
      * @return
      */
     public String readLastUsedClinician() {
         return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(CLINICIAN_KEY, "");
+    }
+
+    /**
+     * Read the last used facility name from Shared Preferences
+     * @return
+     */
+    public String readLastUsedFacilityName() {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(FACILITY_NAME_KEY, "");
+    }
+
+    public void writeString(String key, String value) {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(key, value).commit();
+    }
+    public String readString(String key) {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(key, "");
     }
 
 

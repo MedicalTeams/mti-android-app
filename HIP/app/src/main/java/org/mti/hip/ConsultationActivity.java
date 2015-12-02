@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import org.mti.hip.model.Visit;
@@ -51,6 +52,14 @@ public class ConsultationActivity extends SuperActivity {
         rbRefugee = (RadioButton) findViewById(R.id.rb_refugee);
         rbYears = (RadioButton) findViewById(R.id.rb_years);
         rbMonths = (RadioButton) findViewById(R.id.rb_months);
+
+        findViewById(R.id.opd_tooltip).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert.showAlert("Info", getString(R.string.tooltip_opd_number));
+            }
+        });
+
 
         setupDebugButton();
     }
