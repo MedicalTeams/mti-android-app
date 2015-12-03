@@ -185,7 +185,7 @@ public class DiagnosisActivity extends SuperActivity {
         }
 
         boolean containsBothStiAndContactsTreated = false;
-        if(checks.contains(0) && visit.getStiContactsTreated() != 0) {
+        if(checks.contains(0) && visit.getStiContactsTreated() != -1) {
             containsBothStiAndContactsTreated = true;
         }
 

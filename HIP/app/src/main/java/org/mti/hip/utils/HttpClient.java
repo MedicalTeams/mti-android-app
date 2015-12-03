@@ -15,10 +15,9 @@ import java.io.IOException;
  */
 public class HttpClient {
 
-    private HttpClient instance;
     private OkHttpClient client;
-    public static final String tallyEndpoint = "/facilities/11/visits/upload";
-    public static final String visitEndpoint = "/facilities/11/visits";
+    public static final String getDeviceStatus = "/devices/";
+    public static final String tallyEndpoint = "/visits/upload";
     public static final String facilitiesEndpoint = "/facilities";
     public static final String diagnosisEndpoint = "/diagnosis";
     public static final String supplementalEndpoint = "/supplementals";
@@ -32,20 +31,7 @@ public class HttpClient {
     public static final String get = "GET";
     public static final String put = "PUT";
 
-    // TODO add constant for facility ID (this will be SET when it is selected
-    // from the Centre Selection screen)
- /*
- Default Show/Hide List Operations Expand Operations
-GET /facilities/{facilityId}/visits Get facility visits
-POST /facilities/{facilityId}/visits Add visit
-POST /facilities/{facilityId}/visits/upload Upload visits
-GET /facilities
-GET /facilities/{facilityId}
-GET /citizenships Citizenship Lookup List
-GET /diagnosis Diagnosis Lookup List
-GET /supplementals
-
-  */
+    // TODO update to new /visits endpoint without facility
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
@@ -83,7 +69,7 @@ GET /supplementals
         String responseString = response.body().string();
         if (!response.isSuccessful()) {
             Log.e("parsed response error", response.code() + " " + responseString);
-            throw new IOException("There was an issue with the network request");
+            throw new IOException("The networking request was not successful. Response code: " + response.code() + " " + responseString);
         }
         return responseString;
     }

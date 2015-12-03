@@ -25,14 +25,13 @@ public class VisitSummaryActivity extends SuperActivity {
     private Button submit;
     private Button editDiags;
     private Button editConsultation;
-    private String visitJson;
     private LinearLayout consultationData;
     private LinearLayout diagData;
     private ArrayList<InjuryLocation> injuryLocations;
     private Visit visit;
     private ArrayList<String> prompts = new ArrayList<>();
     private String tallyJson;
-    private String tallyToSendJson;
+    private String tallyJsonToSend;
     private Tally tally;
 
 
@@ -45,11 +44,11 @@ public class VisitSummaryActivity extends SuperActivity {
         tally = (Tally) getJsonManagerInstance().read(tallyJson, Tally.class);
         Tally tallyToSend = new Tally();
         for(Visit visit : tally) {
-            if(!visit.isSent()) {
+            if(visit.getStatus() != visitStatusDuplicate && visit.getStatus() != visitStatusSuccess) {
                 tallyToSend.add(visit);
             }
         }
-        tallyToSendJson = getJsonManagerInstance().writeValueAsString(tallyToSend);
+        tallyJsonToSend = getJsonManagerInstance().writeValueAsString(tallyToSend);
         editDiags = (Button) findViewById(R.id.bt_diag_edit);
         editConsultation = (Button) findViewById(R.id.bt_consultation_edit);
         editDiags.setOnClickListener(editDiagListener);
@@ -88,19 +87,18 @@ public class VisitSummaryActivity extends SuperActivity {
             diagData.addView(tv);
         }
 
-        if (visit.getStiContactsTreated() != 0) {
+        if (visit.getStiContactsTreated() != -1) {
             TextView tv = new TextView(VisitSummaryActivity.this);
 
-            // TODO refactor. Spagetti code surrounding getting/setting this in various classes
+            // TODO refactor. Spagetti code surrounding getting/setting this in various classes (look at stiContactsTreated static constant in adapter vs. Visit getter/setters)
             tv.setText(parseStiContactsTreated(visit.getStiContactsTreated()));
             diagData.addView(tv);
         }
 
+        Log.d("tally json to send", tallyJsonToSend);
+
         addAlerts();
 
-        visitJson = getJsonManagerInstance().writeValueAsString(visit);
-
-        Log.d("visit json", visitJson);
         submit = (Button) findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,9 +131,7 @@ public class VisitSummaryActivity extends SuperActivity {
         final ProgressDialog progDiag = progressDialog;
         progDiag.setCancelable(false);
 
-        // TODO test cancelable
-
-        new NetworkTask(visitJson, HttpClient.visitEndpoint, HttpClient.post) {
+        new NetworkTask(tallyJsonToSend, HttpClient.tallyEndpoint, HttpClient.post) {
 
 
             @Override
@@ -166,26 +162,49 @@ public class VisitSummaryActivity extends SuperActivity {
     }
 
     private void processSuccessfulResponse(String r) {
+        boolean disabled = false;
+        boolean failures = false;
         Log.d("Visit response string", r);
+        // update the tally - if tally response contains status == 4 then device is disabled
+        Tally serverTally = (Tally) getJsonManagerInstance().read(r, Tally.class);
+        for(Visit serverVisit : serverTally) {
+            if(serverVisit.getStatus() == visitStatusDisabled) {
+                Log.d("testing 4", "device disabled");
+                disabled = true;
+                writeDeviceStatus("D");
+                break;
+            } else {
+                Log.d("testing 4", "code is: " + serverVisit.getStatus());
+            }
+            for(Visit visit : tally) {
+                if(serverVisit.getStatus() == visitStatusFailure) {
+                    failures = true;
+                }
+                visit.setStatus(serverVisit.getStatus());
+            }
+        }
+        if(disabled) {
+            // TODO refactor to send status code instead of message and have Dashboard decide what to do/say
+            startDashboard("Your device has been disabled and will need to be activated by the administrator in order to process its visits.");
+        } else if (failures) {
+            startDashboard("Some records were not processed and will be resent during the next upload.");
+        } else {
+            startDashboard("Visit records processed.");
+        }
 
-//        for(Visit visit : tally) {
-            visit.setSent(true);
-            // TODO make this handle possible failures on the service (currently in-progress with Paul Roe)
-//        }
-        startDashboard("Visit submitted");
     }
 
     private void processUnsuccessfulResponse(String r) {
         if(r != null) {
             Log.e("Visit error string", r);
         }
-        visit.setSent(false);
-        startDashboard("VISIT DID NOT SEND. Soon you will be able to resend failed visits.");
+//        visit.setSent(false);
+        startDashboard("VISITS DID NOT SEND. Soon you will be able to resend failed visits.");
     }
 
     private void startDashboard(String message) {
 
-
+        tallyJson = getJsonManagerInstance().writeValueAsString(tally);
 
         getStorageManagerInstance().writeTallyJsonToFile(tallyJson, this);
 
@@ -272,16 +291,16 @@ public class VisitSummaryActivity extends SuperActivity {
         TextView isNational = new TextView(c);
 
         if (visit.getBeneficiaryType() == Visit.national) {
-            isNational.append("National");
+            isNational.append(getString(R.string.national));
         } else {
-            isNational.append("Refugee");
+            isNational.append(getString(R.string.refugee));
         }
 
         TextView isRevisit = new TextView(c);
         if (visit.getIsRevisit()) {
-            isRevisit.append("Revisit");
+            isRevisit.append(getString(R.string.revisit));
         } else {
-            isRevisit.append("Regular visit");
+            isRevisit.append(getString(R.string.new_visit));
         }
 
         TextView consultHeader = new TextView(VisitSummaryActivity.this);

@@ -10,7 +10,9 @@ import java.util.HashSet;
  */
 public class Visit {
 
-    private boolean sent;
+//    private boolean sent;
+
+    private int status;
     public static final int national = 1;
     public static final int refugee = 2;
 
@@ -147,11 +149,20 @@ public class Visit {
         this.isAgeMonths = isAgeMonths;
     }
 
-    public boolean isSent() {
-        return sent;
+//    public boolean isSent() {
+//        return sent;
+//    }
+
+//    public void setSent(boolean sent) {
+//        this.sent = sent;
+//    }
+
+
+    public int getStatus() {
+        return status;
     }
 
-    public void setSent(boolean sent) {
-        this.sent = sent;
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

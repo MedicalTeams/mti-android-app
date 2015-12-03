@@ -1,5 +1,6 @@
 package org.mti.hip;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
@@ -23,12 +24,13 @@ import java.util.Date;
 public class MainActivity extends SuperActivity {
 
     private Button btRegister;
-    private String appVersion;
+    private String versionCode;
     private boolean initialized;
     private boolean registered;
     private ProgressBar progress;
     private String serialNumber;
     private NetworkBroadcastReceiver networkBroadcastReceiver;
+    private ProgressDialog localProgress;
 
 
     @Override
@@ -41,7 +43,13 @@ public class MainActivity extends SuperActivity {
             return;
         }
 
+        progressDialog.hide();
+
+        localProgress = new ProgressDialog(this);
+        localProgress.setMessage("Please wait...");
+        localProgress.setCancelable(false);
         progress = (ProgressBar) findViewById(R.id.progress);
+
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         networkBroadcastReceiver = new NetworkBroadcastReceiver();
@@ -54,15 +62,18 @@ public class MainActivity extends SuperActivity {
             e.printStackTrace();
         }
         TextView version = (TextView) findViewById(R.id.tv_version);
-        appVersion = String.valueOf(pInfo.versionCode);
-        version.setText("Version code: " + appVersion);
+        versionCode = String.valueOf(pInfo.versionCode);
+        version.setText("Version code: " + versionCode);
 
         btRegister = (Button) findViewById(R.id.register);
         btRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                localProgress.show();
                 if(!isConnected()) {
                     alert.showAlert("No network", "Please connect to the internet and try again");
+                    localProgress.dismiss();
                     return;
                 }
                 if(!registered) {
@@ -78,12 +89,15 @@ public class MainActivity extends SuperActivity {
 //
                            DeviceStatusResponse statusResponse = (DeviceStatusResponse)
                                    getJsonManagerInstance().read(response, DeviceStatusResponse.class);
-                           if(statusResponse.getStatus().matches("A")) {
+
+                           writeDeviceStatus(statusResponse.getStatus());
+                           if(statusResponse.getStatus().matches(deviceActiveCode)) {
                                startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
                                finish();
                            } else {
                                alert.showAlert("Device error", "This device hasn't been activated yet. Please set the device status to Active in the database.");
                            }
+                           localProgress.dismiss();
                        }
                    }.execute();
 
@@ -136,7 +150,7 @@ public class MainActivity extends SuperActivity {
 //        toggleProgressOverlay(View.VISIBLE);
         serialNumber = StorageManager.getSerialNumber();
         String description = "Device serial number last created/updated on " + new Date();
-        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, appVersion, description);
+        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, versionCode, description);
         new NetworkTask(jsonBody, HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.put) {
 
             @Override
@@ -154,6 +168,7 @@ public class MainActivity extends SuperActivity {
                     getResponseString(r);
                 } else {
                     alert.showAlert("Error", "The request to register this device didn't succeed: Error data:\n" + e.getMessage());
+                    localProgress.dismiss();
                 }
             }
         }.execute();
@@ -207,6 +222,7 @@ public class MainActivity extends SuperActivity {
             @Override
             protected void onPostExecute(String r) {
                 super.onPostExecute(r);
+                localProgress.dismiss();
             }
         }.execute();
 

@@ -45,6 +45,14 @@ public class SuperActivity extends AppCompatActivity {
     public static final int injuryId = 4;
     public static final int injuryLocId = 5;
 
+    public static final int visitStatusUnsent = 0; // (doesn’t count toward sent value and will try to send)
+    public static final int visitStatusSuccess = 1; // (gets counted toward the "sent" value and won't send again)
+    public static final int visitStatusDuplicate = 2; // (gets counted toward the "sent" value and won't send again – useful for logging)
+    public static final int visitStatusFailure = 3; // (useful for logging and I WILL try to resend this during the next round or on a manual sync – doesn’t count toward the “sent” value in the UI)
+    public static final int visitStatusDisabled = 4; // device has been disabled, will try to send again if re-activated
+
+    public static final String deviceActiveCode = "A";
+
     private static final String LOCATION_KEY = "locationId";
     private static final String FACILITY_KEY = "facilityId";
     private static final String CLINICIAN_KEY = "clinicianName";
@@ -55,6 +63,7 @@ public class SuperActivity extends AppCompatActivity {
     public static final String SUPPLEMENTAL_LIST_KEY = "supplistkey";
     public static final String INJURY_LOCATIONS_KEY = "injurylockey";
     public static final String USER_LIST_KEY = "userlistkey";
+    public static final String DEVICE_STATUS_KEY = "devicestatuskey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +147,7 @@ public class SuperActivity extends AppCompatActivity {
         private String body;
         private String endpoint;
         private String httpMethod;
+        private int responseCode = 0;
 
         public NetworkTask(String endpoint, String httpMethod) {
             this.endpoint = endpoint;
@@ -233,6 +243,10 @@ public class SuperActivity extends AppCompatActivity {
      */
     public void writeLastUsedFacilityName(String name) {
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(FACILITY_NAME_KEY, name).commit();
+    }
+
+    public void writeDeviceStatus(String status) {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putString(DEVICE_STATUS_KEY, status).commit();
     }
 
     /**

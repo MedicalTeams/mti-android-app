@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mti.hip.R;
 import org.mti.hip.SuperActivity;
@@ -52,7 +53,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     private static final int primaryOtherId = 23;
     private static final int chronicOtherId = 54;
 
-    public static int stiContactsTreated = 0;
+    public static int stiContactsTreated = -1;
     public static int customContactsTreatedId = -1;
 
     private ArrayList<Integer> removedDiagHeaders = new ArrayList<>();
@@ -66,7 +67,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     public VisitDiagnosisListAdapter(SuperActivity context) {
         this.context = context;
 
-        stiContactsTreated = 0;
         removedDiagHeaders.add(16);
         removedDiagHeaders.add(19);
         removedDiagHeaders.add(20);
@@ -131,6 +131,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
                     // TODO refactor. Works but is messy.
 
+
                     if (check_states.get(groupPosition).get(childPosition) == 0) {
                         // we've touched the same one twice
                         button.setChecked(false);
@@ -153,6 +154,18 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                     button.setChecked(check);
                     if (check) {
                         check_states.get(groupPosition).set(childPosition, 0);
+                    } else {
+                        // mark as unchecked and don't allow mental health other entry
+                        // (this allows the "other" to be unchecked instead of triggering
+                        // the dialog again on the uncheck)
+                        return true;
+                    }
+                    if(groupPosition == mentalIllnessId) {
+                        Supplemental supp = (Supplemental) getChild(groupPosition, childPosition);
+                        if (supp.getId() == 62) {
+                            // mental illness other
+                            setMentalHealthOther(supp);
+                        }
                     }
                 } else {
 
@@ -276,7 +289,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                     ArrayList<Supplemental> list = getList(groupPosition);
                     Supplemental supp = new Supplemental();
                     supp.setId(id);
-                    supp.setDiagnosis(19);
+                    supp.setDiagnosis(19); // would need to be 20 for mental health
                     supp.setName(customOtherName);
                     list.add(supp);
 
@@ -290,6 +303,44 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
 
                 updateChildrenAndValues(groupPosition, children.get(groupPosition).size());
+                notifyDataSetChanged();
+            }
+        });
+        final AlertDialog dialog = alert.create();
+        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    private void setMentalHealthOther(final Supplemental other) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        LayoutInflater inflater = context.getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_edittext, null);
+        TextView tv = (TextView) view.findViewById(R.id.dialog_message_text);
+        tv.setText("Please enter the name of your diagnosis");
+        final EditText et = (EditText) view.findViewById(R.id.et_dialog);
+        et.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        et.setHint("Diagnosis name");
+        customOtherName = "";
+        alert.setView(view);
+        alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                customOtherName = String.valueOf(et.getText());
+                dialog.dismiss();
+            }
+        });
+        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (customOtherName.matches("")) return;
+                other.setName(customOtherName);
                 notifyDataSetChanged();
             }
         });
@@ -421,7 +472,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
             selector = convertView.findViewById(R.id.cb_multi_select);
 
             ((CheckBox) selector).setChecked(selected);
-            Log.d("id", String.valueOf(id));
             if(groupPosition == chronicDiseaseId && id == 47) {
                 setupEndochrineTooltip(convertView);
             }

@@ -72,7 +72,6 @@ public class CentreSelectionActivity extends SuperActivity {
                 Centre facility = adapter.getItem(position);
                 writeLastUsedFacility(facility.getId());
                 writeLastUsedFacilityName(facility.getName());
-                // TODO record ID
                 startActivity(new Intent(CentreSelectionActivity.this, ClinicianSelectionActivity.class));
             }
         });
