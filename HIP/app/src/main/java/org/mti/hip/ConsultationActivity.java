@@ -31,8 +31,6 @@ public class ConsultationActivity extends SuperActivity {
     private EditText opdNum;
     private EditText age;
     private StringBuilder errorBuilder;
-    private Button validationToggle;
-    private boolean validate = false;
     private int backPressCount;
     private boolean editMode;
 
@@ -60,8 +58,6 @@ public class ConsultationActivity extends SuperActivity {
             }
         });
 
-
-        setupDebugButton();
     }
 
     @Override
@@ -76,22 +72,6 @@ public class ConsultationActivity extends SuperActivity {
         editMode = false;
     }
 
-    private void setupDebugButton() {
-        validationToggle = (Button) findViewById(R.id.bt_consultation_debug);
-        validationToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validate) {
-                    validate = false;
-                    validationToggle.setText("Enable validation");
-                } else {
-                    validate = true;
-                    validationToggle.setText("Disable validation");
-                }
-            }
-        });
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -104,10 +84,8 @@ public class ConsultationActivity extends SuperActivity {
         switch (item.getItemId()) {
             case R.id.action_next:
                 errorBuilder = new StringBuilder();
-                if (valid() && validate) {
+                if (valid()) {
                     startDiagnosisActivity();
-                } else if(!validate) {
-                    startDiagnosisActivity(); // debug bypass of validator
                 } else {
                     alert.showAlert("Errors found", errorBuilder.toString());
                 }

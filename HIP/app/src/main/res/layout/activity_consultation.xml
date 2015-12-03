@@ -193,10 +193,4 @@
         android:layout_alignParentBottom="true"
         android:text="@string/tooltip_morbidity_revisit" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/bt_consultation_debug"
-        android:layout_above="@id/tv_revisit_def"
-        android:text="Enable validation"/>
 </RelativeLayout>
