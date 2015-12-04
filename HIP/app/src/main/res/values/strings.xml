@@ -74,5 +74,15 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="info">Info</string>
     <string name="errors_found">Errors found</string>
     <string name="ru_sure_u_wanna_delete_visit">Are you sure you want to delete this visit?</string>
+    <string name="error">Error</string>
+    <string name="request_2register_no_succeed">The request to register this device didn\'t succeed: Error data</string>
+    <string name="updating_lists">Updating lists</string>
+    <string name="ur_device_disabled">Your device is currently disabled.</string>
+    <string name="plz_meet_data_clerk">Please meet with your data clerk to resolve this.</string>
+    <string name="there_r">There are</string>
+    <string name="visits_not_sent_yet">visits that have not been sent yet.</string>
+    <string name="press_back_2_exit">Press back again to exit</string>
+    <string name="uhave_sent">You have sent</string>
+    <string name="visits_2day">visits today.</string>
 
 </resources>

@@ -197,7 +197,7 @@ public class DashboardActivity extends SuperActivity {
                     getResponseString(r);
                     writeVersionCode();
                 } else {
-                    alert.showAlert("Error", "The request to register this device didn't succeed: Error data:\n" + e.getMessage());
+                    alert.showAlert(getString(R.string.error), getString(R.string.request_2register_no_succeed) + ":\n" + e.getMessage());
                 }
                 progressDialog.dismiss();
             }
@@ -220,7 +220,7 @@ public class DashboardActivity extends SuperActivity {
         // TODO generally works but needs refactoring to chain the requests. Biggest problem is any exceptions each create their own popup
         progressDialog.hide();
         final ProgressDialog localProgress = new ProgressDialog(this);
-        localProgress.setMessage("Updating lists");
+        localProgress.setMessage(getString(R.string.updating_lists));
         localProgress.setCancelable(false);
         localProgress.show();
         new NetworkTask(HttpClient.diagnosisEndpoint, HttpClient.get) {
@@ -378,7 +378,7 @@ public class DashboardActivity extends SuperActivity {
 
         // TODO add colors to status messages
 
-        status.setText("You have sent " + sent + " visits today.");
+        status.setText(getString(R.string.uhave_sent) + " " + sent + " " + getString(R.string.visits_2day));
 
         int totalUnsynced;
 
@@ -392,12 +392,12 @@ public class DashboardActivity extends SuperActivity {
                 status.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.colorPrimary));
             }
 
-            status.append("\nThere are " + totalUnsynced + " visits that have not been " +
-                    "sent yet. \nPlease meet with your data clerk to resolve this.");
+            status.append("\n" + getString(R.string.there_r) + " " + totalUnsynced + " " + getString(R.string.visits_not_sent_yet) +
+                    " \n" + getString(R.string.plz_meet_data_clerk));
 
         }
         if (!readDeviceStatus().matches(deviceActiveCode)) {
-            status.append("\nYour device is currently disabled.");
+            status.append("\n" + getString(R.string.ur_device_disabled));
         }
 
 
@@ -406,7 +406,7 @@ public class DashboardActivity extends SuperActivity {
     @Override
     public void onBackPressed() {
         backPressCount++;
-        Toast.makeText(DashboardActivity.this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        Toast.makeText(DashboardActivity.this, getString(R.string.press_back_2_exit), Toast.LENGTH_SHORT).show();
         if (backPressCount == 2) {
             super.onBackPressed();
         }
