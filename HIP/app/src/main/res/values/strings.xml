@@ -65,5 +65,11 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="is_offline">You are currently OFF-LINE</string>
     <string name="register_device">Register Device</string>
     <string name="start">Start</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_staff_member">Delete Staff Member?</string>
+    <string name="want_to_remove_staff">Do you want to remove this staff member from the list?</string>
+    <string name="your_name">Your name</string>
+    <string name="okay">Okay</string>
 
 </resources>
