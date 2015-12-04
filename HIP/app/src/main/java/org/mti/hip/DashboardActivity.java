@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.content.ContextCompat;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mti.hip.model.DeviceStatusResponse;
-import org.mti.hip.model.Diagnosis;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
@@ -27,6 +28,7 @@ import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 public class DashboardActivity extends SuperActivity {
@@ -40,11 +42,24 @@ public class DashboardActivity extends SuperActivity {
     private int backPressCount;
     private NetworkBroadcastReceiver networkBroadcastReceiver;
     private int versionCode;
+    private String tallyJson;
+    private Tally tally;
+    private boolean needsSync;
+    private TextView manualSync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        manualSync = (TextView) findViewById(R.id.bt_manual_sync);
+
+        manualSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendTally();
+            }
+        });
 
         findViewById(R.id.bt_sign_out).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,12 +72,16 @@ public class DashboardActivity extends SuperActivity {
         });
 
 
-        if (getIntent().getStringExtra(EXTRA_MSG) != null) {
-            Toast.makeText(this, getIntent().getStringExtra(EXTRA_MSG), Toast.LENGTH_LONG).show();
-        }
+//        if (getIntent().getStringExtra(EXTRA_MSG) != null) {
+//            Toast.makeText(this, getIntent().getStringExtra(EXTRA_MSG), Toast.LENGTH_LONG).show();
+//        }
         findViewById(R.id.new_visit).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!isConnected()) {
+                    startVisit();
+                    return;
+                }
                 if (readDeviceStatus().matches(deviceActiveCode)) {
                     startVisit();
                 } else {
@@ -72,11 +91,7 @@ public class DashboardActivity extends SuperActivity {
                         public void getResponseString(String response) {
                             DeviceStatusResponse deviceStatusResponse = (DeviceStatusResponse) getJsonManagerInstance().read(response, DeviceStatusResponse.class);
                             writeDeviceStatus(deviceStatusResponse.getStatus());
-                            if(deviceStatusResponse.getStatus().matches(deviceActiveCode)) {
-                                startVisit();
-                            } else {
-                                alert.showAlert("Device disabled", "This device has been disabled. Please contact [placeholder] to have it activated.");
-                            }
+                            startVisit();
                         }
                     }.execute();
 
@@ -84,17 +99,6 @@ public class DashboardActivity extends SuperActivity {
             }
         });
 
-    }
-
-    private void startVisit() {
-        Visit visit = getStorageManagerInstance().newVisit();
-        visit.setVisitDate(new Date());
-        visit.setStaffMemberName(currentUserName);
-        visit.setDeviceId(StorageManager.getSerialNumber());
-        visit.setFacilityName(facilityName);
-        visit.setFacility(readLastUsedFacility());
-        VisitDiagnosisListAdapter.stiContactsTreated = -1;
-        startActivity(new Intent(DashboardActivity.this, ConsultationActivity.class));
     }
 
     @Override
@@ -110,30 +114,23 @@ public class DashboardActivity extends SuperActivity {
         }
         versionCode = pInfo.versionCode;
 
-        Log.d("test", String.valueOf(isServerConstantsSyncOverdue()));
 
-        if(readVersionCode() == 0 || readVersionCode() != versionCode) {
-            if(isConnected()) updateDeviceRegistration();
-        }
-
-        if(isServerConstantsSyncOverdue() && isConnected()) {
-            getServerConstants();
+        if (readVersionCode() == 0 || readVersionCode() != versionCode) {
+            if (isConnected()) updateDeviceRegistration();
         }
 
         final TextView connectivityStatus = (TextView) findViewById(R.id.dashboard_connectivity_status);
 
-        String tallyJsonIn = getStorageManagerInstance().readTallyToJsonString(this);
+        tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
 
-        // TODO delete Tally from after fully synced (all == 0 or 1?) and greater than 24 hours have passed
-
-        if(tallyJsonIn != null) {
+        if (tallyJson != null) {
             // make object from string
-            Tally tally = (Tally) getJsonManagerInstance().read(tallyJsonIn, Tally.class);
+            tally = (Tally) getJsonManagerInstance().read(tallyJson, Tally.class);
             getStorageManagerInstance().setTally(tally);
             if (!tally.isEmpty()) {
-                writeTallyToDisk(tally);
+                manageTally();
             }
-        } else { // no tally stored on disk so make a new one
+        } else { // no tally stored on disk so make a new one (will get written to disk on next visit)
             getStorageManagerInstance().setTally(new Tally());
         }
 
@@ -145,6 +142,13 @@ public class DashboardActivity extends SuperActivity {
                 int green = getResources().getColor(R.color.lightgreen);
                 int red = getResources().getColor(R.color.colorPrimary);
                 if (isConnected()) {
+                    if(needsSync) {
+                        manualSync.setVisibility(View.VISIBLE);
+                    }
+
+                    if (isServerConstantsSyncOverdue()) {
+                        getServerConstants();
+                    }
                     connectivityStatus.setText(R.string.is_online);
                     connectivityStatus.setTextColor(green);
                 } else {
@@ -163,6 +167,17 @@ public class DashboardActivity extends SuperActivity {
         super.onPause();
     }
 
+    private void startVisit() {
+        Visit visit = getStorageManagerInstance().newVisit();
+        visit.setVisitDate(new Date());
+        visit.setStaffMemberName(currentUserName);
+        visit.setDeviceId(StorageManager.getSerialNumber());
+        visit.setFacilityName(facilityName);
+        visit.setFacility(readLastUsedFacility());
+        VisitDiagnosisListAdapter.stiContactsTreated = -1;
+        startActivity(new Intent(DashboardActivity.this, ConsultationActivity.class));
+    }
+
     private void updateDeviceRegistration() {
 
         String serialNumber = StorageManager.getSerialNumber();
@@ -178,11 +193,9 @@ public class DashboardActivity extends SuperActivity {
             @Override
             protected void onPostExecute(String r) {
 
-                if(e == null) {
+                if (e == null) {
                     getResponseString(r);
-                    // TODO make status response and update stat
                     writeVersionCode();
-//                    writeDeviceStatus();
                 } else {
                     alert.showAlert("Error", "The request to register this device didn't succeed: Error data:\n" + e.getMessage());
                 }
@@ -258,11 +271,89 @@ public class DashboardActivity extends SuperActivity {
         }.execute();
     }
 
+    private void sendTally() {
+        new NetworkTask(tallyJson, HttpClient.tallyEndpoint, HttpClient.post) {
 
 
-    private void writeTallyToDisk(Tally tally) {
+            @Override
+            public void getResponseString(String response) {
+                Log.d("Visit response string", response);
+                // update the tally - if tally response contains status == 4 then device is disabled
+                Tally serverTally = (Tally) getJsonManagerInstance().read(response, Tally.class);
+                for(Visit serverVisit : serverTally) {
+                    if(serverVisit.getStatus() == visitStatusDisabled) {
+                        Log.d("testing 4", "device disabled");
+                        writeDeviceStatus("D");
+                    }
+                    for(Visit visit : tally) {
+                        visit.setStatus(serverVisit.getStatus());
+                    }
+                }
+                manageTally();
+            }
 
-        // TODO refactor this is messy (also... App sends "isSent" to the server and this should eventually be removed but will require some other serialization method
+        }.execute();
+    }
+
+
+    private void manageTally() {
+
+        // TODO refactor: this is messy (also... App sends "sent" bool to the server and this should eventually be removed but will require some other serialization method
+
+        // TODO update messages to new format
+
+        int sent = 0;
+        int total = 0;
+        int warningCount = 0;
+        Iterator<Visit> iter = tally.iterator();
+        while (iter.hasNext()) {
+            Visit visit = iter.next();
+            if (DateUtils.isToday(visit.getVisitDate().getTime())) {
+                total++;
+                switch (visit.getStatus()) {
+                    case visitStatusDisabled:
+                        break;
+                    case visitStatusFailure:
+                        break;
+                    case visitStatusDuplicate:
+                        sent++;
+                        break;
+                    case visitStatusSuccess:
+                        sent++;
+                        break;
+                    case visitStatusUnsent:
+                        break;
+                }
+
+            } else {
+                // not today
+                switch (visit.getStatus()) {
+                    case visitStatusDisabled:
+                        warningCount++;
+                        break;
+                    case visitStatusFailure:
+                        warningCount++;
+                        break;
+                    case visitStatusDuplicate:
+                        iter.remove();
+                        break;
+                    case visitStatusSuccess:
+                        iter.remove();
+                        break;
+                    case visitStatusUnsent:
+                        warningCount++;
+                        break;
+                }
+            }
+        }
+
+        if(sent != total || warningCount > 0) {
+            needsSync = true;
+            if(isConnected()) manualSync.setVisibility(View.VISIBLE);
+        } else {
+            manualSync.setVisibility(View.GONE);
+            needsSync = false;
+        }
 
         // make tally string
         String tallyJsonOut = getJsonManagerInstance().writeValueAsString(tally);
@@ -270,32 +361,46 @@ public class DashboardActivity extends SuperActivity {
         // write to file
         getStorageManagerInstance().writeTallyJsonToFile(tallyJsonOut, this);
 
-        // make tally string from file
-        String tallyJsonIn = getStorageManagerInstance().readTallyToJsonString(this);
-
-        // make object from string
-        Tally tallyFromJson = (Tally) getJsonManagerInstance().read(tallyJsonIn, Tally.class);
-        boolean fullySynced = true;
-        int sent = 0;
-        int total = 0;
-        for (Visit visit : tallyFromJson) {
-            total++;
-            if(visit.getStatus() == visitStatusSuccess || visit.getStatus() == visitStatusDuplicate) {
-                sent++;
-            } else {
-                // we're not fully synced
-                fullySynced = false;
-            }
-         }
-
-        Log.d("fully synced", String.valueOf(fullySynced));
 
         TextView status = (TextView) findViewById(R.id.tv_tally_status);
-        status.setText("You have sent " + sent + " out of " + total + " visits");
-        Log.d("test", readDeviceStatus());
-        if(!readDeviceStatus().matches("A")) {
+//        writeLastTallyFileSyncTime();
+//        Log.d("test", "Last sync is today?: " + String.valueOf(DateUtils.isToday(readLastTallyFileSyncTime())));
+
+//        if(fullySynced && isTallyFileSyncOverdue()) {
+//            Log.w("DELETE TALLY", "LOG MSG THAT DELETE TALLY == TRUE");
+//            Tally blankTally = new Tally();
+//            getStorageManagerInstance().setTally(blankTally);
+//            getStorageManagerInstance().deleteTallyFile(this);
+//            status.setText("A new tally has been created.");
+//        } else if (isTallyFileSyncOverdue()) {
+//            // warning state to get fully synced
+//        } else {
+
+        // TODO add colors to status messages
+
+        status.setText("You have sent " + sent + " visits today.");
+
+        int totalUnsynced;
+
+        if(sent != total) {
+            totalUnsynced = total - sent;
+            // yellow
+            status.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.colorPrimaryDark));
+
+            if(warningCount > 0) {
+                totalUnsynced += warningCount;
+                status.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.colorPrimary));
+            }
+
+            status.append("\nThere are " + totalUnsynced + " visits that have not been " +
+                    "sent yet. \nPlease meet with your data clerk to resolve this.");
+
+        }
+        if (!readDeviceStatus().matches(deviceActiveCode)) {
             status.append("\nYour device is currently disabled.");
         }
+
+
     }
 
     @Override
@@ -327,7 +432,6 @@ public class DashboardActivity extends SuperActivity {
     }
 
     /**
-     *
      * @return The last date/time (as UTC milliseconds from the epoch) at which the tally file was successfully sent up to the server
      */
     public Long readLastTallyFileSyncTime() {
@@ -335,7 +439,6 @@ public class DashboardActivity extends SuperActivity {
     }
 
     /**
-     *
      * @return true if the last time the tally file was successfully sent up to the server was too long ago
      */
     public boolean isTallyFileSyncOverdue() {
@@ -355,7 +458,6 @@ public class DashboardActivity extends SuperActivity {
     }
 
     /**
-     *
      * @return The last date/time (as UTC milliseconds from the epoch) at which the constants were successfully downloaded from the server
      */
     public Long readLastServerConstantsSyncTime() {
@@ -363,7 +465,6 @@ public class DashboardActivity extends SuperActivity {
     }
 
     /**
-     *
      * @return true if the last time the constants were successfully downloaded from the server was too long ago
      */
     public boolean isServerConstantsSyncOverdue() {

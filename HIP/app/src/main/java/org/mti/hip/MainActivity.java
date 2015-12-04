@@ -1,6 +1,7 @@
 package org.mti.hip;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
@@ -95,7 +96,29 @@ public class MainActivity extends SuperActivity {
                                startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
                                finish();
                            } else {
-                               alert.showAlert("Device error", "This device hasn't been activated yet. Please set the device status to Active in the database.");
+//                               AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+//                               alert.setTitle("Permissions notice");
+//                               alert.setMessage("Visits can be entered " +
+//                                       "but they will not be submitted until the device has been activated by " +
+//                                       "the device administrator.");
+//                               alert.setNegativeButton("Okay", new DialogInterface.OnClickListener() {
+//                                   @Override
+//                                   public void onClick(DialogInterface dialog, int which) {
+//                                       startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
+//                                       finish();
+//                                       dialog.dismiss();
+//                                   }
+//                               });
+//                               alert.show();
+                               DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                                   @Override
+                                   public void onClick(DialogInterface dialog, int which) {
+                                       startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
+                                       finish();
+                                       dialog.dismiss();
+                                   }
+                               };
+                               alert.showPermissionsAlert(listener);
                            }
                            localProgress.dismiss();
                        }

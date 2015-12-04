@@ -42,7 +42,7 @@ public class AlertDialogManager {
             public void onClick(DialogInterface dialog, int which) {
                 Intent sendIntent = new Intent(Intent.ACTION_SEND);
                 sendIntent.setType("text/plain");
-                sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{context.getString(R.string.error_email_address) });
+                sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{context.getString(R.string.error_email_address)});
                 sendIntent.putExtra(Intent.EXTRA_SUBJECT, title);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, message);
                 context.startActivity(sendIntent);
@@ -52,10 +52,18 @@ public class AlertDialogManager {
         });
 
 
-
         alert.show();
     }
 
+    public void showPermissionsAlert(DialogInterface.OnClickListener listener) {
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(context);
+        alert.setTitle("Permissions notice");
+        alert.setMessage("Visits can be entered " +
+                "but they will not be submitted until the device has been activated by " +
+                "the device administrator.");
+        alert.setNegativeButton("Okay", listener);
+        alert.show();
+    }
 
 
 }

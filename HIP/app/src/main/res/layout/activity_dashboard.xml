@@ -33,6 +33,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_tally_status"
+        android:gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_centerInParent="true"
         />
@@ -43,9 +47,24 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_tally_status"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/bt_manual_sync"
+        android:drawableLeft="@drawable/ic_sync"
+        android:text="Sync Now"
+        android:gravity="center_vertical"
+        style="@android:style/Widget.DeviceDefault.Button"
+        android:drawablePadding="4dp"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/dashboard_connectivity_status"
+        />
     <Button
         android:id="@+id/bt_sign_out"
         android:layout_width="wrap_content"
