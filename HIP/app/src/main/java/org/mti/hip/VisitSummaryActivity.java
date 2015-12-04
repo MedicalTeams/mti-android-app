@@ -103,7 +103,7 @@ public class VisitSummaryActivity extends SuperActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendVisit();
+                sendTally();
 
             }
         });
@@ -127,7 +127,7 @@ public class VisitSummaryActivity extends SuperActivity {
         }
     };
 
-    private void sendVisit() {
+    private void sendTally() {
         final ProgressDialog progDiag = progressDialog;
         progDiag.setCancelable(false);
 
@@ -189,7 +189,7 @@ public class VisitSummaryActivity extends SuperActivity {
         } else if (failures) {
             startDashboard("Some records were not processed and will be resent during the next upload.");
         } else {
-            startDashboard("Visit records processed.");
+            startDashboard("");
         }
 
     }
@@ -199,7 +199,7 @@ public class VisitSummaryActivity extends SuperActivity {
             Log.e("Visit error string", r);
         }
 //        visit.setSent(false);
-        startDashboard("VISITS DID NOT SEND. Soon you will be able to resend failed visits.");
+        startDashboard("");
     }
 
     private void startDashboard(String message) {
@@ -250,17 +250,19 @@ public class VisitSummaryActivity extends SuperActivity {
     private void addVisitData(Visit visit) {
         Context c = VisitSummaryActivity.this;
 
+        TextView age = new TextView(c);
+
         int ageVal = visit.getPatientAgeMonths();
         String ageString;
         if (visit.isAgeMonths()) {
             ageString = String.valueOf(ageVal);
+            age.setText("Age (Months): ");
         } else {
             ageString = String.valueOf(ageVal / 12);
+            age.setText("Age (Years): ");
         }
-        TextView age = new TextView(c);
-        age.setText("Age: ");
-        age.append(ageString);
 
+        age.append(ageString);
         TextView gender = new TextView(c);
         gender.setText("Gender: ");
         if (visit.getGender() == 'M') {

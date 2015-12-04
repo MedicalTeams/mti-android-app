@@ -51,7 +51,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="error_status_type">You must select a Status type - National or Refugee</string>
     <string name="error_age">You must enter an age in years or months</string>
     <string name="error_age_range">Please enter a number between 1–150</string>
-    <string name="error_age_range_months">Please enter a number between 1–11</string>
+    <string name="error_age_range_months">Please enter a number between 1–24</string>
     <string name="error_visit_type">You must select a visit type - New Visit or Revisit</string>
     <string name="error_gender">You must select a Sex - Male or Female</string>
     <string name="powered_by">HIP powered by</string>
