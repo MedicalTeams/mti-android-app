@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.mti.hip.R;
 import org.mti.hip.SuperActivity;
@@ -368,6 +366,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         switch (groupPosition) {
             case diagId:
                 child = (ArrayList<Diagnosis>) children.get(groupPosition);
+                break;
             default:
                 child = (ArrayList<Supplemental>) children.get(groupPosition);
 
@@ -391,6 +390,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         switch (groupPosition) {
             case diagId:
                 child = (ArrayList<Diagnosis>) children.get(groupPosition);
+                break;
             default:
                 child = (ArrayList<Supplemental>) children.get(groupPosition);
 

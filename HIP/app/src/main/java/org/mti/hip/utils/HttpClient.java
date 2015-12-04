@@ -31,7 +31,6 @@ public class HttpClient {
     public static final String get = "GET";
     public static final String put = "PUT";
 
-    // TODO update to new /visits endpoint without facility
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
