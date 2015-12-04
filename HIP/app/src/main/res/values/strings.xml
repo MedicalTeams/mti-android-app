@@ -71,5 +71,8 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="want_to_remove_staff">Do you want to remove this staff member from the list?</string>
     <string name="your_name">Your name</string>
     <string name="okay">Okay</string>
+    <string name="info">Info</string>
+    <string name="errors_found">Errors found</string>
+    <string name="ru_sure_u_wanna_delete_visit">Are you sure you want to delete this visit?</string>
 
 </resources>
