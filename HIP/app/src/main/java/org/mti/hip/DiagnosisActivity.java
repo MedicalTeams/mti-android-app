@@ -52,7 +52,7 @@ public class DiagnosisActivity extends SuperActivity {
                 if (valid()) {
                     startActivity(new Intent(this, VisitSummaryActivity.class));
                 } else {
-                    alert.showAlert("Invalid visit", errorBuilder.toString());
+                    alert.showAlert(getString(R.string.invalid_visit), errorBuilder.toString());
                 }
                 return true;
             default:
@@ -113,7 +113,7 @@ public class DiagnosisActivity extends SuperActivity {
 
         } // end of groups loop
         if (!hadSomethingChecked) {
-            errorBuilder.append("You must select at least one diagnosis");
+            errorBuilder.append(getString(R.string.u_must_select_a_dx));
             return false;
         }
         return valid;

@@ -84,5 +84,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="press_back_2_exit">Press back again to exit</string>
     <string name="uhave_sent">You have sent</string>
     <string name="visits_2day">visits today.</string>
+    <string name="invalid_visit">Invalid visit</string>
+    <string name="u_must_select_a_dx">You must select at least one diagnosis</string>
 
 </resources>
