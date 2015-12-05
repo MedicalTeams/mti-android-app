@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_new_visit">输入访问记录</string>
+    <string name="dashboard">仪表板</string>
+    <string name="edit_location_slash_name">编辑位置/名称</string>
+    <string name="powered_by">HIP 供电</string>
+    <string name="is_online">您当前在线</string>
+    <string name="is_offline">您目前处于离线</string>
+</resources>
