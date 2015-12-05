@@ -113,5 +113,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="status">"Status: "</string>
     <string name="age_colon">"Age: "</string>
     <string name="sex_colon">"Sex: "</string>
+    <string name="health_info_pgm">Health Information Program</string>
+    <string name="sync_now">Sync Now</string>
 
 </resources>
