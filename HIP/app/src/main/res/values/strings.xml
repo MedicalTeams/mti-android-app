@@ -109,5 +109,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="no_of_contacts_treated">Number of Contacts Treated</string>
     <string name="plz_enter_dx_name">Please enter the name of your diagnosis</string>
     <string name="dx_name">Diagnosis name</string>
+    <string name="type_of_visit">"Type of Visit: "</string>
+    <string name="status">"Status: "</string>
+    <string name="age_colon">"Age: "</string>
+    <string name="sex_colon">"Sex: "</string>
 
 </resources>
