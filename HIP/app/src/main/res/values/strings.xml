@@ -90,5 +90,17 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="version_code">Version code</string>
     <string name="no_network">No network</string>
     <string name="plz_connect2_internet_ntry_again">Please connect to the internet and try again</string>
+    <string name="dx_summary">Diagnosis Summary</string>
+    <string name="injury_location">Injury Location</string>
+    <string name="ur_device_has_been_disabled">Your device has been disabled and will need to be activated by the administrator in order to process its visits.</string>
+    <string name="some_recs_not_processed">Some records were not processed and will be resent during the next upload.</string>
+    <string name="age">Age</string>
+    <string name="months">Months</string>
+    <string name="years">Years</string>
+    <string name="gender">Gender</string>
+    <string name="staff_member">Staff member</string>
+    <string name="center">Centre</string>
+    <string name="not_recorded">Not recorded</string>
+    <string name="consultation_summary">Consultation Summary</string>
 
 </resources>

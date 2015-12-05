@@ -64,8 +64,7 @@ public class MainActivity extends SuperActivity {
         }
         TextView version = (TextView) findViewById(R.id.tv_version);
         versionCode = String.valueOf(pInfo.versionCode);
-        String versionCodeLbl = getString(R.string.version_code);
-        version.setText(versionCodeLbl + ": " + versionCode);
+        version.setText(getString(R.string.version_code) + ": " + versionCode);
 
         btRegister = (Button) findViewById(R.id.register);
         btRegister.setOnClickListener(new View.OnClickListener() {
