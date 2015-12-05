@@ -106,5 +106,8 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="send_report">Send Report</string>
     <string name="permissions_notice">Permissions notice</string>
     <string name="visits_can_be_entered">Visits can be entered but they will not be submitted until the device has been activated by the device administrator.</string>
+    <string name="no_of_contacts_treated">Number of Contacts Treated</string>
+    <string name="plz_enter_dx_name">Please enter the name of your diagnosis</string>
+    <string name="dx_name">Diagnosis name</string>
 
 </resources>

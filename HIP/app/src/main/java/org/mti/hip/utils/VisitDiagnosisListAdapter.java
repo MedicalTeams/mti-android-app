@@ -235,9 +235,9 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         tv.setText(context.getString(R.string.tooltip_morbidity_sti_contacts));
         final EditText et = (EditText) view.findViewById(R.id.et_dialog);
         et.setInputType(InputType.TYPE_CLASS_NUMBER);
-        et.setHint("Number of Contacts Treated");
+        et.setHint(getString(R.string.no_of_contacts_treated));
         alert.setView(view);
-        alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -266,13 +266,13 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         LayoutInflater inflater = context.getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_edittext, null);
         TextView tv = (TextView) view.findViewById(R.id.dialog_message_text);
-        tv.setText("Please enter the name of your diagnosis");
+        tv.setText(getString(R.string.plz_enter_dx_name));
         final EditText et = (EditText) view.findViewById(R.id.et_dialog);
         et.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-        et.setHint("Diagnosis name");
+        et.setHint(getString(R.string.dx_name));
         customOtherName = "";
         alert.setView(view);
-        alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 customOtherName = String.valueOf(et.getText());
@@ -321,13 +321,13 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         LayoutInflater inflater = context.getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_edittext, null);
         TextView tv = (TextView) view.findViewById(R.id.dialog_message_text);
-        tv.setText("Please enter the name of your diagnosis");
+        tv.setText(getString(R.string.plz_enter_dx_name));
         final EditText et = (EditText) view.findViewById(R.id.et_dialog);
         et.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-        et.setHint("Diagnosis name");
+        et.setHint(getString(R.string.dx_name));
         customOtherName = "";
         alert.setView(view);
-        alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 customOtherName = String.valueOf(et.getText());
@@ -511,7 +511,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         tooltip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.alert.showAlert("Info", context.getString(R.string.tooltip_morbidity_endocrine_metabolic));
+                context.alert.showAlert(getString(R.string.info), context.getString(R.string.tooltip_morbidity_endocrine_metabolic));
             }
         });
     }
