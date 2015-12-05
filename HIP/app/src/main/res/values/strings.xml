@@ -102,5 +102,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="center">Centre</string>
     <string name="not_recorded">Not recorded</string>
     <string name="consultation_summary">Consultation Summary</string>
+    <string name="oops_something_wrong">Oops! Something went wrong.</string>
+    <string name="send_report">Send Report</string>
+    <string name="permissions_notice">Permissions notice</string>
+    <string name="visits_can_be_entered">Visits can be entered but they will not be submitted until the device has been activated by the device administrator.</string>
 
 </resources>

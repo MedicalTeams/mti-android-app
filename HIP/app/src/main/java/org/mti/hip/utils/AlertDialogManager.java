@@ -22,7 +22,7 @@ public class AlertDialogManager {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle(title);
         alert.setMessage(message);
-        alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(context.getString(R.string.okay), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -32,12 +32,12 @@ public class AlertDialogManager {
     }
 
     public void showErrorReport(final String message) {
-        final String title = "Oops! Something went wrong.";
+        final String title = context.getString(R.string.oops_something_wrong);
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setCancelable(false);
         alert.setTitle(title);
         alert.setMessage(message);
-        alert.setPositiveButton("Send Report", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(context.getString(R.string.send_report), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent sendIntent = new Intent(Intent.ACTION_SEND);
@@ -57,11 +57,9 @@ public class AlertDialogManager {
 
     public void showPermissionsAlert(DialogInterface.OnClickListener listener) {
         android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(context);
-        alert.setTitle("Permissions notice");
-        alert.setMessage("Visits can be entered " +
-                "but they will not be submitted until the device has been activated by " +
-                "the device administrator.");
-        alert.setNegativeButton("Okay", listener);
+        alert.setTitle(context.getString(R.string.permissions_notice));
+        alert.setMessage(context.getString(R.string.visits_can_be_entered));
+        alert.setNegativeButton(context.getString(R.string.okay), listener);
         alert.show();
     }
 
