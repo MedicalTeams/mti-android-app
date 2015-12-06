@@ -102,7 +102,11 @@ public class ConsultationActivity extends SuperActivity {
     private boolean valid() {
         boolean valid = true;
         if (editTextHasContent(opdNum)) {
-            visit.setOPD(Integer.valueOf(opdNum.getText().toString()));
+            try {
+                visit.setOPD(Long.valueOf(opdNum.getText().toString()));
+            } catch (NumberFormatException e) {
+                alert.showAlert("Invalid number", "Please enter a valid number.");
+            }
         } // not worried about the else case since OPD# is optional
 
         if (editTextHasContent(age)) {

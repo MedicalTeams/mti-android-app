@@ -158,7 +158,7 @@
 
     <TextView
         android:id="@+id/tv_label_opd"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="18dp"
         android:layout_below="@+id/ll_consultation_entry"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="OPD #: "
@@ -170,7 +170,8 @@
     <EditText
         android:id="@+id/opd_number"
         android:layout_toRightOf="@id/tv_label_opd"
-        android:layout_width="64dp"
+        android:layout_width="100dp"
+        android:maxLength="12"
         android:layout_alignBaseline="@id/tv_label_opd"
         android:layout_height="wrap_content"
         android:inputType="number" />

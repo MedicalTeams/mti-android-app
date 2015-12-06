@@ -275,7 +275,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                customOtherName = String.valueOf(et.getText());
+                customOtherName = String.valueOf(et.getText().toString().trim());
                 dialog.dismiss();
             }
         });
@@ -330,7 +330,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                customOtherName = String.valueOf(et.getText());
+                customOtherName = String.valueOf(et.getText().toString().trim());
                 dialog.dismiss();
             }
         });

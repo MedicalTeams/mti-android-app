@@ -22,7 +22,7 @@ public class Visit {
     private int facility;
     private char gender;
     private int beneficiaryType;
-    private int OPD;
+    private long OPD;
     private int patientAgeMonths;
     private Boolean isRevisit = false;
     private HashSet<Diagnosis> patientDiagnosis = new HashSet<>();
@@ -72,11 +72,11 @@ public class Visit {
         this.beneficiaryType = beneficiaryType;
     }
 
-    public int getOPD() {
+    public long getOPD() {
         return OPD;
     }
 
-    public void setOPD(int OPD) {
+    public void setOPD(long OPD) {
         this.OPD = OPD;
     }
 

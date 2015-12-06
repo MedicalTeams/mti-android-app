@@ -130,7 +130,7 @@ public class ClinicianSelectionActivity extends SuperActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (editTextHasContent(et)) {
-                    String input = et.getText().toString();
+                    String input = et.getText().toString().trim();
                     User user = new User();
                     user.setName(input);
                     userList.add(user);
