@@ -128,6 +128,10 @@ public class VisitSummaryActivity extends SuperActivity {
     };
 
     private void sendTally() {
+        if(!isConnected()) {
+            processUnsuccessfulResponse("");
+            return;
+        }
         final ProgressDialog progDiag = progressDialog;
         progDiag.setCancelable(false);
 
