@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">HIP</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="title_item_list">Artículos</string>
+    <string name="title_item_detail">Detalle del artículo</string>
+    <string name="sign_in">Ingresar</string>
+    <string name="other">Otro</string>
+    <string name="visit_new">Nuevo Visitas</string>
+    <string name="visit_revisit">Revisita</string>
+    <string name="injury_location_home">Casa</string>
+    <string name="header_diagnosis">Diagnóstico</string>
+    <string name="next">Siguiente</string>
+    <string name="header_injury_location">Lesión Localización</string>
+    <string name="male">Masculino</string>
+    <string name="female">Hembra</string>
+    <string name="national">Nacional</string>
+    <string name="refugee">Refugiado</string>
+    <string name="revisit">Volver a visitar</string>
+    <string name="visit">Visita</string>
+    <string name="create_new_visit">Entrar Visita Grabar</string>
+    <string name="choose_your_name">Escoger tu nombre</string>
+    <string name="select_facility">Seleccionar tu Centro de salud</string>
+    <string name="select_location">Seleccionar tu Localización</string>
+    <string name="demographics">Demografía</string>
+    <string name="dashboard">Tablero</string>
+    <string name="visit_summary">Visita Resumen</string>
+    <string name="visit_entry">Visita Entrada</string>
+    <string name="submit">Enviar</string>
+    <string name="sign_out">Desconectarse</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <!-- Start: Tool Tips -->
+    <string name="tooltip_morbidity_revisit">"NOTA:
+Referirse a directrices for definitions of New Visit and Revisit.
+Solo uno visit record should be entered for each patient visit.
+Un paciente with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp; Revisit criteria) should be recorded as a NEW visit."</string>
+    <string name="tooltip_morbidity_endocrine_metabolic">Incluye DM</string>
+    <string name="tooltip_morbidity_sti_contacts">Grabar the number of contacts treated for the primary patient. Also ensure a visit record is completed for each contact treated.</string>
+    <string name="tooltip_opd_number">Entrar paciente OPD number if available</string>
+    <string name="tooltip_injury_mode">Seleccionar ambos mode and location</string>
+    <!-- End: Tool Tips -->
+    <!-- Start: Prompts -->
+    <string name="prompt_hiv">HIV Consejo needed.</string>
+    <string name="prompt_assault">Si SGBV consult to go to policía.</string>
+    <string name="prompt_outbreak_potential">Enfermedad with outbreak potential. Refer to weekly alert thresholds.</string>
+    <string name="prompt_threshold_reached">Semanal la epidemia threshold reached.  Report to clinic.</string>
+    <string name="edit">Editar</string>
+    <!-- End: Prompts -->
+    <string name="error_email_address">hip@medicalteams.org</string>
+    <string name="consultation">Consulta</string>
+    <string name="contacts_treated">Contactos Treated</string>
+    <string name="error_status_type">Debes seleccionar a Status type - National or Refugee</string>
+    <string name="error_age">Debe ingresar an age in years or months</string>
+    <string name="error_age_range">Por favor entra a number between 1–150</string>
+    <string name="error_age_range_months">Por favor entra a number between 1–11</string>
+    <string name="error_visit_type">Debe seleccionar a visit type - New Visit or Revisit</string>
+    <string name="error_gender">Debe seleccionar a Sex - Male or Female</string>
+    <string name="powered_by">HIP energizado por</string>
+    <string name="edit_location_slash_name">Editar Location/Name</string>
+    <string name="and">y</string>
+    <string name="enter_your_name">Introduzca su nombre</string>
+    <string name="add_new_staff_member">Añadir Nuevo Miembro del Personal</string>
+    <string name="last_used">Último Utilizado</string>
+    <!-- Connectivity status messages -->
+    <string name="is_online">Usted está en línea</string>
+    <string name="is_offline">Usted está en desconectado</string>
+    <string name="register_device">Registrar Dispositivo</string>
+    <string name="start">Empezar</string>
+
+</resources>
