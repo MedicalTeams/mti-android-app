@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:padding="32dp"
-        android:text="Health Information Program"
+        android:text="@string/health_info_pgm"
         android:id="@+id/logo"
         android:background="@color/colorPrimary"
         android:textColor="#FFF"
@@ -57,7 +57,7 @@
         android:layout_marginLeft="16dp"
         android:id="@+id/bt_manual_sync"
         android:drawableLeft="@drawable/ic_sync"
-        android:text="Sync Now"
+        android:text="@string/sync_now"
         android:gravity="center_vertical"
         style="@android:style/Widget.DeviceDefault.Button"
         android:drawablePadding="4dp"
