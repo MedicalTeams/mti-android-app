@@ -78,12 +78,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="request_2register_no_succeed">The request to register this device didn\'t succeed: Error data</string>
     <string name="updating_lists">Updating lists</string>
     <string name="ur_device_disabled">Your device is currently disabled.</string>
-    <string name="plz_meet_data_clerk">Please meet with your data clerk to resolve this.</string>
-    <string name="there_r">There are</string>
-    <string name="visits_not_sent_yet">visits that have not been sent yet.</string>
     <string name="press_back_2_exit">Press back again to exit</string>
     <string name="uhave_sent">You have sent</string>
-    <string name="visits_2day">visits today.</string>
+    <string name="today_period">today.</string>
     <string name="invalid_visit">Invalid visit</string>
     <string name="u_must_select_a_dx">You must select at least one diagnosis</string>
     <string name="plz_wait">Please wait</string>
@@ -115,5 +112,20 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="sex_colon">"Sex: "</string>
     <string name="health_info_pgm">Health Information Program</string>
     <string name="sync_now">Sync Now</string>
-
+    <plurals name="visitOrVisits">
+        <item quantity="one">1 visit </item>
+        <item quantity="other">%d visits </item>
+    </plurals>
+    <plurals name="sent_visits">
+        <item quantity="other">You have sent %d visits today.</item>
+        <item quantity="one">You have sent 1 visit today.</item>
+    </plurals>
+    <plurals name="failed_visits">
+        <item quantity="other">\nThere are %d visits that have not been sent yet.\n
+        Please meet with your data clerk to resolve this.</item>
+        <item quantity="one">\nThere is 1 visit that has not been sent yet.\n
+        Please meet with your data clerk to resolve this.</item>
+    </plurals>
 </resources>
+
+
