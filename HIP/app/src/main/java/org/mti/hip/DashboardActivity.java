@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -280,15 +281,38 @@ public class DashboardActivity extends SuperActivity {
                 Log.d("Visit response string", response);
                 // update the tally - if tally response contains status == 4 then device is disabled
                 Tally serverTally = (Tally) getJsonManagerInstance().read(response, Tally.class);
+                int success = 0;
+                int successPastVisit = 0;
+                int warnings = 0;
                 for(Visit serverVisit : serverTally) {
                     if(serverVisit.getStatus() == visitStatusDisabled) {
-                        Log.d("testing 4", "device disabled");
                         writeDeviceStatus("D");
+                    }
+                    if(serverVisit.getStatus() == visitStatusSuccess || serverVisit.getStatus() == visitStatusDuplicate) {
+                        if(DateUtils.isToday(serverVisit.getVisitDate().getTime())) {
+                            success++;
+                        } else {
+                            successPastVisit++;
+                        }
+                    } else {
+                        warnings++;
                     }
                     for(Visit visit : tally) {
                         visit.setStatus(serverVisit.getStatus());
                     }
                 }
+
+                StringBuilder resultsMessageBuilder = new StringBuilder();
+                resultsMessageBuilder.append("Visits for today successfully recorded: " + success + "\n");
+                if(successPastVisit > 0) {
+                    resultsMessageBuilder.append("Visits for past days successfully recorded: " + successPastVisit);
+                }
+                if(warnings > 0) {
+                    resultsMessageBuilder.append("Records that failed and will be sent again during next sync: " + warnings);
+                }
+
+                alert.showAlert("Sync results", resultsMessageBuilder.toString());
+
                 manageTally();
             }
 
@@ -308,8 +332,9 @@ public class DashboardActivity extends SuperActivity {
         Iterator<Visit> iter = tally.iterator();
         while (iter.hasNext()) {
             Visit visit = iter.next();
+            total++;
             if (DateUtils.isToday(visit.getVisitDate().getTime())) {
-                total++;
+
                 switch (visit.getStatus()) {
                     case visitStatusDisabled:
                         break;
@@ -336,9 +361,11 @@ public class DashboardActivity extends SuperActivity {
                         break;
                     case visitStatusDuplicate:
                         iter.remove();
+                        total--;
                         break;
                     case visitStatusSuccess:
                         iter.remove();
+                        total--;
                         break;
                     case visitStatusUnsent:
                         warningCount++;
@@ -358,27 +385,21 @@ public class DashboardActivity extends SuperActivity {
         // make tally string
         String tallyJsonOut = getJsonManagerInstance().writeValueAsString(tally);
 
-        // write to file
+        // write to file with new edits
         getStorageManagerInstance().writeTallyJsonToFile(tallyJsonOut, this);
 
 
         TextView status = (TextView) findViewById(R.id.tv_tally_status);
-//        writeLastTallyFileSyncTime();
-//        Log.d("test", "Last sync is today?: " + String.valueOf(DateUtils.isToday(readLastTallyFileSyncTime())));
 
-//        if(fullySynced && isTallyFileSyncOverdue()) {
-//            Log.w("DELETE TALLY", "LOG MSG THAT DELETE TALLY == TRUE");
-//            Tally blankTally = new Tally();
-//            getStorageManagerInstance().setTally(blankTally);
-//            getStorageManagerInstance().deleteTallyFile(this);
-//            status.setText("A new tally has been created.");
-//        } else if (isTallyFileSyncOverdue()) {
-//            // warning state to get fully synced
-//        } else {
+        status.setText("");
 
-        // TODO add colors to status messages
+        if(sent > 0) {
+////            status.setText(getString(R.string.uhave_sent) + " " +
+//                    getResources().getQuantityString(R.plurals.visitOrVisits, sent, sent) + " " +
+//                    getString(R.string.today_period));
+            status.setText(getResources().getQuantityString(R.plurals.sent_visits, sent, sent));
+        }
 
-        status.setText(getString(R.string.uhave_sent) + " " + sent + " " + getString(R.string.visits_2day));
 
         int totalUnsynced;
 
@@ -388,12 +409,10 @@ public class DashboardActivity extends SuperActivity {
             status.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.colorPrimaryDark));
 
             if(warningCount > 0) {
-                totalUnsynced += warningCount;
                 status.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.colorPrimary));
             }
 
-            status.append("\n" + getString(R.string.there_r) + " " + totalUnsynced + " " + getString(R.string.visits_not_sent_yet) +
-                    " \n" + getString(R.string.plz_meet_data_clerk));
+            status.append(getResources().getQuantityString(R.plurals.failed_visits, totalUnsynced, totalUnsynced));
 
         }
         if (!readDeviceStatus().matches(deviceActiveCode)) {
