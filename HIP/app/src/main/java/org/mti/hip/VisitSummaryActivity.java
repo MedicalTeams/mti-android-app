@@ -63,7 +63,7 @@ public class VisitSummaryActivity extends SuperActivity {
         addVisitData(visit);
         diagData = (LinearLayout) findViewById(R.id.ll_diag_data);
         TextView diagHeader = new TextView(VisitSummaryActivity.this);
-        diagHeader.setText(bold("Diagnosis Summary"));
+        diagHeader.setText(bold(getString(R.string.dx_summary)));
         diagData.addView(diagHeader);
         for (Diagnosis diag : visit.getPatientDiagnosis()) {
             Supplemental supplementalDiagnosis = null;
@@ -83,7 +83,7 @@ public class VisitSummaryActivity extends SuperActivity {
             TextView tv = new TextView(VisitSummaryActivity.this);
             // server is 1 based list is 0 based
             String injuryLocationName = injuryLocations.get(visit.getInjuryLocation() - 1).getName();
-            tv.setText("Injury Location: " + bold(injuryLocationName));
+            tv.setText(getString(R.string.injury_location) + ": " + bold(injuryLocationName));
             diagData.addView(tv);
         }
 
@@ -185,9 +185,9 @@ public class VisitSummaryActivity extends SuperActivity {
         }
         if(disabled) {
             // TODO refactor to send status code instead of message and have Dashboard decide what to do/say
-            startDashboard("Your device has been disabled and will need to be activated by the administrator in order to process its visits.");
+            startDashboard(getString(R.string.ur_device_has_been_disabled));
         } else if (failures) {
-            startDashboard("Some records were not processed and will be resent during the next upload.");
+            startDashboard(getString(R.string.some_recs_not_processed));
         } else {
             startDashboard("");
         }
@@ -256,15 +256,15 @@ public class VisitSummaryActivity extends SuperActivity {
         String ageString;
         if (visit.isAgeMonths()) {
             ageString = String.valueOf(ageVal);
-            age.setText("Age (Months): ");
+            age.setText(getString(R.string.age) + " (" + getString(R.string.months) + "): ");
         } else {
             ageString = String.valueOf(ageVal / 12);
-            age.setText("Age (Years): ");
+            age.setText(getString(R.string.age) + " (" + getString(R.string.years) + "): ");
         }
 
         age.append(ageString);
         TextView gender = new TextView(c);
-        gender.setText("Gender: ");
+        gender.setText(getString(R.string.gender) + ": ");
         if (visit.getGender() == 'M') {
             gender.append(getString(R.string.male));
         } else {
@@ -272,11 +272,11 @@ public class VisitSummaryActivity extends SuperActivity {
         }
 
         TextView staffMember = (TextView) findViewById(R.id.tv_summary_staff_member);
-        staffMember.setText("Staff member: ");
+        staffMember.setText(getString(R.string.staff_member) + ": ");
         staffMember.append(visit.getStaffMemberName());
 
         TextView facility = (TextView) findViewById(R.id.tv_summary_centre);
-        facility.setText("Centre: ");
+        facility.setText(getString(R.string.center) + ": ");
         facility.append(visit.getFacilityName());
 
         TextView date = (TextView) findViewById(R.id.tv_summary_date);
@@ -287,7 +287,7 @@ public class VisitSummaryActivity extends SuperActivity {
         if (visit.getOPD() != 0) {
             opId.append(String.valueOf(visit.getOPD()));
         } else {
-            opId.append("Not recorded");
+            opId.append(getString(R.string.not_recorded));
         }
 
         TextView isNational = new TextView(c);
@@ -306,7 +306,7 @@ public class VisitSummaryActivity extends SuperActivity {
         }
 
         TextView consultHeader = new TextView(VisitSummaryActivity.this);
-        consultHeader.setText(bold("Consultation Summary"));
+        consultHeader.setText(bold(getString(R.string.consultation_summary)));
         consultationData.addView(consultHeader);
         consultationData.addView(opId);
         consultationData.addView(age);

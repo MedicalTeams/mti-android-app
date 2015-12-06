@@ -164,7 +164,7 @@ public class SuperActivity extends AppCompatActivity {
         protected void onPreExecute() {
 
             super.onPreExecute();
-            progressDialog.setMessage("Please wait...");
+            progressDialog.setMessage(getString(R.string.plz_wait) + "...");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -213,7 +213,7 @@ public class SuperActivity extends AppCompatActivity {
             if (e == null) {
                 getResponseString(r);
             } else if(!isCancelled()){
-                alert.showAlert("Error", e.getMessage());
+                alert.showAlert(getString(R.string.error), e.getMessage());
             }
             super.onPostExecute(r);
         }

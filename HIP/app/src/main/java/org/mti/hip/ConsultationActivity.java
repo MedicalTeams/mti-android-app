@@ -52,7 +52,7 @@ public class ConsultationActivity extends SuperActivity {
         findViewById(R.id.opd_tooltip).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alert.showAlert("Info", getString(R.string.tooltip_opd_number));
+                alert.showAlert(getString(R.string.info), getString(R.string.tooltip_opd_number));
             }
         });
 
@@ -85,7 +85,7 @@ public class ConsultationActivity extends SuperActivity {
                 if (valid()) {
                     startDiagnosisActivity();
                 } else {
-                    alert.showAlert("Errors found", errorBuilder.toString());
+                    alert.showAlert(getString(R.string.errors_found), errorBuilder.toString());
                 }
                 return true;
             default:
@@ -173,7 +173,7 @@ public class ConsultationActivity extends SuperActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setMessage("Are you sure you want to delete this visit?");
+        alert.setMessage(getString(R.string.ru_sure_u_wanna_delete_visit));
         alert.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

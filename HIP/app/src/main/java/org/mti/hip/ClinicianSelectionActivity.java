@@ -48,7 +48,7 @@ public class ClinicianSelectionActivity extends SuperActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(ClinicianSelectionActivity.this);
-                alert.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         User user = adapter.getItem(position);
@@ -59,14 +59,14 @@ public class ClinicianSelectionActivity extends SuperActivity {
                     }
                 });
 
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });
-                alert.setTitle("Delete Staff Member?");
-                alert.setMessage("Do you want to remove this staff member from the list?");
+                alert.setTitle(getString(R.string.delete_staff_member));
+                alert.setMessage(getString(R.string.want_to_remove_staff));
                 alert.show();
 
                 return true;
@@ -122,10 +122,10 @@ public class ClinicianSelectionActivity extends SuperActivity {
         tv.setText(getString(R.string.enter_your_name));
         final EditText et = (EditText) dialog.findViewById(R.id.et_dialog);
         et.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-        et.setHint("Your name");
+        et.setHint(getString(R.string.your_name));
 
         alert.setView(dialog);
-        alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {

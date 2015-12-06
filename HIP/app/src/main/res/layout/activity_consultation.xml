@@ -28,7 +28,7 @@
             <TextView
                 android:id="@+id/tv_label_visit_type"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Type of Visit: "
+                android:text="@string/type_of_visit"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
@@ -61,7 +61,7 @@
             <TextView
                 android:id="@+id/tv_label_status"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Status: "
+                android:text="@string/status"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
@@ -92,7 +92,7 @@
 
             <TextView
                 android:id="@+id/tv_label_age"
-                android:text="Age: "
+                android:text="@string/age_colon"
                 android:layout_width="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_height="wrap_content" />
@@ -109,7 +109,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Years"
+                android:text="@string/years"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <RadioButton
@@ -117,7 +117,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Months"
+                android:text="@string/months"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RadioGroup>
 
@@ -133,7 +133,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Sex: "
+                android:text="@string/sex_colon"
                 android:layout_height="wrap_content" />
 
             <RadioButton

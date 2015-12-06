@@ -47,7 +47,7 @@ public class MainActivity extends SuperActivity {
         progressDialog.hide();
 
         localProgress = new ProgressDialog(this);
-        localProgress.setMessage("Please wait...");
+        localProgress.setMessage(getString(R.string.plz_wait) + "...");
         localProgress.setCancelable(false);
         progress = (ProgressBar) findViewById(R.id.progress);
 
@@ -64,7 +64,7 @@ public class MainActivity extends SuperActivity {
         }
         TextView version = (TextView) findViewById(R.id.tv_version);
         versionCode = String.valueOf(pInfo.versionCode);
-        version.setText("Version code: " + versionCode);
+        version.setText(getString(R.string.version_code) + ": " + versionCode);
 
         btRegister = (Button) findViewById(R.id.register);
         btRegister.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +73,7 @@ public class MainActivity extends SuperActivity {
 
                 localProgress.show();
                 if(!isConnected()) {
-                    alert.showAlert("No network", "Please connect to the internet and try again");
+                    alert.showAlert(getString(R.string.no_network), getString(R.string.plz_connect2_internet_ntry_again));
                     localProgress.dismiss();
                     return;
                 }
@@ -190,7 +190,7 @@ public class MainActivity extends SuperActivity {
                 if(e == null) {
                     getResponseString(r);
                 } else {
-                    alert.showAlert("Error", "The request to register this device didn't succeed: Error data:\n" + e.getMessage());
+                    alert.showAlert(getString(R.string.error), getString(R.string.request_2register_no_succeed) + ":\n" + e.getMessage());
                     localProgress.dismiss();
                 }
             }
