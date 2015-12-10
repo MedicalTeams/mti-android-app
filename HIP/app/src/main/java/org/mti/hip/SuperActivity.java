@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.widget.EditText;
 
 import org.mti.hip.model.CentreWrapper;
@@ -27,6 +28,8 @@ import java.util.Date;
 
 public class SuperActivity extends AppCompatActivity {
 
+    public static final String DEFAULT_LOG_TAG = "MTI-HIP";
+
     public static final String EXTRA_MSG = "extramsg";
     public static String currentUserName;
     private static JSONManager jsonManager;
@@ -44,6 +47,7 @@ public class SuperActivity extends AppCompatActivity {
     public static final int mentalIllnessId = 3;
     public static final int injuryId = 4;
     public static final int injuryLocId = 5;
+    public static int injuryListPosition;
 
     public static final int visitStatusUnsent = 0; // (doesn’t count toward sent value and will try to send)
     public static final int visitStatusSuccess = 1; // (gets counted toward the "sent" value and won't send again)

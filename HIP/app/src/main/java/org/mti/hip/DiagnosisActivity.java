@@ -104,6 +104,7 @@ public class DiagnosisActivity extends SuperActivity {
                         supps = listAdapter.getList(i);
                         Supplemental supp = supps.get(j);
                         visit.setInjuryLocation(supp.getId());
+                        injuryListPosition = j;
                     } else {
                         supps = listAdapter.getList(i);
                         getAndAddDiagnosis(suppsSet, supps, i, j);
