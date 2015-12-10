@@ -61,6 +61,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     private static HashMap<Integer, ArrayList<RadioButton>> buttonMap = new HashMap<>();
 
     public ExpandableListView.OnChildClickListener listener;
+    private int customContactsTreatedListPos;
 
     public VisitDiagnosisListAdapter(SuperActivity context) {
         this.context = context;
@@ -86,8 +87,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         children.put(injuryLocId, injuryLocList);
 
 
-
-        if(check_states.isEmpty()) {
+        if (check_states.isEmpty()) {
 
             setChildrenAndValues();
         }
@@ -158,7 +158,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                         // the dialog again on the uncheck)
                         return true;
                     }
-                    if(groupPosition == mentalIllnessId) {
+                    if (groupPosition == mentalIllnessId) {
                         Supplemental supp = (Supplemental) getChild(groupPosition, childPosition);
                         if (supp.getId() == 62) {
                             // mental illness other
@@ -171,7 +171,11 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
                     // this prevents others and sti contacts from being added to checked state
                     boolean isOther = processIfIsOther(groupPosition, childPosition);
-                    boolean isStiContacts = processIfIsStiContactsTreated(groupPosition, childPosition);
+                    boolean isStiContacts = false;
+                    isStiContacts = processIfIsStiContactsTreated(groupPosition, childPosition);
+                    if (stiContactsTreated == -1) {
+                        processIfIsSti(groupPosition, childPosition);
+                    }
                     if (isOther || isStiContacts) {
                         return true;
                     }
@@ -191,11 +195,28 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         };
     }
 
+    private void processIfIsSti(int groupPosition, int childPosition) {
+        if (groupPosition == stiId) {
+            Supplemental supp = (Supplemental) getChild(groupPosition, childPosition);
+            ArrayList<Integer> blockedIds = new ArrayList<>();
+            blockedIds.add(40);
+            blockedIds.add(41);
+            blockedIds.add(customContactsTreatedId);
+            if (blockedIds.contains(supp.getId())) {
+                return;
+            } else {
+                showStiContactsDialog();
+            }
+        }
+
+
+    }
+
     private boolean processIfIsStiContactsTreated(int group, int child) {
         if (group == stiId) {
             Supplemental supp = (Supplemental) getChild(group, child);
             if (supp.getId() == customContactsTreatedId) {
-                showStiContactsDialog(supp);
+                showStiContactsDialog();
                 return true;
             }
         }
@@ -227,7 +248,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     }
 
-    public void showStiContactsDialog(final Supplemental supp) {
+    public void showStiContactsDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         LayoutInflater inflater = context.getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_edittext, null);
@@ -244,8 +265,12 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 if (context.editTextHasContent(et)) {
                     String input = et.getText().toString();
                     stiContactsTreated = Integer.valueOf(input);
+                    Supplemental supp = (Supplemental) getChild(stiId, customContactsTreatedListPos);
                     supp.setName(context.parseStiContactsTreated(stiContactsTreated));
+                    notifyDataSetChanged();
+
                 }
+
                 dialog.dismiss();
             }
         });
@@ -451,7 +476,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         }
 
 
-
         LayoutInflater inflater = (LayoutInflater) this.context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TextView tv = null;
@@ -472,7 +496,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
             selector = convertView.findViewById(R.id.cb_multi_select);
 
             ((CheckBox) selector).setChecked(selected);
-            if(groupPosition == chronicDiseaseId && id == 47) {
+            if (groupPosition == chronicDiseaseId && id == 47) {
                 setupEndochrineTooltip(convertView);
             }
 
@@ -558,14 +582,17 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     private ArrayList<Supplemental> getSTIs() {
 //        stis.add("Contacts Treated");
         ArrayList<Supplemental> parsedList = new ArrayList<>();
+        int count = 0;
         for (Supplemental supp : supplementals) {
             if (supp.getDiagnosis() == 16) {
+                count++;
                 parsedList.add(supp);
             }
         }
         Supplemental supp = new Supplemental();
         supp.setName(context.getString(R.string.contacts_treated));
         supp.setId(customContactsTreatedId);
+        customContactsTreatedListPos = count++;
 
         parsedList.add(supp);
 
