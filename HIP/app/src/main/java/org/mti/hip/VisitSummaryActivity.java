@@ -3,9 +3,16 @@ package org.mti.hip;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +26,7 @@ import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class VisitSummaryActivity extends SuperActivity {
 
@@ -29,11 +37,12 @@ public class VisitSummaryActivity extends SuperActivity {
     private LinearLayout diagData;
     private ArrayList<InjuryLocation> injuryLocations;
     private Visit visit;
-    private ArrayList<String> prompts = new ArrayList<>();
+    private ArrayList<Spanned> prompts = new ArrayList<>();
     private String tallyJson;
     private String tallyJsonToSend;
     private Tally tally;
 
+    private float headerSize = 20f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +73,10 @@ public class VisitSummaryActivity extends SuperActivity {
         diagData = (LinearLayout) findViewById(R.id.ll_diag_data);
         TextView diagHeader = new TextView(VisitSummaryActivity.this);
         diagHeader.setText(bold(getString(R.string.dx_summary)));
+        diagHeader.setTextSize(headerSize);
         diagData.addView(diagHeader);
+//        ArrayList<Diagnosis> displayList = new ArrayList<>(visit.getPatientDiagnosis());
+//        Collections.sort(displayList, Collections.reverseOrder());
         for (Diagnosis diag : visit.getPatientDiagnosis()) {
             Supplemental supplementalDiagnosis = null;
             TextView tv = new TextView(VisitSummaryActivity.this);
@@ -81,8 +93,7 @@ public class VisitSummaryActivity extends SuperActivity {
 
         if (visit.getInjuryLocation() != 0) {
             TextView tv = new TextView(VisitSummaryActivity.this);
-            // server is 1 based list is 0 based
-            String injuryLocationName = injuryLocations.get(visit.getInjuryLocation() - 1).getName();
+            String injuryLocationName = injuryLocations.get(injuryListPosition).getName();
             tv.setText(getString(R.string.injury_location) + ": " + bold(injuryLocationName));
             diagData.addView(tv);
         }
@@ -187,14 +198,13 @@ public class VisitSummaryActivity extends SuperActivity {
                 visit.setStatus(serverVisit.getStatus());
             }
         }
-        if(disabled) {
-            // TODO refactor to send status code instead of message and have Dashboard decide what to do/say
-            startDashboard(getString(R.string.ur_device_has_been_disabled));
-        } else if (failures) {
-            startDashboard(getString(R.string.some_recs_not_processed));
-        } else {
+//        if(disabled) {
+//            startDashboard(getString(R.string.ur_device_has_been_disabled));
+//        } else if (failures) {
+//            startDashboard(getString(R.string.some_recs_not_processed));
+//        } else {
             startDashboard("");
-        }
+//        }
 
     }
 
@@ -223,8 +233,7 @@ public class VisitSummaryActivity extends SuperActivity {
         int id = diag.getId();
         if(id == 3 || id == 4 || id == 9 || id == 10 || id == 14) {
             addDiagPrompt(diag, getString(R.string.prompt_outbreak_potential));
-        } else if (id == 12 || id == 13) {
-        // TODO add cholera once it is in the service
+        } else if (id == 12 || id == 13 || id == 29) {
             addDiagPrompt(diag, getString(R.string.prompt_threshold_reached));
         } else if (id == 15) {
             addDiagPrompt(diag, getString(R.string.prompt_hiv));
@@ -244,11 +253,17 @@ public class VisitSummaryActivity extends SuperActivity {
     }
 
     private void addDiagPrompt(Diagnosis diag, String string) {
-        prompts.add(diag.getName() + ": " + string);
+        SpannableStringBuilder builder = new SpannableStringBuilder(bold(diag.getName()));
+        builder.append(": ");
+        builder.append(string);
+        prompts.add(builder);
     }
 
     private void addSupplementalDiagPrompt(Supplemental diag, String string) {
-        prompts.add(diag.getName() + ": " + string);
+        SpannableStringBuilder builder = new SpannableStringBuilder(bold(diag.getName()));
+        builder.append(": ");
+        builder.append(string);
+        prompts.add(builder);
     }
 
     private void addVisitData(Visit visit) {
@@ -311,6 +326,7 @@ public class VisitSummaryActivity extends SuperActivity {
 
         TextView consultHeader = new TextView(VisitSummaryActivity.this);
         consultHeader.setText(bold(getString(R.string.consultation_summary)));
+        consultHeader.setTextSize(headerSize);
         consultationData.addView(consultHeader);
         consultationData.addView(opId);
         consultationData.addView(age);
@@ -325,11 +341,28 @@ public class VisitSummaryActivity extends SuperActivity {
         LinearLayout ll = (LinearLayout) findViewById(R.id.ll_summary_alerts);
         if(prompts.isEmpty()) {
             ll.setVisibility(View.GONE);
+        } else {
+            TextView alerts = new TextView(this);
+            alerts.setText(bold(getString(R.string.alerts)));
+            alerts.setTextSize(headerSize);
+            ll.addView(alerts);
         }
-        for(String alert : prompts) {
+        int pos = 0;
+        for(Spanned alert : prompts) {
+            pos++;
             TextView tv = new TextView(this);
             tv.setText(alert);
             ll.addView(tv);
+            if(prompts.size() > 1 && pos != prompts.size()) {
+                View line = new View(VisitSummaryActivity.this);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
+                params.bottomMargin = 4;
+                params.topMargin = 4;
+//                line.setBackgroundColor(ContextCompat.getColor(VisitSummaryActivity.this, R.color.colorPrimaryDark));
+                line.setBackgroundColor(Color.DKGRAY);
+                line.setLayoutParams(params);
+                ll.addView(line);
+            }
         }
     }
 

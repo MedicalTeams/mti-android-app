@@ -69,7 +69,8 @@
                 android:id="@+id/bt_consultation_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/edit" />
+                android:text="@string/edit"
+                android:layout_marginRight="@dimen/edge_margin" />
         </LinearLayout>
 
         <LinearLayout
@@ -103,7 +104,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/edit" />
+                android:text="@string/edit"
+                android:layout_marginRight="@dimen/edge_margin" />
         </LinearLayout>
 
         <LinearLayout
