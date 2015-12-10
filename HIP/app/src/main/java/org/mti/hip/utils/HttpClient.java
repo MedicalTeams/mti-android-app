@@ -2,6 +2,7 @@ package org.mti.hip.utils;
 
 import android.util.Log;
 
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -9,6 +10,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by r624513 on 11/4/15.
@@ -36,6 +38,10 @@ public class HttpClient {
 
     public HttpClient() {
         client = new OkHttpClient();
+        // TODO set timeouts if default of 10 seconds doesn't work
+//        client.setConnectTimeout(15, TimeUnit.SECONDS);
+//        client.setReadTimeout(15, TimeUnit.SECONDS);
+//        client.setWriteTimeout(15, TimeUnit.SECONDS);
     }
 
     public String post(final String endpoint, final String json) throws IOException {
@@ -81,10 +87,9 @@ public class HttpClient {
                 .build();
         Log.v("mti","request.toString() = " + request.toString());
         Response response;
-        String responseString = null;
+        String responseString;
         response = client.newCall(request).execute();
         responseString = parseResponse(response);
-        Log.v("mti", "responseString = " + responseString);
         return responseString;
     }
 
