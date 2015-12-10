@@ -23,7 +23,8 @@
             android:id="@+id/rg_visit_revisit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/edge_margin">
 
             <TextView
                 android:id="@+id/tv_label_visit_type"
@@ -56,7 +57,8 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/edge_margin">
 
             <TextView
                 android:id="@+id/tv_label_status"
@@ -88,7 +90,8 @@
             android:id="@+id/rg_years_or_months"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/edge_margin">
 
             <TextView
                 android:id="@+id/tv_label_age"
@@ -126,7 +129,8 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/edge_margin">
 
             <TextView
                 android:id="@+id/tv_label_sex"
