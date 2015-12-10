@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.content.ContextCompat;
@@ -27,6 +28,7 @@ import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.StorageManager;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -79,7 +81,7 @@ public class DashboardActivity extends SuperActivity {
         findViewById(R.id.new_visit).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isConnected()) {
+                if (!isConnected()) {
                     startVisit();
                     return;
                 }
@@ -218,58 +220,43 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void getServerConstants() {
-        // TODO generally works but needs refactoring to chain the requests. Biggest problem is any exceptions each create their own popup
         progressDialog.hide();
         final ProgressDialog localProgress = new ProgressDialog(this);
         localProgress.setMessage(getString(R.string.updating_lists));
         localProgress.setCancelable(false);
         localProgress.show();
-        new NetworkTask(HttpClient.diagnosisEndpoint, HttpClient.get) {
 
+        new AsyncTask<Void, Void, Void>() {
+            Exception e;
+            HttpClient client = getHttpClientInstance();
             @Override
-            public void getResponseString(String response) {
-                writeString(DIAGNOSIS_LIST_KEY, response);
-            }
-        }.execute();
-
-        new NetworkTask(HttpClient.facilitiesEndpoint, HttpClient.get) {
-
-            @Override
-            public void getResponseString(String response) {
-                writeString(FACILITIES_LIST_KEY, response);
-            }
-        }.execute();
-
-        new NetworkTask(HttpClient.supplementalEndpoint, HttpClient.get) {
-
-            @Override
-            public void getResponseString(String response) {
-                writeString(SUPPLEMENTAL_LIST_KEY, response);
-            }
-        }.execute();
-
-        new NetworkTask(HttpClient.settlementEndpoint, HttpClient.get) {
-
-            @Override
-            public void getResponseString(String response) {
-                writeString(SETTLEMENT_LIST_KEY, response);
-            }
-        }.execute();
-
-        new NetworkTask(HttpClient.injuryLocationsEndpoint, HttpClient.get) {
-
-            @Override
-            public void getResponseString(String response) {
-                writeString(SuperActivity.INJURY_LOCATIONS_KEY, response);
+            protected Void doInBackground(Void... params) {
+                try {
+                    writeString(DIAGNOSIS_LIST_KEY, client.get(HttpClient.diagnosisEndpoint));
+                    writeString(FACILITIES_LIST_KEY, client.get(HttpClient.facilitiesEndpoint));
+                    writeString(SUPPLEMENTAL_LIST_KEY, client.get(HttpClient.supplementalEndpoint));
+                    writeString(SETTLEMENT_LIST_KEY, client.get(HttpClient.settlementEndpoint));
+                    writeString(INJURY_LOCATIONS_KEY, client.get(HttpClient.injuryLocationsEndpoint));
+                } catch (IOException e1) {
+                    e = e1;
+                }
+                return null;
             }
 
             @Override
-            protected void onPostExecute(String r) {
-                super.onPostExecute(r);
-                writeLastServerConstantsSyncTime();
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if(e == null) {
+                    Log.e(DEFAULT_LOG_TAG, "Couldn't get constants");
+                    Toast.makeText(DashboardActivity.this, R.string.failed_to_retrieve_updated_lists, Toast.LENGTH_SHORT).show();
+                } else {
+                    writeLastServerConstantsSyncTime();
+                }
                 localProgress.dismiss();
             }
+
         }.execute();
+
     }
 
     private void sendTally() {
@@ -323,8 +310,6 @@ public class DashboardActivity extends SuperActivity {
     private void manageTally() {
 
         // TODO refactor: this is messy (also... App sends "sent" bool to the server and this should eventually be removed but will require some other serialization method
-
-        // TODO update messages to new format
 
         int sent = 0;
         int total = 0;
@@ -473,6 +458,7 @@ public class DashboardActivity extends SuperActivity {
      * Save the last date/time (as UTC milliseconds from the epoch) at which the constants were successfully downloaded from the server
      */
     public void writeLastServerConstantsSyncTime() {
+        Log.v(DEFAULT_LOG_TAG, "Server constants downloaded and sync time updated");
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_SERVER_CONSTANTS_SYNC_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
     }
 

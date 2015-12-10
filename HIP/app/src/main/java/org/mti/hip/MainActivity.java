@@ -7,12 +7,14 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mti.hip.model.DeviceStatusResponse;
 import org.mti.hip.utils.HttpClient;
@@ -20,6 +22,7 @@ import org.mti.hip.utils.JSONManager;
 import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.StorageManager;
 
+import java.io.IOException;
 import java.util.Date;
 
 public class MainActivity extends SuperActivity {
@@ -200,54 +203,37 @@ public class MainActivity extends SuperActivity {
     private void initApp() {
 
 //        toggleProgressOverlay(View.VISIBLE);
-
-        new NetworkTask(HttpClient.diagnosisEndpoint, HttpClient.get) {
-
+        new AsyncTask<Void, Void, Void>() {
+            Exception e;
+            HttpClient client = getHttpClientInstance();
             @Override
-            public void getResponseString(String response) {
-                writeString(DIAGNOSIS_LIST_KEY, response);
-            }
-        }.execute();
-
-        new NetworkTask(HttpClient.facilitiesEndpoint, HttpClient.get) {
-
-            @Override
-            public void getResponseString(String response) {
-                writeString(FACILITIES_LIST_KEY, response);
-            }
-        }.execute();
-
-        new NetworkTask(HttpClient.supplementalEndpoint, HttpClient.get) {
-
-            @Override
-            public void getResponseString(String response) {
-                writeString(SUPPLEMENTAL_LIST_KEY, response);
-            }
-        }.execute();
-
-        new NetworkTask(HttpClient.settlementEndpoint, HttpClient.get) {
-
-            @Override
-            public void getResponseString(String response) {
-                writeString(SETTLEMENT_LIST_KEY, response);
-            }
-        }.execute();
-
-        new NetworkTask(HttpClient.injuryLocationsEndpoint, HttpClient.get) {
-
-            @Override
-            public void getResponseString(String response) {
-                writeString(SuperActivity.INJURY_LOCATIONS_KEY, response);
-                initialized = true;
-                btRegister.setText(getString(R.string.start));
+            protected Void doInBackground(Void... params) {
+                try {
+                    writeString(DIAGNOSIS_LIST_KEY, client.get(HttpClient.diagnosisEndpoint));
+                    writeString(FACILITIES_LIST_KEY, client.get(HttpClient.facilitiesEndpoint));
+                    writeString(SUPPLEMENTAL_LIST_KEY, client.get(HttpClient.supplementalEndpoint));
+                    writeString(SETTLEMENT_LIST_KEY, client.get(HttpClient.settlementEndpoint));
+                    writeString(INJURY_LOCATIONS_KEY, client.get(HttpClient.injuryLocationsEndpoint));
+                } catch (IOException e1) {
+                    e = e1;
+                }
+                return null;
             }
 
             @Override
-            protected void onPostExecute(String r) {
-                super.onPostExecute(r);
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if(e != null) {
+                    alert.showAlert("Error", "Failed to retrieve updated lists.");
+                } else {
+                    initialized = true;
+                    btRegister.setText(getString(R.string.start));
+                }
                 localProgress.dismiss();
             }
+
         }.execute();
+
 
     }
 
