@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,11 +18,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.mti.hip.model.DeviceRegistrationObj;
 import org.mti.hip.model.DeviceStatusResponse;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
-import org.mti.hip.utils.JSONManager;
 import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.StorageManager;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
@@ -118,10 +117,6 @@ public class DashboardActivity extends SuperActivity {
         versionCode = pInfo.versionCode;
 
 
-        if (readVersionCode() == 0 || readVersionCode() != versionCode) {
-            if (isConnected()) updateDeviceRegistration();
-        }
-
         final TextView connectivityStatus = (TextView) findViewById(R.id.dashboard_connectivity_status);
 
         tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
@@ -149,9 +144,15 @@ public class DashboardActivity extends SuperActivity {
                         manualSync.setVisibility(View.VISIBLE);
                     }
 
-                    if (isServerConstantsSyncOverdue()) {
+//                    if (readVersionCode() == 0 || readVersionCode() != versionCode) {
+                        if (isConnected()) {
+                            updateDeviceRegistration();
+                        }
+//                    }
+
+//                    if (isServerConstantsSyncOverdue()) {
                         getServerConstants();
-                    }
+//                    }
                     connectivityStatus.setText(R.string.is_online);
                     connectivityStatus.setTextColor(green);
                 } else {
@@ -182,10 +183,15 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void updateDeviceRegistration() {
-
         String serialNumber = StorageManager.getSerialNumber();
-        String description = "Device serial number last created/updated on " + new Date();
-        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, String.valueOf(versionCode), description);
+//        String description = "Device serial number last created/updated on " + new Date();
+//        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, String.valueOf(versionCode), description);
+        DeviceRegistrationObj regObj = new DeviceRegistrationObj();
+        regObj.setUuid(serialNumber);
+        regObj.setFacility(readLastUsedFacility());
+        regObj.setAppVersion(String.valueOf(versionCode));
+        progressDialog.setMessage(getString(R.string.plz_wait));
+        String jsonBody = getJsonManagerInstance().writeValueAsString(regObj);
         new NetworkTask(jsonBody, HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.put) {
 
             @Override
@@ -220,13 +226,13 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void getServerConstants() {
-        progressDialog.hide();
         final ProgressDialog localProgress = new ProgressDialog(this);
         localProgress.setMessage(getString(R.string.updating_lists));
         localProgress.setCancelable(false);
         localProgress.show();
 
         new AsyncTask<Void, Void, Void>() {
+
             Exception e;
             HttpClient client = getHttpClientInstance();
             @Override
@@ -246,8 +252,8 @@ public class DashboardActivity extends SuperActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                if(e == null) {
-                    Log.e(DEFAULT_LOG_TAG, "Couldn't get constants");
+                if(e != null) {
+                    Log.e(DEFAULT_LOG_TAG, "Couldn't get constants " + e.getMessage());
                     Toast.makeText(DashboardActivity.this, R.string.failed_to_retrieve_updated_lists, Toast.LENGTH_SHORT).show();
                 } else {
                     writeLastServerConstantsSyncTime();

@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.mti.hip.model.DeviceStatusResponse;
 import org.mti.hip.utils.HttpClient;
@@ -50,7 +49,7 @@ public class MainActivity extends SuperActivity {
         progressDialog.hide();
 
         localProgress = new ProgressDialog(this);
-        localProgress.setMessage(getString(R.string.plz_wait) + "...");
+        localProgress.setMessage(getString(R.string.plz_wait));
         localProgress.setCancelable(false);
         progress = (ProgressBar) findViewById(R.id.progress);
 
@@ -66,7 +65,7 @@ public class MainActivity extends SuperActivity {
             e.printStackTrace();
         }
         TextView version = (TextView) findViewById(R.id.tv_version);
-        versionCode = String.valueOf(pInfo.versionCode);
+        versionCode = String.valueOf(pInfo.versionName);
         version.setText(getString(R.string.version_code) + ": " + versionCode);
 
         btRegister = (Button) findViewById(R.id.register);
@@ -82,9 +81,10 @@ public class MainActivity extends SuperActivity {
                 }
                 if(!registered) {
                     register();
+                    return;
                 }
 
-               if (initialized && registered){ // text = "Start"
+               if (initialized){ // text = "Start"
                    new NetworkTask(HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.get) {
 
                        @Override
@@ -136,7 +136,7 @@ public class MainActivity extends SuperActivity {
 
     }
 
-    private boolean checkForAppReadiness() {
+    public boolean checkForAppReadiness() {
         boolean ready = true;
         if(readLastUsedLocation().matches("")) {
             ready = false;
@@ -206,6 +206,13 @@ public class MainActivity extends SuperActivity {
         new AsyncTask<Void, Void, Void>() {
             Exception e;
             HttpClient client = getHttpClientInstance();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog.hide();
+            }
+
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -222,14 +229,15 @@ public class MainActivity extends SuperActivity {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
                 if(e != null) {
                     alert.showAlert("Error", "Failed to retrieve updated lists.");
                 } else {
+                    Log.d(DEFAULT_LOG_TAG, "initialized");
                     initialized = true;
                     btRegister.setText(getString(R.string.start));
                 }
                 localProgress.dismiss();
+                super.onPostExecute(aVoid);
             }
 
         }.execute();

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.widget.EditText;
 
 import org.mti.hip.model.CentreWrapper;
@@ -168,7 +167,7 @@ public class SuperActivity extends AppCompatActivity {
         protected void onPreExecute() {
 
             super.onPreExecute();
-            progressDialog.setMessage(getString(R.string.plz_wait) + "...");
+            progressDialog.setMessage(getString(R.string.plz_wait));
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -217,6 +216,9 @@ public class SuperActivity extends AppCompatActivity {
             if (e == null) {
                 getResponseString(r);
             } else if(!isCancelled()){
+                if(e.getMessage().isEmpty()) {
+                    alert.showAlert(getString(R.string.error), "There was a networking issue. Please check your connection and try again.");
+                }
                 alert.showAlert(getString(R.string.error), e.getMessage());
             }
             super.onPostExecute(r);

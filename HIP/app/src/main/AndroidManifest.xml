@@ -27,15 +27,16 @@
         <activity
             android:name=".SignOnActivity"
             android:label="@string/sign_in"
-            android:screenOrientation="portrait" >
+             >
         </activity>
         <activity
             android:name=".DiagnosisActivity"
             android:label="@string/visit_entry"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" >
+             >
         </activity>
-        <activity android:name=".SuperActivity" >
+        <activity android:name=".SuperActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity android:name=".VisitSummaryActivity"
             android:label="@string/visit_summary">
@@ -54,6 +55,7 @@
             android:label="@string/choose_your_name">
         </activity>
         <activity android:name=".LocationSelectionActivity"
+
                   android:label="@string/select_location">
         </activity>
     </application>

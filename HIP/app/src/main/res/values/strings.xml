@@ -84,7 +84,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="invalid_visit">Invalid visit</string>
     <string name="u_must_select_a_dx">You must select at least one diagnosis</string>
     <string name="plz_wait">Please wait…</string>
-    <string name="version_code">Version code</string>
+    <string name="version_code">Version: </string>
     <string name="no_network">No network</string>
     <string name="plz_connect2_internet_ntry_again">Please connect to the internet and try again</string>
     <string name="dx_summary">Diagnosis Summary</string>
