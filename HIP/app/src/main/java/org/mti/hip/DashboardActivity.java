@@ -144,15 +144,15 @@ public class DashboardActivity extends SuperActivity {
                         manualSync.setVisibility(View.VISIBLE);
                     }
 
-//                    if (readVersionCode() == 0 || readVersionCode() != versionCode) {
+                    if (readVersionCode() == 0 || readVersionCode() != versionCode) {
                         if (isConnected()) {
                             updateDeviceRegistration();
                         }
-//                    }
+                    }
 
-//                    if (isServerConstantsSyncOverdue()) {
+                    if (isServerConstantsSyncOverdue()) {
                         getServerConstants();
-//                    }
+                    }
                     connectivityStatus.setText(R.string.is_online);
                     connectivityStatus.setTextColor(green);
                 } else {
