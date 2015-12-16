@@ -3,10 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:padding="@dimen/edge_margin"
     tools:context="org.mti.hip.ConsultationActivity">
 
 
@@ -28,7 +25,7 @@
 
             <TextView
                 android:id="@+id/tv_label_visit_type"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/body_font_medium"
                 android:text="@string/type_of_visit"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -41,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/new_visit"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+               android:textSize="@dimen/body_font_medium" />
 
             <RadioButton
                 android:id="@+id/rb_revisit"
@@ -49,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/revisit"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+               android:textSize="@dimen/body_font_medium" />
         </RadioGroup>
 
         <RadioGroup
@@ -62,7 +59,7 @@
 
             <TextView
                 android:id="@+id/tv_label_status"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+               android:textSize="@dimen/body_font_medium"
                 android:text="@string/status"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -74,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/national"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+               android:textSize="@dimen/body_font_medium" />
 
             <RadioButton
                 android:id="@+id/rb_refugee"
@@ -82,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/refugee"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+               android:textSize="@dimen/body_font_medium" />
 
         </RadioGroup>
 
@@ -97,7 +94,7 @@
                 android:id="@+id/tv_label_age"
                 android:text="@string/age_colon"
                 android:layout_width="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+               android:textSize="@dimen/body_font_medium"
                 android:layout_height="wrap_content" />
 
             <EditText
@@ -113,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/years"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+               android:textSize="@dimen/body_font_medium" />
 
             <RadioButton
                 android:id="@+id/rb_months"
@@ -121,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/months"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+               android:textSize="@dimen/body_font_medium" />
         </RadioGroup>
 
         <RadioGroup
@@ -136,7 +133,7 @@
                 android:id="@+id/tv_label_sex"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+               android:textSize="@dimen/body_font_medium"
                 android:text="@string/sex_colon"
                 android:layout_height="wrap_content" />
 
@@ -146,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/male"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+               android:textSize="@dimen/body_font_medium" />
 
             <RadioButton
                 android:id="@+id/rb_female"
@@ -154,7 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/female"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+               android:textSize="@dimen/body_font_medium" />
         </RadioGroup>
 
 
@@ -164,7 +161,7 @@
         android:id="@+id/tv_label_opd"
         android:layout_marginTop="18dp"
         android:layout_below="@+id/ll_consultation_entry"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+       android:textSize="@dimen/body_font_medium"
         android:text="OPD #: "
         android:layout_toRightOf="@+id/opd_tooltip"
         android:layout_width="wrap_content"

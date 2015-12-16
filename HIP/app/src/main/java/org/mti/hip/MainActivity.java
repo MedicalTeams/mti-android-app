@@ -27,7 +27,7 @@ import java.util.Date;
 public class MainActivity extends SuperActivity {
 
     private Button btRegister;
-    private String versionCode;
+    private String versionName;
     private boolean initialized;
     private boolean registered;
     private ProgressBar progress;
@@ -65,8 +65,8 @@ public class MainActivity extends SuperActivity {
             e.printStackTrace();
         }
         TextView version = (TextView) findViewById(R.id.tv_version);
-        versionCode = String.valueOf(pInfo.versionName);
-        version.setText(getString(R.string.version_code) + ": " + versionCode);
+        versionName = String.valueOf(pInfo.versionName);
+        version.setText(getString(R.string.version_code) + " " + versionName);
 
         btRegister = (Button) findViewById(R.id.register);
         btRegister.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +176,7 @@ public class MainActivity extends SuperActivity {
 //        toggleProgressOverlay(View.VISIBLE);
         serialNumber = StorageManager.getSerialNumber();
         String description = "Device serial number last created/updated on " + new Date();
-        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, versionCode, description);
+        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, versionName, description);
         new NetworkTask(jsonBody, HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.put) {
 
             @Override

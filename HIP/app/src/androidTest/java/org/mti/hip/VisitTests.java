@@ -32,7 +32,7 @@ public class VisitTests extends SuperTest {
         clickOnView(R.id.register);
         clickOnView(R.id.register);
         clickOnText("Nakivale");
-        clickOnText("Nakivale");
+        clickOnText("Kibengo");
         clickOnView(R.id.bt_add_new_staff_member);
         enterText(R.id.et_dialog, "Mick");
         clickOnText(getActivity().getString(R.string.okay));
@@ -44,7 +44,6 @@ public class VisitTests extends SuperTest {
 
     private void enterBasicHappyPathVisit() {
         // Dashboard
-        pause(2000); // for demo purposes
         clickOnView(R.id.new_visit);
 
         // Consultation
@@ -72,6 +71,7 @@ public class VisitTests extends SuperTest {
 
         // Dashboard
         isTextVisible("You have sent");
-        pause(3000); // for demo purposes
     }
+
+
 }

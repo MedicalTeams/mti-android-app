@@ -14,7 +14,7 @@
         android:background="@color/colorPrimary"
         android:textColor="#FFF"
         android:gravity="center"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="@dimen/margin_large"
         android:textStyle="bold"
         android:textSize="@dimen/title_font"
         android:layout_height="wrap_content" />
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/logo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="@dimen/margin_large"
         android:text="@string/create_new_visit"
         android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -36,8 +36,7 @@
         android:gravity="center"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="@dimen/body_font_medium"
         android:layout_centerInParent="true"
         />
 
@@ -48,7 +47,7 @@
         android:layout_below="@+id/tv_tally_status"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/body_font_large"
         />
 
     <TextView
@@ -72,7 +71,7 @@
         android:layout_above="@+id/ll_poweredby"
         android:layout_alignParentRight="true"
         android:text="@string/edit_location_slash_name"
-        android:layout_margin="24dp"
+        android:layout_margin="@dimen/margin_large"
         android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 

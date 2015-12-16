@@ -5,5 +5,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="app_bar_height">200dp</dimen>
     <dimen name="title_font">23sp</dimen>
-    <dimen name="edge_margin">16dp</dimen>
+    <dimen name="body_font_medium">16sp</dimen>
+    <dimen name="body_font_large">20sp</dimen>
+    <dimen name="edge_margin">12dp</dimen>
+    <dimen name="margin_large">18dp</dimen>
 </resources>

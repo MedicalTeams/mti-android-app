@@ -50,9 +50,10 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     private static final int primaryOtherId = 23;
     private static final int chronicOtherId = 54;
+    private static final int mentalHealthOtherId = 62;
+    private static final int customContactsTreatedId = -1;
 
     public static int stiContactsTreated = -1;
-    public static int customContactsTreatedId = -1;
 
     private ArrayList<Integer> removedDiagHeaders = new ArrayList<>();
 
@@ -160,7 +161,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                     }
                     if (groupPosition == mentalIllnessId) {
                         Supplemental supp = (Supplemental) getChild(groupPosition, childPosition);
-                        if (supp.getId() == 62) {
+                        if (supp.getId() == mentalHealthOtherId) {
                             // mental illness other
                             setMentalHealthOther(supp);
                         }
