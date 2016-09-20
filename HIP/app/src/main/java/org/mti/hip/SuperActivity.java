@@ -75,7 +75,7 @@ public class SuperActivity extends AppCompatActivity {
         currentUserName = readLastUsedClinician();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_super);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(buildHeader());
         }
         progressDialog = new ProgressDialog(this);
@@ -117,6 +117,14 @@ public class SuperActivity extends AppCompatActivity {
         return !et.getText().toString().isEmpty();
     }
 
+    public int editTextToInt(EditText et, int defaultVal) {
+        if (editTextHasContent(et)) {
+            return Integer.valueOf(et.getText().toString());
+        } else {
+            return defaultVal;
+        }
+    }
+
     public String getDateNowString() {
         return new SimpleDateFormat("dd-MMM-yyyy").format(new Date());
     }
@@ -131,10 +139,10 @@ public class SuperActivity extends AppCompatActivity {
 
     private String buildHeader() {
         StringBuffer sb = new StringBuffer();
-        if(!facilityName.matches("")) {
+        if (!facilityName.matches("")) {
             sb.append(facilityName + "  |  " + getDateNowString());
         }
-        if(!currentUserName.matches("")) {
+        if (!currentUserName.matches("")) {
             sb.append("  |  " + currentUserName);
         }
         return sb.toString();
@@ -186,21 +194,19 @@ public class SuperActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             String responseString = null;
-            if(httpMethod.equals(HttpClient.post)) {
+            if (httpMethod.equals(HttpClient.post)) {
                 try {
                     responseString = getHttpClientInstance().post(endpoint, body);
                 } catch (IOException e) {
                     this.e = e;
                 }
-            }
-            else if (httpMethod.equals(HttpClient.put)) {
+            } else if (httpMethod.equals(HttpClient.put)) {
                 try {
                     responseString = getHttpClientInstance().put(endpoint, body);
                 } catch (IOException e) {
                     this.e = e;
                 }
-            }
-            else {
+            } else {
                 try {
                     responseString = getHttpClientInstance().get(endpoint);
                 } catch (IOException e) {
@@ -229,6 +235,7 @@ public class SuperActivity extends AppCompatActivity {
 
     /**
      * Save the last used location to Shared Preferences
+     *
      * @param locationId
      */
     public void writeLastUsedLocation(String locationId) {
@@ -237,6 +244,7 @@ public class SuperActivity extends AppCompatActivity {
 
     /**
      * Save the last used facility to Shared Preferences
+     *
      * @param facilityId
      */
     public void writeLastUsedFacility(int facilityId) {
@@ -245,6 +253,7 @@ public class SuperActivity extends AppCompatActivity {
 
     /**
      * Save the last used facility name to Shared Preferences
+     *
      * @param name
      */
     public void writeLastUsedFacilityName(String name) {
@@ -257,6 +266,7 @@ public class SuperActivity extends AppCompatActivity {
 
     /**
      * Save the last used clinician to Shared Preferences
+     *
      * @param clinicianName
      */
     public void writeLastUsedClinician(String clinicianName) {
@@ -265,6 +275,7 @@ public class SuperActivity extends AppCompatActivity {
 
     /**
      * Read the last used location from Shared Preferences
+     *
      * @return
      */
     public String readLastUsedLocation() {
@@ -273,6 +284,7 @@ public class SuperActivity extends AppCompatActivity {
 
     /**
      * Read the last used facility from Shared Preferences
+     *
      * @return
      */
     public int readLastUsedFacility() {
@@ -281,6 +293,7 @@ public class SuperActivity extends AppCompatActivity {
 
     /**
      * Read the last used clinician from Shared Preferences
+     *
      * @return
      */
     public String readLastUsedClinician() {
@@ -289,6 +302,7 @@ public class SuperActivity extends AppCompatActivity {
 
     /**
      * Read the last used facility name from Shared Preferences
+     *
      * @return
      */
     public String readLastUsedFacilityName() {
@@ -298,6 +312,7 @@ public class SuperActivity extends AppCompatActivity {
     public void writeString(String key, String value) {
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(key, value).commit();
     }
+
     public String readString(String key) {
         return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(key, "");
     }
@@ -305,12 +320,12 @@ public class SuperActivity extends AppCompatActivity {
 
     public Object getObjectFromPrefsKey(String key) {
         Class clazz = null;
-        if(key.matches(SETTLEMENT_LIST_KEY)) clazz = SettlementWrapper.class;
-        if(key.matches(INJURY_LOCATIONS_KEY)) clazz = InjuryLocationWrapper.class;
-        if(key.matches(DIAGNOSIS_LIST_KEY)) clazz = DiagnosisWrapper.class;
-        if(key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = SupplementalsWrapper.class;
-        if(key.matches(FACILITIES_LIST_KEY)) clazz = CentreWrapper.class;
-        if(key.matches(USER_LIST_KEY)) clazz = UserWrapper.class;
+        if (key.matches(SETTLEMENT_LIST_KEY)) clazz = SettlementWrapper.class;
+        if (key.matches(INJURY_LOCATIONS_KEY)) clazz = InjuryLocationWrapper.class;
+        if (key.matches(DIAGNOSIS_LIST_KEY)) clazz = DiagnosisWrapper.class;
+        if (key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = SupplementalsWrapper.class;
+        if (key.matches(FACILITIES_LIST_KEY)) clazz = CentreWrapper.class;
+        if (key.matches(USER_LIST_KEY)) clazz = UserWrapper.class;
         return getJsonManagerInstance().read(readString(key), clazz);
     }
 

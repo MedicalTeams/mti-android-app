@@ -84,7 +84,6 @@
         </RadioGroup>
 
         <RadioGroup
-            android:id="@+id/rg_years_or_months"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -98,27 +97,28 @@
                 android:layout_height="wrap_content" />
 
             <EditText
-                android:id="@+id/patient_age"
+                android:id="@+id/patient_years"
                 android:layout_width="73dp"
                 android:maxLength="3"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:hint="@string/years" />
 
-            <RadioButton
-                android:id="@+id/rb_years"
-                android:layout_width="0dp"
+            <EditText
+                android:id="@+id/patient_months"
+                android:layout_width="73dp"
+                android:maxLength="3"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/years"
-               android:textSize="@dimen/body_font_medium" />
+                android:inputType="number"
+                android:hint="@string/months" />
 
-            <RadioButton
-                android:id="@+id/rb_months"
-                android:layout_width="0dp"
+            <EditText
+                android:id="@+id/patient_days"
+                android:layout_width="73dp"
+                android:maxLength="3"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/months"
-               android:textSize="@dimen/body_font_medium" />
+                android:inputType="number"
+                android:hint="@string/days"/>
         </RadioGroup>
 
         <RadioGroup

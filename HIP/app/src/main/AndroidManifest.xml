@@ -26,38 +26,33 @@
         </activity>
         <activity
             android:name=".SignOnActivity"
-            android:label="@string/sign_in"
-             >
-        </activity>
+            android:label="@string/sign_in"></activity>
         <activity
             android:name=".DiagnosisActivity"
             android:label="@string/visit_entry"
-            android:launchMode="singleTop"
-             >
-        </activity>
-        <activity android:name=".SuperActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".VisitSummaryActivity"
-            android:label="@string/visit_summary">
-        </activity>
-        <activity android:name=".DashboardActivity"
-            android:label="@string/dashboard">
-        </activity>
-        <activity android:name=".ConsultationActivity"
-            android:launchMode="singleTop"
-            android:label="@string/consultation">
-        </activity>
-        <activity android:name=".CentreSelectionActivity"
-            android:label="@string/select_facility">
-        </activity>
-        <activity android:name=".ClinicianSelectionActivity"
-            android:label="@string/choose_your_name">
-        </activity>
-        <activity android:name=".LocationSelectionActivity"
-
-                  android:label="@string/select_location">
-        </activity>
+            android:launchMode="singleTop"></activity>
+        <activity
+            android:name=".SuperActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".VisitSummaryActivity"
+            android:label="@string/visit_summary"></activity>
+        <activity
+            android:name=".DashboardActivity"
+            android:label="@string/dashboard"></activity>
+        <activity
+            android:name=".ConsultationActivity"
+            android:label="@string/consultation"
+            android:launchMode="singleTop"></activity>
+        <activity
+            android:name=".CentreSelectionActivity"
+            android:label="@string/select_facility"></activity>
+        <activity
+            android:name=".ClinicianSelectionActivity"
+            android:label="@string/choose_your_name"></activity>
+        <activity
+            android:name=".LocationSelectionActivity"
+            android:label="@string/select_location"></activity>
     </application>
 
 </manifest>

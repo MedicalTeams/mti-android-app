@@ -22,9 +22,8 @@ public class DemoTests extends SuperTest {
         // Consultation
         clickOnView(R.id.rb_visit);
         clickOnView(R.id.rb_refugee);
-        enterText(R.id.patient_age, "25");
-        clickOnView(R.id.rb_years);
-        clickOnView(R.id.patient_age);
+        enterText(R.id.patient_years, "25");
+        clickOnView(R.id.patient_years);
         clickOnView(R.id.rb_female);
         enterText(R.id.opd_number, "1234");
         clickOnView(R.id.action_next);
@@ -65,9 +64,8 @@ public class DemoTests extends SuperTest {
         // Consultation
         clickOnView(R.id.rb_visit);
         clickOnView(R.id.rb_refugee);
-        clickOnView(R.id.patient_age);
-        enterText(R.id.patient_age, "34");
-        clickOnView(R.id.rb_years);
+        clickOnView(R.id.patient_years);
+        enterText(R.id.patient_years, "34");
         clickOnView(R.id.rb_male);
         enterText(R.id.opd_number, "1235");
         clickOnView(R.id.action_next);

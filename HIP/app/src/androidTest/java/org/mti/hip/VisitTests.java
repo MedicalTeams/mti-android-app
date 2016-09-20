@@ -2,9 +2,6 @@ package org.mti.hip;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by r624513 on 12/10/15.
- */
 public class VisitTests extends SuperTest {
 
     public VisitTests() {
@@ -49,9 +46,8 @@ public class VisitTests extends SuperTest {
         // Consultation
         clickOnView(R.id.rb_visit);
         clickOnView(R.id.rb_refugee);
-        clickOnView(R.id.rb_years);
-        clickOnView(R.id.patient_age);
-        enterText(R.id.patient_age, "25");
+        clickOnView(R.id.patient_years);
+        enterText(R.id.patient_years, "25");
         clickOnView(R.id.rb_female);
         enterText(R.id.opd_number, "1234");
         clickOnView(R.id.action_next);

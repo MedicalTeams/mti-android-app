@@ -162,7 +162,6 @@ public class DashboardActivity extends SuperActivity {
             }
         };
         registerReceiver(networkBroadcastReceiver, intentFilter);
-
     }
 
     @Override

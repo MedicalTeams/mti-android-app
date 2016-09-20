@@ -271,17 +271,20 @@ public class VisitSummaryActivity extends SuperActivity {
 
         TextView age = new TextView(c);
 
-        int ageVal = visit.getPatientAgeMonths();
-        String ageString;
-        if (visit.isAgeMonths()) {
-            ageString = String.valueOf(ageVal);
-            age.setText(getString(R.string.age) + " (" + getString(R.string.months) + "): ");
-        } else {
-            ageString = String.valueOf(ageVal / 12);
-            age.setText(getString(R.string.age) + " (" + getString(R.string.years) + "): ");
+        int years = visit.getPatientAgeYears();
+        int months = visit.getPatientAgeMonths();
+        int days = visit.getPatientAgeDays();
+        age.setText(getString(R.string.age) + ": ");
+        if(years > 0) {
+            age.append(String.valueOf(years) + " " + getString(R.string.years) + " ");
+        }
+        if(months > 0) {
+            age.append(String.valueOf(months) + " " + getString(R.string.months) + " ");
+        }
+        if(days > 0) {
+            age.append(String.valueOf(days) + " " + getString(R.string.days) + " ");
         }
 
-        age.append(ageString);
         TextView gender = new TextView(c);
         gender.setText(getString(R.string.gender) + ": ");
         if (visit.getGender() == 'M') {

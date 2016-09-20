@@ -2,6 +2,8 @@ package org.mti.hip.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.mti.hip.R;
+
 import java.util.Date;
 import java.util.HashSet;
 
@@ -16,14 +18,15 @@ public class Visit {
     public static final int national = 1;
     public static final int refugee = 2;
 
-    private boolean isAgeMonths;
     private String staffMemberName;
     private String facilityName;
     private int facility;
     private char gender;
     private int beneficiaryType;
     private long OPD;
+    private int patientAgeYears;
     private int patientAgeMonths;
+    private int patientAgeDays;
     private Boolean isRevisit = false;
     private HashSet<Diagnosis> patientDiagnosis = new HashSet<>();
     private int stiContactsTreated;
@@ -80,13 +83,48 @@ public class Visit {
         this.OPD = OPD;
     }
 
-    public int getPatientAgeMonths() {
-        return patientAgeMonths;
+    /**
+     * Gets age low so the system can handle age ranges.
+     * Age range is not implemented in the UI.
+     * @return Age as a decimal in years.
+     */
+    public double getPatientAgeLow(){
+        return patientAgeYears + patientAgeMonths / 12.0 + patientAgeDays / (12.0 * 30.0);
     }
 
-    public void setPatientAgeMonths(int patientAgeMonths) {
-        this.patientAgeMonths = patientAgeMonths;
+    /**
+     * Gets and sets age low and high so the system can handle age ranges.
+     * Age range is not implemented in the UI.
+     * @return Age as a decimal in years.
+     */
+    public void setPatientAgeLow(double age){
+        patientAgeYears = (int)Math.floor(age / 12.0);
+        patientAgeMonths = (int)Math.floor(age - patientAgeYears * 12.0);
+        patientAgeDays = (int)Math.floor(age - patientAgeYears * 12.0 * 30.0 - patientAgeMonths * 30.0);
     }
+
+    public double getPatientAgeHigh(){
+        return patientAgeYears + patientAgeMonths / 12.0 + patientAgeDays / (12.0 * 30.0);
+    }
+
+    @JsonIgnore
+    public int getPatientAgeYears() { return patientAgeYears; }
+
+    @JsonIgnore
+    public void setPatientAgeYears(int patientAgeYears) { this.patientAgeYears = patientAgeYears; }
+
+    @JsonIgnore
+    public int getPatientAgeMonths() { return patientAgeMonths; }
+
+    @JsonIgnore
+    public void setPatientAgeMonths(int patientAgeMonths) { this.patientAgeMonths = patientAgeMonths; }
+
+    @JsonIgnore
+    public int getPatientAgeDays() { return patientAgeDays; }
+
+    @JsonIgnore
+    public void setPatientAgeDays(int patientAgeDays) { this.patientAgeDays = patientAgeDays; }
+
 
     public Boolean getIsRevisit() {
         return isRevisit;
@@ -138,25 +176,6 @@ public class Visit {
     public void setFacilityName(String facilityName) {
         this.facilityName = facilityName;
     }
-
-    @JsonIgnore
-    public boolean isAgeMonths() {
-        return isAgeMonths;
-    }
-
-    @JsonIgnore
-    public void setIsAgeMonths(boolean isAgeMonths) {
-        this.isAgeMonths = isAgeMonths;
-    }
-
-//    public boolean isSent() {
-//        return sent;
-//    }
-
-//    public void setSent(boolean sent) {
-//        this.sent = sent;
-//    }
-
 
     public int getStatus() {
         return status;

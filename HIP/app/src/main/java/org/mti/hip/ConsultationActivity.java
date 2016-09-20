@@ -24,10 +24,10 @@ public class ConsultationActivity extends SuperActivity {
     private RadioButton rbRevisit;
     private RadioButton rbNational;
     private RadioButton rbRefugee;
-    private RadioButton rbYears;
-    private RadioButton rbMonths;
     private EditText opdNum;
-    private EditText age;
+    private EditText patientYears;
+    private EditText patientMonths;
+    private EditText patientDays;
     private StringBuilder errorBuilder;
     private int backPressCount;
     private boolean editMode;
@@ -38,7 +38,9 @@ public class ConsultationActivity extends SuperActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consultation);
         opdNum = (EditText) findViewById(R.id.opd_number);
-        age = (EditText) findViewById(R.id.patient_age);
+        patientYears = (EditText) findViewById(R.id.patient_years);
+        patientMonths = (EditText) findViewById(R.id.patient_months);
+        patientDays = (EditText) findViewById(R.id.patient_days);
         rbMale = (RadioButton) findViewById(R.id.rb_male);
         rbFemale = (RadioButton) findViewById(R.id.rb_female);
         rbNational = (RadioButton) findViewById(R.id.rb_national);
@@ -46,8 +48,6 @@ public class ConsultationActivity extends SuperActivity {
         rbVisit = (RadioButton) findViewById(R.id.rb_visit);
         rbRevisit = (RadioButton) findViewById(R.id.rb_revisit);
         rbRefugee = (RadioButton) findViewById(R.id.rb_refugee);
-        rbYears = (RadioButton) findViewById(R.id.rb_years);
-        rbMonths = (RadioButton) findViewById(R.id.rb_months);
 
         findViewById(R.id.opd_tooltip).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,27 +109,14 @@ public class ConsultationActivity extends SuperActivity {
             }
         } // not worried about the else case since OPD# is optional
 
-        if (editTextHasContent(age)) {
-            // something is entered
-            int ageVal = Integer.valueOf(age.getText().toString());
-
-            if (rbMonths.isChecked()) {
-                visit.setPatientAgeMonths(Integer.valueOf(age.getText().toString()));
-                visit.setIsAgeMonths(true);
-                if(ageVal == 0 | ageVal > 24) {
-                    addErrorString(R.string.error_age_range_months);
-                    valid = false;
-                }
-            } else if (rbYears.isChecked()){
-                visit.setPatientAgeMonths(Integer.valueOf(age.getText().toString()) * 12);
-                visit.setIsAgeMonths(false);
-                if (ageVal == 0 | ageVal > 150){
-                    addErrorString(R.string.error_age_range);
-                    valid = false;
-                }
-            } else {
+        if (editTextHasContent(patientYears) || editTextHasContent(patientMonths) || editTextHasContent(patientDays)) {
+            visit.setPatientAgeYears(editTextToInt(patientYears, 0));
+            visit.setPatientAgeMonths(editTextToInt(patientMonths, 0));
+            visit.setPatientAgeDays(editTextToInt(patientDays, 0));
+            double ageVal = visit.getPatientAgeLow();
+            if (ageVal <= 0 | ageVal > 150) {
+                addErrorString(R.string.error_age_range);
                 valid = false;
-                addErrorString(R.string.error_age);
             }
         } else {
             // handles nothing entered scenario

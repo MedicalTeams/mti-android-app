@@ -49,7 +49,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="consultation">Consultation</string>
     <string name="contacts_treated">Contacts Treated</string>
     <string name="error_status_type">You must select a Status type - National or Refugee</string>
-    <string name="error_age">You must enter an age in years or months</string>
+    <string name="error_age">You must enter an age in years, months, and/or days.</string>
     <string name="error_age_range">Please enter an age between 1–150 years</string>
     <string name="error_age_range_months">Please enter an age between 1–24 months</string>
     <string name="error_visit_type">You must select a visit type - New Visit or Revisit</string>
@@ -92,6 +92,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="ur_device_has_been_disabled">Your device has been disabled and will need to be activated by the administrator in order to process its visits.</string>
     <string name="some_recs_not_processed">Some records were not processed and will be resent during the next upload.</string>
     <string name="age">Age</string>
+    <string name="days">Days</string>
     <string name="months">Months</string>
     <string name="years">Years</string>
     <string name="gender">Gender</string>
