@@ -17,6 +17,11 @@
 
         <!-- date, facility, staff member-->
 
+        <include layout="@layout/includeable_dev_mode"
+            android:id="@+id/dev_mode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
         <TextView
             android:id="@+id/tv_summary_date"
             android:layout_width="wrap_content"

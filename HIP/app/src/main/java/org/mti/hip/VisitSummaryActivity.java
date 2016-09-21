@@ -48,6 +48,7 @@ public class VisitSummaryActivity extends SuperActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_summary);
+        displayMode();
 
         tallyJson = getJsonManagerInstance().writeValueAsString(getStorageManagerInstance().getTally());
         tally = (Tally) getJsonManagerInstance().read(tallyJson, Tally.class);
@@ -224,7 +225,7 @@ public class VisitSummaryActivity extends SuperActivity {
 
         VisitDiagnosisListAdapter.check_states.clear();
         Intent i = new Intent(VisitSummaryActivity.this, DashboardActivity.class);
-        i.putExtra(EXTRA_MSG, message);
+        //i.putExtra(EXTRA_MSG, message);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
@@ -247,9 +248,6 @@ public class VisitSummaryActivity extends SuperActivity {
         if (id == 65 || id == 66) {
             addSupplementalDiagPrompt(diag, getString(R.string.prompt_assault));
         }
-
-
-
     }
 
     private void addDiagPrompt(Diagnosis diag, String string) {

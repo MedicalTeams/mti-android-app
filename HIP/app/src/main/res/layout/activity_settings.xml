@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/edge_margin"
+    tools:context="org.mti.hip.SettingsActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="340dp"
+        android:layout_marginLeft="32dp"
+        android:layout_height="wrap_content">
+
+
+        <RadioGroup
+            android:id="@+id/rg_visit_revisit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/edge_margin">
+
+            <TextView
+                android:id="@+id/tv_label_visit_type"
+                android:textSize="@dimen/body_font_medium"
+                android:text="Mode"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+
+            <RadioButton
+                android:id="@+id/rb_production"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Prod"
+               android:textSize="@dimen/body_font_medium" />
+
+            <RadioButton
+                android:id="@+id/rb_test"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Test"
+               android:textSize="@dimen/body_font_medium" />
+        </RadioGroup>
+   </LinearLayout>
+
+</RelativeLayout>

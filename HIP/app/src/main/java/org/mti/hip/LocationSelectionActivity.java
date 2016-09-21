@@ -24,6 +24,7 @@ public class LocationSelectionActivity extends SuperActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_selection);
+        displayMode();
         lv = (ListView) findViewById(R.id.location_list);
         getList();
 

@@ -9,10 +9,8 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Created by r624513 on 11/4/15.
- */
 public class HttpClient {
 
     private OkHttpClient client;
@@ -25,7 +23,8 @@ public class HttpClient {
     public static final String injuryLocationsEndpoint = "/injurylocations";
     public static final String devicesEndpoint = "/devices";
 
-    public static final String hipWebUrl = "http://clinicwebapp.azurewebsites.net/hip";
+    public static final String prodWebUrl = "http://clinicwebapp.azurewebsites.net/hip";
+    public static final String testWebUrl = "http://clinicwebapp.azurewebsites.net/hip";
 
     public static final String post = "POST";
     public static final String get = "GET";
@@ -36,18 +35,25 @@ public class HttpClient {
 
     public HttpClient() {
         client = new OkHttpClient();
-        // TODO set timeouts if default of 10 seconds doesn't work
-//        client.setConnectTimeout(15, TimeUnit.SECONDS);
+        client.setConnectTimeout(3, TimeUnit.SECONDS);
 //        client.setReadTimeout(15, TimeUnit.SECONDS);
 //        client.setWriteTimeout(15, TimeUnit.SECONDS);
     }
 
-    public String post(final String endpoint, final String json) throws IOException {
+    public String post(final String endpoint, final String json, final boolean isProduction) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(hipWebUrl + endpoint)
-                .post(body)
-                .build();
+        Request request = null;
+        if(isProduction) {
+            request = new Request.Builder()
+                    .url(prodWebUrl + endpoint)
+                    .post(body)
+                    .build();
+        } else {
+            request = new Request.Builder()
+                    .url(testWebUrl + endpoint)
+                    .post(body)
+                    .build();
+        }
         Response response;
         String responseString = null;
         response = client.newCall(request).execute();
@@ -55,17 +61,23 @@ public class HttpClient {
         return responseString;
     }
 
-    public String get(final String endpoint) throws IOException {
-        Request request = new Request.Builder()
-                .url(hipWebUrl + endpoint)
-                .build();
+    public String get(final String endpoint, final boolean isProduction) throws IOException {
+        Request request = null;
+        if(isProduction) {
+            request = new Request.Builder()
+                    .url(prodWebUrl + endpoint)
+                    .build();
+        } else {
+            request = new Request.Builder()
+                    .url(testWebUrl + endpoint)
+                    .build();
+        }
         Response response;
 
         String responseString = null;
         response = client.newCall(request).execute();
         responseString = parseResponse(response);
         return responseString;
-
     }
 
     private String parseResponse(Response response) throws IOException {
@@ -77,12 +89,20 @@ public class HttpClient {
         return responseString;
     }
 
-    public String put(final String endpoint, final String json) throws IOException {
+    public String put(final String endpoint, final String json, final boolean isProduction) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(hipWebUrl + endpoint)
-                .put(body)
-                .build();
+        Request request = null;
+        if(isProduction) {
+            request = new Request.Builder()
+                    .url(prodWebUrl + endpoint)
+                    .put(body)
+                    .build();
+        } else {
+            request = new Request.Builder()
+                    .url(testWebUrl + endpoint)
+                    .put(body)
+                    .build();
+        }
         Log.v("mti","request.toString() = " + request.toString());
         Response response;
         String responseString;

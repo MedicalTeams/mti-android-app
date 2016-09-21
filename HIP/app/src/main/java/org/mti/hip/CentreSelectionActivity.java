@@ -23,6 +23,7 @@ public class CentreSelectionActivity extends SuperActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_centre_selection);
+        displayMode();
         lv = (ListView) findViewById(android.R.id.list);
         getFacilities();
     }
@@ -34,7 +35,6 @@ public class CentreSelectionActivity extends SuperActivity {
     }
 
     private void getFacilities() {
-
         if (readString(FACILITIES_LIST_KEY).matches("")) {
             runNetworkTask();
         } else {

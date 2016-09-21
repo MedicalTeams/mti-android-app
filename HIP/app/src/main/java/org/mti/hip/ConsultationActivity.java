@@ -37,6 +37,7 @@ public class ConsultationActivity extends SuperActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consultation);
+        displayMode();
         opdNum = (EditText) findViewById(R.id.opd_number);
         patientYears = (EditText) findViewById(R.id.patient_years);
         patientMonths = (EditText) findViewById(R.id.patient_months);
@@ -113,7 +114,7 @@ public class ConsultationActivity extends SuperActivity {
             visit.setPatientAgeYears(editTextToInt(patientYears, 0));
             visit.setPatientAgeMonths(editTextToInt(patientMonths, 0));
             visit.setPatientAgeDays(editTextToInt(patientDays, 0));
-            double ageVal = visit.getPatientAgeLow();
+            double ageVal = visit.getPatientAgeMonthsLow();
             if (ageVal <= 0 | ageVal > 150) {
                 addErrorString(R.string.error_age_range);
                 valid = false;

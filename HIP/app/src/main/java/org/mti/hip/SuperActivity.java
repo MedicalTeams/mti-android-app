@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.BoolRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 
 import org.mti.hip.model.CentreWrapper;
@@ -24,21 +27,22 @@ import org.mti.hip.utils.StorageManager;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class SuperActivity extends AppCompatActivity {
 
     public static final String DEFAULT_LOG_TAG = "MTI-HIP";
 
-    public static final String EXTRA_MSG = "extramsg";
     public static String currentUserName;
     private static JSONManager jsonManager;
-    private static StorageManager storageManager = getStorageManagerInstance();
+    private static HashMap<String, StorageManager> storageManagerModes = new HashMap<String, StorageManager>();
     private static HttpClient httpClient;
     public static String facilityName;
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
     public ProgressDialog progressDialog;
     private static boolean isConnected;
+    private static String mode;
 
     public static final int diagId = 0;
     public static final int stiId = 1;
@@ -59,7 +63,7 @@ public class SuperActivity extends AppCompatActivity {
     private static final String LOCATION_KEY = "locationId";
     private static final String FACILITY_KEY = "facilityId";
     private static final String CLINICIAN_KEY = "clinicianName";
-    private static final String FACILITY_NAME_KEY = "facnamekey";
+    public static final String FACILITY_NAME_KEY = "facnamekey";
     public static final String FACILITIES_LIST_KEY = "facilitieskey";
     public static final String SETTLEMENT_LIST_KEY = "settlementkey";
     public static final String DIAGNOSIS_LIST_KEY = "diaglistkey";
@@ -67,6 +71,9 @@ public class SuperActivity extends AppCompatActivity {
     public static final String INJURY_LOCATIONS_KEY = "injurylockey";
     public static final String USER_LIST_KEY = "userlistkey";
     public static final String DEVICE_STATUS_KEY = "devicestatuskey";
+    private static final String MODE_KEY = "modekey";
+    public static final String MODE_PROD = "PROD";
+    public static final String MODE_TEST = "TEST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +82,11 @@ public class SuperActivity extends AppCompatActivity {
         currentUserName = readLastUsedClinician();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_super);
-        if (getSupportActionBar() != null) {
+        if(getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(buildHeader());
         }
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-
-
     }
 
     @Override
@@ -98,11 +103,12 @@ public class SuperActivity extends AppCompatActivity {
         return jsonManager;
     }
 
-    public static StorageManager getStorageManagerInstance() {
-        if (storageManager == null) {
-            storageManager = new StorageManager();
+    public StorageManager getStorageManagerInstance() {
+        String mode = getMode();
+        if(!storageManagerModes.containsKey(mode)) {
+            storageManagerModes.put(mode, new StorageManager(mode));
         }
-        return storageManager;
+        return storageManagerModes.get(mode);
     }
 
 
@@ -118,7 +124,7 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     public int editTextToInt(EditText et, int defaultVal) {
-        if (editTextHasContent(et)) {
+        if(editTextHasContent(et)) {
             return Integer.valueOf(et.getText().toString());
         } else {
             return defaultVal;
@@ -139,10 +145,10 @@ public class SuperActivity extends AppCompatActivity {
 
     private String buildHeader() {
         StringBuffer sb = new StringBuffer();
-        if (!facilityName.matches("")) {
+        if(!facilityName.matches("")) {
             sb.append(facilityName + "  |  " + getDateNowString());
         }
-        if (!currentUserName.matches("")) {
+        if(!currentUserName.matches("")) {
             sb.append("  |  " + currentUserName);
         }
         return sb.toString();
@@ -194,21 +200,21 @@ public class SuperActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             String responseString = null;
-            if (httpMethod.equals(HttpClient.post)) {
+            if(httpMethod.equals(HttpClient.post)) {
                 try {
-                    responseString = getHttpClientInstance().post(endpoint, body);
+                    responseString = getHttpClientInstance().post(endpoint, body, getIsProductionMode());
                 } catch (IOException e) {
                     this.e = e;
                 }
             } else if (httpMethod.equals(HttpClient.put)) {
                 try {
-                    responseString = getHttpClientInstance().put(endpoint, body);
+                    responseString = getHttpClientInstance().put(endpoint, body, getIsProductionMode());
                 } catch (IOException e) {
                     this.e = e;
                 }
             } else {
                 try {
-                    responseString = getHttpClientInstance().get(endpoint);
+                    responseString = getHttpClientInstance().get(endpoint, getIsProductionMode());
                 } catch (IOException e) {
                     this.e = e;
                 }
@@ -222,6 +228,7 @@ public class SuperActivity extends AppCompatActivity {
             if (e == null) {
                 getResponseString(r);
             } else if(!isCancelled()){
+                setIsConnected(false);
                 if(e.getMessage().isEmpty()) {
                     alert.showAlert(getString(R.string.error), "There was a networking issue. Please check your connection and try again.");
                 }
@@ -239,7 +246,7 @@ public class SuperActivity extends AppCompatActivity {
      * @param locationId
      */
     public void writeLastUsedLocation(String locationId) {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(LOCATION_KEY, locationId).commit();
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(getMode() + LOCATION_KEY, locationId).commit();
     }
 
     /**
@@ -248,7 +255,7 @@ public class SuperActivity extends AppCompatActivity {
      * @param facilityId
      */
     public void writeLastUsedFacility(int facilityId) {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putInt(FACILITY_KEY, facilityId).commit();
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putInt(getMode() + FACILITY_KEY, facilityId).commit();
     }
 
     /**
@@ -257,11 +264,11 @@ public class SuperActivity extends AppCompatActivity {
      * @param name
      */
     public void writeLastUsedFacilityName(String name) {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(FACILITY_NAME_KEY, name).commit();
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(getMode() + FACILITY_NAME_KEY, name).commit();
     }
 
     public void writeDeviceStatus(String status) {
-        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putString(DEVICE_STATUS_KEY, status).commit();
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putString(getMode() + DEVICE_STATUS_KEY, status).commit();
     }
 
     /**
@@ -270,7 +277,7 @@ public class SuperActivity extends AppCompatActivity {
      * @param clinicianName
      */
     public void writeLastUsedClinician(String clinicianName) {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(CLINICIAN_KEY, clinicianName).commit();
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(getMode() + CLINICIAN_KEY, clinicianName).commit();
     }
 
     /**
@@ -279,7 +286,7 @@ public class SuperActivity extends AppCompatActivity {
      * @return
      */
     public String readLastUsedLocation() {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(LOCATION_KEY, "");
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(getMode() + LOCATION_KEY, "");
     }
 
     /**
@@ -288,7 +295,7 @@ public class SuperActivity extends AppCompatActivity {
      * @return
      */
     public int readLastUsedFacility() {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getInt(FACILITY_KEY, 0);
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getInt(getMode() + FACILITY_KEY, 0);
     }
 
     /**
@@ -297,7 +304,7 @@ public class SuperActivity extends AppCompatActivity {
      * @return
      */
     public String readLastUsedClinician() {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(CLINICIAN_KEY, "");
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(getMode() + CLINICIAN_KEY, "");
     }
 
     /**
@@ -306,17 +313,26 @@ public class SuperActivity extends AppCompatActivity {
      * @return
      */
     public String readLastUsedFacilityName() {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(FACILITY_NAME_KEY, "");
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(getMode() + FACILITY_NAME_KEY, "");
     }
 
     public void writeString(String key, String value) {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(key, value).commit();
+        // WORK AROUND
+        if(key.startsWith(getMode())) {
+            key = key.substring(4);
+        }
+        Log.d("WRITE", key);
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putString(getMode() + key, value).commit();
     }
 
     public String readString(String key) {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(key, "");
+        // WORK AROUND
+        if(key.startsWith(getMode())) {
+            key = key.substring(4);
+        }
+        Log.d("READ", key);
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(getMode() + key, "");
     }
-
 
     public Object getObjectFromPrefsKey(String key) {
         Class clazz = null;
@@ -326,7 +342,7 @@ public class SuperActivity extends AppCompatActivity {
         if (key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = SupplementalsWrapper.class;
         if (key.matches(FACILITIES_LIST_KEY)) clazz = CentreWrapper.class;
         if (key.matches(USER_LIST_KEY)) clazz = UserWrapper.class;
-        return getJsonManagerInstance().read(readString(key), clazz);
+        return getJsonManagerInstance().read(readString(getMode() + key), clazz);
     }
 
     /**
@@ -341,7 +357,45 @@ public class SuperActivity extends AppCompatActivity {
         SuperActivity.isConnected = isConnected;
     }
 
+    /**
+     *
+     */
+    public void displayMode() {
+        if(getMode() == MODE_PROD) {
+            findViewById(R.id.dev_mode).setVisibility(View.INVISIBLE);
+        } else {
+            findViewById(R.id.dev_mode).setVisibility(View.VISIBLE);
+        }
+    }
 
+    private String getMode() {
+        if(mode == null) {
+            mode = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(MODE_KEY, "");
+            if(mode == "") {
+                mode = MODE_PROD;
+            }
+        }
+        return mode;
+    }
 
+    private void setMode(String mode) {
+        this.mode = mode;
+        writeString(MODE_KEY, mode);
+    }
 
+    public boolean getIsProductionMode() {
+        if(getMode() == MODE_PROD) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setIsProductionMode(boolean isProductionMode) {
+        if(isProductionMode) {
+            setMode(MODE_PROD);
+        } else {
+            setMode(MODE_TEST);
+        }
+    }
 }

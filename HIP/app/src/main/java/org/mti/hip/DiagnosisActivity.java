@@ -25,6 +25,7 @@ public class DiagnosisActivity extends SuperActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diagnosis_entry);
+        displayMode();
 
         // get the listview
         expListView = (ExpandableListView) findViewById(R.id.visitdiaglist);

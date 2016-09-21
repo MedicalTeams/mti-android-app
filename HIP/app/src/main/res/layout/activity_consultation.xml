@@ -6,7 +6,10 @@
     android:padding="@dimen/edge_margin"
     tools:context="org.mti.hip.ConsultationActivity">
 
-
+    <include layout="@layout/includeable_dev_mode"
+        android:id="@+id/dev_mode"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <LinearLayout
         android:orientation="vertical"

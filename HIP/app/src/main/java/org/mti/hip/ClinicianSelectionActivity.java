@@ -35,6 +35,7 @@ public class ClinicianSelectionActivity extends SuperActivity {
         setContentView(R.layout.activity_clinician_selection);
         lv = (ListView) findViewById(android.R.id.list);
         add = (Button) findViewById(R.id.bt_add_new_staff_member);
+        displayMode();
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -13,6 +13,9 @@ import android.os.CountDownTimer;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -53,9 +56,9 @@ public class DashboardActivity extends SuperActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        displayMode();
 
         manualSync = (TextView) findViewById(R.id.bt_manual_sync);
-
         manualSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +104,22 @@ public class DashboardActivity extends SuperActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i = new Intent(DashboardActivity.this, SettingsActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
+        return true;
     }
 
     @Override
@@ -237,11 +256,11 @@ public class DashboardActivity extends SuperActivity {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    writeString(DIAGNOSIS_LIST_KEY, client.get(HttpClient.diagnosisEndpoint));
-                    writeString(FACILITIES_LIST_KEY, client.get(HttpClient.facilitiesEndpoint));
-                    writeString(SUPPLEMENTAL_LIST_KEY, client.get(HttpClient.supplementalEndpoint));
-                    writeString(SETTLEMENT_LIST_KEY, client.get(HttpClient.settlementEndpoint));
-                    writeString(INJURY_LOCATIONS_KEY, client.get(HttpClient.injuryLocationsEndpoint));
+                    writeString(DIAGNOSIS_LIST_KEY, client.get(HttpClient.diagnosisEndpoint, getIsProductionMode()));
+                    writeString(FACILITIES_LIST_KEY, client.get(HttpClient.facilitiesEndpoint, getIsProductionMode()));
+                    writeString(SUPPLEMENTAL_LIST_KEY, client.get(HttpClient.supplementalEndpoint, getIsProductionMode()));
+                    writeString(SETTLEMENT_LIST_KEY, client.get(HttpClient.settlementEndpoint, getIsProductionMode()));
+                    writeString(INJURY_LOCATIONS_KEY, client.get(HttpClient.injuryLocationsEndpoint, getIsProductionMode()));
                 } catch (IOException e1) {
                     e = e1;
                 }
@@ -265,6 +284,7 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void sendTally() {
+        Log.d("sendTally", tallyJson);
         new NetworkTask(tallyJson, HttpClient.tallyEndpoint, HttpClient.post) {
 
 

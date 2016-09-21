@@ -18,12 +18,13 @@ import java.io.IOException;
  */
 public class StorageManager {
 
-    public static final String TALLY_FILENAME = "tally_file";
-    public static final String LOG_TAG = "MTI-HIP";
-
+    private static final String TALLY_FILENAME = "tally_file";
+    private static final String LOG_TAG = "MTI-HIP";
+    private String mode;
     private Tally tally;
 
-    public StorageManager() {
+    public StorageManager(String mode) {
+        this.mode = mode;
     }
 
     public Visit newVisit() {
@@ -52,7 +53,7 @@ public class StorageManager {
      */
     public String readTallyToJsonString(Context context) {
         if (isExternalStorageReadable()) {
-            File file = new File(context.getExternalFilesDir(null), TALLY_FILENAME);
+            File file = new File(context.getExternalFilesDir(null), mode + TALLY_FILENAME);
             try {
                 return FileUtils.readFileToString(file);
             } catch (IOException e) {
@@ -72,7 +73,7 @@ public class StorageManager {
      */
     public void writeTallyJsonToFile(String jsonString, Context context) {
         if (isExternalStorageWritable()) {
-            File file = new File(context.getExternalFilesDir(null), TALLY_FILENAME);
+            File file = new File(context.getExternalFilesDir(null), mode + TALLY_FILENAME);
             try {
                 FileUtils.writeStringToFile(file, jsonString);
             } catch (IOException e) {

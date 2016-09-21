@@ -9,6 +9,11 @@
                 android:paddingTop="16dp"
                 tools:context="org.mti.hip.LocationSelectionActivity">
 
+    <include layout="@layout/includeable_dev_mode"
+        android:id="@+id/dev_mode"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <ListView
         android:id="@+id/location_list"
         android:layout_width="match_parent"
