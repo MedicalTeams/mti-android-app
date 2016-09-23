@@ -38,10 +38,10 @@ import java.util.concurrent.TimeUnit;
 
 public class DashboardActivity extends SuperActivity {
 
-    public static final int tallyFileSyncOverdueThresholdDays = 1;
-    public static final int serverConstantsSyncOverdueThresholdDays = 1;
-    public static final String LAST_TALLY_FILE_SYNC_TIME_KEY = "lastTallyFileSyncTimeKey";
-    public static final String LAST_SERVER_CONSTANTS_SYNC_TIME_KEY = "lastServerConstantsSyncTimeKey";
+    private static final int tallyFileSyncOverdueThresholdDays = 1;
+    private static final int serverConstantsSyncOverdueThresholdDays = 1;
+    private static final String LAST_TALLY_FILE_SYNC_TIME_KEY = "lastTallyFileSyncTimeKey";
+    private static final String LAST_SERVER_CONSTANTS_SYNC_TIME_KEY = "lastServerConstantsSyncTimeKey";
     private static final String APP_VERSION_KEY = "appversionkey";
 
     private int backPressCount;
@@ -76,10 +76,6 @@ public class DashboardActivity extends SuperActivity {
             }
         });
 
-
-//        if (getIntent().getStringExtra(EXTRA_MSG) != null) {
-//            Toast.makeText(this, getIntent().getStringExtra(EXTRA_MSG), Toast.LENGTH_LONG).show();
-//        }
         findViewById(R.id.new_visit).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +110,7 @@ public class DashboardActivity extends SuperActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuOpened(int featureId, Menu menu) {
         Intent i = new Intent(DashboardActivity.this, SettingsActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
@@ -296,24 +292,27 @@ public class DashboardActivity extends SuperActivity {
                 int success = 0;
                 int successPastVisit = 0;
                 int warnings = 0;
-                for(Visit serverVisit : serverTally) {
-                    if(serverVisit.getStatus() == visitStatusDisabled) {
-                        writeDeviceStatus("D");
-                    }
-                    if(serverVisit.getStatus() == visitStatusSuccess || serverVisit.getStatus() == visitStatusDuplicate) {
-                        if(DateUtils.isToday(serverVisit.getVisitDate().getTime())) {
-                            success++;
-                        } else {
-                            successPastVisit++;
+                if(serverTally == null) {
+                    warnings = tally.size();
+                } else {
+                    for (Visit serverVisit : serverTally) {
+                        if (serverVisit.getStatus() == visitStatusDisabled) {
+                            writeDeviceStatus("D");
                         }
-                    } else {
-                        warnings++;
-                    }
-                    for(Visit visit : tally) {
-                        visit.setStatus(serverVisit.getStatus());
+                        if (serverVisit.getStatus() == visitStatusSuccess || serverVisit.getStatus() == visitStatusDuplicate) {
+                            if (DateUtils.isToday(serverVisit.getVisitDate().getTime())) {
+                                success++;
+                            } else {
+                                successPastVisit++;
+                            }
+                        } else {
+                            warnings++;
+                        }
+                        for (Visit visit : tally) {
+                            visit.setStatus(serverVisit.getStatus());
+                        }
                     }
                 }
-
                 StringBuilder resultsMessageBuilder = new StringBuilder();
                 resultsMessageBuilder.append("Visits for today successfully recorded: " + success + "\n");
                 if(successPastVisit > 0) {

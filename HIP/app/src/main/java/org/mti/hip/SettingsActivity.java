@@ -1,16 +1,21 @@
 package org.mti.hip;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.util.Log;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 public class SettingsActivity extends SuperActivity {
+
     private RadioButton rbProduction;
     private RadioButton rbTest;
+    private TextView tvVersion;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -19,6 +24,14 @@ public class SettingsActivity extends SuperActivity {
 
         rbProduction = (RadioButton)findViewById(R.id.rb_production);
         rbTest = (RadioButton)findViewById(R.id.rb_test);
+        tvVersion = (TextView)findViewById(R.id.tv_version);
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            tvVersion.setText(pInfo.versionName + " (" + Integer.toString(pInfo.versionCode) + ")");
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         if(getIsProductionMode()) {
             rbProduction.setChecked(true);
         } else {

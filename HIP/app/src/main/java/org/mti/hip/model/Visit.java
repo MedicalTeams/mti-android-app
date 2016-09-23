@@ -89,7 +89,7 @@ public class Visit {
      * @return Age as a decimal in years.
      */
     public double getPatientAgeMonthsLow(){
-        return patientAgeYears + patientAgeMonths / 12.0 + patientAgeDays / (12.0 * 30.0);
+        return patientAgeYears * 12.0 + patientAgeMonths + patientAgeDays / 30.0;
     }
 
     /**
@@ -100,11 +100,11 @@ public class Visit {
     public void setPatientAgeMonthsLow(double ageMonths){
         patientAgeYears = (int)Math.floor(ageMonths / 12.0);
         patientAgeMonths = (int)Math.floor(ageMonths - patientAgeYears * 12.0);
-        patientAgeDays = (int)Math.floor(ageMonths - patientAgeYears * 12.0 * 30.0 - patientAgeMonths * 30.0);
+        patientAgeDays = (int)Math.floor((ageMonths - patientAgeYears * 12.0 - patientAgeMonths) * 30.0);
     }
 
     public double getPatientAgeMonthsHigh(){
-        return patientAgeYears * 12.0 + patientAgeMonths + patientAgeDays / (30.0);
+        return patientAgeYears * 12.0 + patientAgeMonths + patientAgeDays / 30.0;
     }
 
     @JsonIgnore
@@ -124,7 +124,6 @@ public class Visit {
 
     @JsonIgnore
     public void setPatientAgeDays(int patientAgeDays) { this.patientAgeDays = patientAgeDays; }
-
 
     public Boolean getIsRevisit() {
         return isRevisit;

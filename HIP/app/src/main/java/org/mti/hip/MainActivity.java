@@ -1,6 +1,5 @@
 package org.mti.hip;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.mti.hip.model.DeviceStatusResponse;
@@ -33,30 +31,18 @@ public class MainActivity extends SuperActivity {
     private String versionName;
     private boolean initialized;
     private boolean registered;
-    private ProgressBar progress;
     private String serialNumber;
     private NetworkBroadcastReceiver networkBroadcastReceiver;
-    private ProgressDialog localProgress;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
         displayMode();
 
         if(checkForAppReadiness()) {
             return;
         }
-
-        progressDialog.hide();
-
-        localProgress = new ProgressDialog(this);
-        localProgress.setMessage(getString(R.string.plz_wait));
-        localProgress.setCancelable(false);
-        progress = (ProgressBar) findViewById(R.id.progress);
-
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         networkBroadcastReceiver = new NetworkBroadcastReceiver();
@@ -77,10 +63,8 @@ public class MainActivity extends SuperActivity {
             @Override
             public void onClick(View v) {
 
-                localProgress.show();
                 if(!isConnected()) {
                     alert.showAlert(getString(R.string.no_network), getString(R.string.plz_connect2_internet_ntry_again));
-                    localProgress.dismiss();
                     return;
                 }
                 if(!registered) {
@@ -103,20 +87,6 @@ public class MainActivity extends SuperActivity {
                                startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
                                finish();
                            } else {
-//                               AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
-//                               alert.setTitle("Permissions notice");
-//                               alert.setMessage("Visits can be entered " +
-//                                       "but they will not be submitted until the device has been activated by " +
-//                                       "the device administrator.");
-//                               alert.setNegativeButton("Okay", new DialogInterface.OnClickListener() {
-//                                   @Override
-//                                   public void onClick(DialogInterface dialog, int which) {
-//                                       startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
-//                                       finish();
-//                                       dialog.dismiss();
-//                                   }
-//                               });
-//                               alert.show();
                                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                                    @Override
                                    public void onClick(DialogInterface dialog, int which) {
@@ -127,7 +97,6 @@ public class MainActivity extends SuperActivity {
                                };
                                alert.showPermissionsAlert(listener);
                            }
-                           localProgress.dismiss();
                        }
                    }.execute();
 
@@ -136,8 +105,6 @@ public class MainActivity extends SuperActivity {
                }
             }
         });
-        toggleProgressOverlay(View.INVISIBLE);
-
     }
 
 
@@ -177,16 +144,6 @@ public class MainActivity extends SuperActivity {
         return ready;
     }
 
-    private void toggleProgressOverlay(int visibility) {
-        progress.setVisibility(visibility);
-        if(visibility == View.INVISIBLE) {
-            btRegister.setVisibility(View.VISIBLE);
-        } else {
-            btRegister.setVisibility(View.INVISIBLE);
-        }
-
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -194,7 +151,6 @@ public class MainActivity extends SuperActivity {
     }
 
     private void register() {
-//        toggleProgressOverlay(View.VISIBLE);
         serialNumber = StorageManager.getSerialNumber();
         String description = "Device serial number last created/updated on " + new Date();
         String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, versionName, description);
@@ -210,20 +166,21 @@ public class MainActivity extends SuperActivity {
 
             @Override
             protected void onPostExecute(String r) {
-
-                if(e == null) {
+                progressDialog.dismiss();
+                if (e == null) {
                     getResponseString(r);
                 } else {
-                    alert.showAlert(getString(R.string.error), getString(R.string.request_2register_no_succeed) + ":\n" + e.getMessage());
-                    localProgress.dismiss();
+                    if(e.getMessage() == null || e.getMessage().isEmpty()) {
+                        alert.showAlert(getString(R.string.error), getString(R.string.request_2register_no_succeed) + "\n" + "There was a networking issue. Please check your connection and try again.");
+                    } else {
+                        alert.showAlert(getString(R.string.error), getString(R.string.request_2register_no_succeed) + ":\n" + e.getMessage());
+                    }
                 }
             }
         }.execute();
     }
 
     private void initApp() {
-
-//        toggleProgressOverlay(View.VISIBLE);
         new AsyncTask<Void, Void, Void>() {
             Exception e;
             HttpClient client = getHttpClientInstance();
@@ -258,14 +215,9 @@ public class MainActivity extends SuperActivity {
                     initialized = true;
                     btRegister.setText(getString(R.string.start));
                 }
-                localProgress.dismiss();
                 super.onPostExecute(aVoid);
             }
 
         }.execute();
-
-
     }
-
-
 }

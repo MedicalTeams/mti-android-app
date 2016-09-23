@@ -23,8 +23,8 @@ public class HttpClient {
     public static final String injuryLocationsEndpoint = "/injurylocations";
     public static final String devicesEndpoint = "/devices";
 
-    public static final String prodWebUrl = "http://clinicwebapp.azurewebsites.net/hip";
-    public static final String testWebUrl = "http://clinicwebapp.azurewebsites.net/hip";
+    public static final String prodWebUrl = "https://hip-app-service-prod.azurewebsites.net/hip/";
+    public static final String testWebUrl = "https://clinicwebapp.azurewebsites.net/hip";
 
     public static final String post = "POST";
     public static final String get = "GET";
@@ -36,7 +36,7 @@ public class HttpClient {
     public HttpClient() {
         client = new OkHttpClient();
         client.setConnectTimeout(3, TimeUnit.SECONDS);
-//        client.setReadTimeout(15, TimeUnit.SECONDS);
+        client.setReadTimeout(3, TimeUnit.SECONDS);
 //        client.setWriteTimeout(15, TimeUnit.SECONDS);
     }
 

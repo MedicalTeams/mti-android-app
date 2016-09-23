@@ -179,7 +179,6 @@ public class SuperActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-
             super.onPreExecute();
             progressDialog.setMessage(getString(R.string.plz_wait));
             runOnUiThread(new Runnable() {
@@ -188,13 +187,11 @@ public class SuperActivity extends AppCompatActivity {
                     progressDialog.show();
                 }
             });
-
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-
         }
 
         @Override
@@ -231,8 +228,9 @@ public class SuperActivity extends AppCompatActivity {
                 setIsConnected(false);
                 if(e.getMessage().isEmpty()) {
                     alert.showAlert(getString(R.string.error), "There was a networking issue. Please check your connection and try again.");
+                } else {
+                    alert.showAlert(getString(R.string.error), e.getMessage());
                 }
-                alert.showAlert(getString(R.string.error), e.getMessage());
             }
             super.onPostExecute(r);
         }
