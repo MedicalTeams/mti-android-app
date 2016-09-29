@@ -32,7 +32,7 @@ public class MainActivity extends SuperActivity {
     private boolean initialized;
     private boolean registered;
     private String serialNumber;
-    private NetworkBroadcastReceiver networkBroadcastReceiver;
+    private NetworkBroadcastReceiver networkBroadcastReceiver = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +43,6 @@ public class MainActivity extends SuperActivity {
         if(checkForAppReadiness()) {
             return;
         }
-
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        networkBroadcastReceiver = new NetworkBroadcastReceiver();
-        registerReceiver(networkBroadcastReceiver, intentFilter);
 
         PackageInfo pInfo = null;
         try {
@@ -145,9 +141,22 @@ public class MainActivity extends SuperActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(networkBroadcastReceiver == null) {
+            networkBroadcastReceiver = new NetworkBroadcastReceiver();
+        }
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkBroadcastReceiver, intentFilter);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(networkBroadcastReceiver);
+        try {
+            unregisterReceiver(networkBroadcastReceiver);
+        } catch (Exception e){
+        }
     }
 
     private void register() {
@@ -194,7 +203,6 @@ public class MainActivity extends SuperActivity {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    Log.d("TONY", "PULL LISTS");
                     writeString(DIAGNOSIS_LIST_KEY, client.get(HttpClient.diagnosisEndpoint, getIsProductionMode()));
                     writeString(FACILITIES_LIST_KEY, client.get(HttpClient.facilitiesEndpoint, getIsProductionMode()));
                     writeString(SUPPLEMENTAL_LIST_KEY, client.get(HttpClient.supplementalEndpoint, getIsProductionMode()));

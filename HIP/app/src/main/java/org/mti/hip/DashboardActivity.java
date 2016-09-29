@@ -39,7 +39,9 @@ import java.util.concurrent.TimeUnit;
 public class DashboardActivity extends SuperActivity {
 
     private static final int tallyFileSyncOverdueThresholdDays = 1;
+    private static final int visitEnteredOverdueThresholdMintues = 30;
     private static final int serverConstantsSyncOverdueThresholdDays = 1;
+    private static final String LAST_VISIT_ENTERED_TIME_KEY = "lastTallyFileSyncTimeKey";
     private static final String LAST_TALLY_FILE_SYNC_TIME_KEY = "lastTallyFileSyncTimeKey";
     private static final String LAST_SERVER_CONSTANTS_SYNC_TIME_KEY = "lastServerConstantsSyncTimeKey";
     private static final String APP_VERSION_KEY = "appversionkey";
@@ -186,14 +188,20 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void startVisit() {
-        Visit visit = getStorageManagerInstance().newVisit();
-        visit.setVisitDate(new Date());
-        visit.setStaffMemberName(currentUserName);
-        visit.setDeviceId(StorageManager.getSerialNumber());
-        visit.setFacilityName(facilityName);
-        visit.setFacility(readLastUsedFacility());
-        VisitDiagnosisListAdapter.stiContactsTreated = -1;
-        startActivity(new Intent(DashboardActivity.this, ConsultationActivity.class));
+        if(isVisitEnteredOverdue()) {
+            writeLastVisitEnteredTime();
+            startActivity(new Intent(DashboardActivity.this, ClinicianSelectionActivity.class));
+        } else {
+            writeLastVisitEnteredTime();
+            Visit visit = getStorageManagerInstance().newVisit();
+            visit.setVisitDate(new Date());
+            visit.setStaffMemberName(currentUserName);
+            visit.setDeviceId(StorageManager.getSerialNumber());
+            visit.setFacilityName(facilityName);
+            visit.setFacility(readLastUsedFacility());
+            VisitDiagnosisListAdapter.stiContactsTreated = -1;
+            startActivity(new Intent(DashboardActivity.this, ConsultationActivity.class));
+        }
     }
 
     private void updateDeviceRegistration() {
@@ -451,6 +459,28 @@ public class DashboardActivity extends SuperActivity {
         }.start();
     }
 
+    /**
+     */
+    public void writeLastVisitEnteredTime() {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_VISIT_ENTERED_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
+    }
+
+    /**
+     */
+    public Long readLastVisitEnteredTime() {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_VISIT_ENTERED_TIME_KEY, 0L);
+    }
+
+    /**
+     */
+    public boolean isVisitEnteredOverdue() {
+        Long diffMillis = Calendar.getInstance().getTimeInMillis() - readLastVisitEnteredTime();
+        int diffDays = (int) TimeUnit.MILLISECONDS.toMinutes(diffMillis);
+        if (diffDays >= visitEnteredOverdueThresholdMintues) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Save the last date/time (as UTC milliseconds from the epoch) at which the tally file was successfully sent up to the server
