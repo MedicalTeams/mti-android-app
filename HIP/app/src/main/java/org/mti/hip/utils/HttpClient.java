@@ -9,7 +9,6 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class HttpClient {
 
@@ -35,8 +34,8 @@ public class HttpClient {
 
     public HttpClient() {
         client = new OkHttpClient();
-        client.setConnectTimeout(3, TimeUnit.SECONDS);
-        client.setReadTimeout(3, TimeUnit.SECONDS);
+//        client.setConnectTimeout(3, TimeUnit.SECONDS);
+//        client.setReadTimeout(3, TimeUnit.SECONDS);
 //        client.setWriteTimeout(15, TimeUnit.SECONDS);
     }
 

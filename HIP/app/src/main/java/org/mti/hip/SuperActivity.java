@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import org.mti.hip.model.CentreWrapper;
+import org.mti.hip.model.DeviceInfo;
 import org.mti.hip.model.DiagnosisWrapper;
 import org.mti.hip.model.InjuryLocationWrapper;
 import org.mti.hip.model.SettlementWrapper;
@@ -43,6 +44,7 @@ public class SuperActivity extends AppCompatActivity {
     public ProgressDialog progressDialog;
     private static boolean isConnected;
     private static String mode;
+    private static DeviceInfo deviceInfo;
 
     public static final int diagId = 0;
     public static final int stiId = 1;
@@ -96,7 +98,7 @@ public class SuperActivity extends AppCompatActivity {
 
     protected static final String PREFS_NAME = "HipPrefs";
 
-    public static JSONManager getJsonManagerInstance() {
+    public JSONManager getJsonManagerInstance() {
         if (jsonManager == null) {
             jsonManager = new JSONManager();
         }
@@ -112,11 +114,18 @@ public class SuperActivity extends AppCompatActivity {
     }
 
 
-    public static HttpClient getHttpClientInstance() {
+    public HttpClient getHttpClientInstance() {
         if (httpClient == null) {
             httpClient = new HttpClient();
         }
         return httpClient;
+    }
+
+    public DeviceInfo getDeviceInfo(){
+        if (deviceInfo == null) {
+            deviceInfo = new DeviceInfo(this);
+        }
+        return deviceInfo;
     }
 
     public boolean editTextHasContent(EditText et) {
@@ -229,7 +238,8 @@ public class SuperActivity extends AppCompatActivity {
                 if(e.getMessage().isEmpty()) {
                     alert.showAlert(getString(R.string.error), "There was a networking issue. Please check your connection and try again.");
                 } else {
-                    alert.showAlert(getString(R.string.error), e.getMessage());
+                    // REMOVE FOR NOW TO STOP ERROR MESSAGES.
+                    //alert.showAlert(getString(R.string.error), e.getMessage());
                 }
             }
             super.onPostExecute(r);

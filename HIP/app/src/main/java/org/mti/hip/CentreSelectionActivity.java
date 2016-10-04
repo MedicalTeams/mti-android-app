@@ -27,13 +27,6 @@ public class CentreSelectionActivity extends SuperActivity {
         lv = (ListView) findViewById(android.R.id.list);
         getFacilities();
     }
-
-    @Override
-    protected void onResume() {
-
-        super.onResume();
-    }
-
     private void getFacilities() {
         if (readString(FACILITIES_LIST_KEY).matches("")) {
             runNetworkTask();
@@ -41,8 +34,6 @@ public class CentreSelectionActivity extends SuperActivity {
             list = (ArrayList<Centre>) getJsonManagerInstance().read(readString(FACILITIES_LIST_KEY), CentreWrapper.class);
             showList();
         }
-
-
     }
 
     private void runNetworkTask() {
