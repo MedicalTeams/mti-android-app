@@ -1,10 +1,6 @@
 package org.mti.hip.model;
 
-/**
- * Created by r624513 on 11/21/15.
- */
 public class InjuryLocation {
-
     private int id;
     private String name;
     private int diagnosis;
@@ -32,5 +28,4 @@ public class InjuryLocation {
     public void setDiagnosis(int diagnosis) {
         this.diagnosis = diagnosis;
     }
-
 }

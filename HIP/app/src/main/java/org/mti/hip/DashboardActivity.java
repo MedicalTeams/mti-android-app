@@ -15,7 +15,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,6 +25,7 @@ import org.mti.hip.model.DeviceStatusResponse;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
+import org.mti.hip.utils.JSON;
 import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.StorageManager;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
@@ -92,7 +92,7 @@ public class DashboardActivity extends SuperActivity {
 
                         @Override
                         public void getResponseString(String response) {
-                            DeviceStatusResponse deviceStatusResponse = (DeviceStatusResponse) getJsonManagerInstance().read(response, DeviceStatusResponse.class);
+                            DeviceStatusResponse deviceStatusResponse = JSON.loads(response, DeviceStatusResponse.class);
                             writeDeviceStatus(deviceStatusResponse.getStatus());
                             startVisit();
                         }
@@ -140,7 +140,7 @@ public class DashboardActivity extends SuperActivity {
 
         if (tallyJson != null) {
             // make object from string
-            tally = (Tally) getJsonManagerInstance().read(tallyJson, Tally.class);
+            tally = JSON.loads(tallyJson, Tally.class);
             getStorageManagerInstance().setTally(tally);
             if (!tally.isEmpty()) {
                 manageTally();
@@ -213,7 +213,7 @@ public class DashboardActivity extends SuperActivity {
         regObj.setFacility(readLastUsedFacility());
         regObj.setAppVersion(String.valueOf(versionCode));
         progressDialog.setMessage(getString(R.string.plz_wait));
-        String jsonBody = getJsonManagerInstance().writeValueAsString(regObj);
+        String jsonBody = JSON.dumps(regObj);
         new NetworkTask(jsonBody, HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.put) {
 
             @Override
@@ -257,6 +257,7 @@ public class DashboardActivity extends SuperActivity {
 
             Exception e;
             HttpClient client = getHttpClientInstance();
+
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -296,7 +297,7 @@ public class DashboardActivity extends SuperActivity {
             public void getResponseString(String response) {
                 Log.d("Visit response string", response);
                 // update the tally - if tally response contains status == 4 then device is disabled
-                Tally serverTally = (Tally) getJsonManagerInstance().read(response, Tally.class);
+                Tally serverTally = JSON.loads(response, Tally.class);
                 int success = 0;
                 int successPastVisit = 0;
                 int warnings = 0;
@@ -400,7 +401,7 @@ public class DashboardActivity extends SuperActivity {
         }
 
         // make tally string
-        String tallyJsonOut = getJsonManagerInstance().writeValueAsString(tally);
+        String tallyJsonOut = JSON.dumps(tally);
 
         // write to file with new edits
         getStorageManagerInstance().writeTallyJsonToFile(tallyJsonOut, this);

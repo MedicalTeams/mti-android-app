@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import org.mti.hip.model.User;
 import org.mti.hip.utils.ClinicianListAdapter;
+import org.mti.hip.utils.JSON;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,7 +44,6 @@ public class ClinicianSelectionActivity extends SuperActivity {
                 showDialog();
             }
         });
-
 
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -77,17 +77,9 @@ public class ClinicianSelectionActivity extends SuperActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 User user = adapter.getItem(position);
-                currentUserName = user.getName();
-                writeLastUsedClinician(currentUserName);
-                Intent i = new Intent(ClinicianSelectionActivity.this, DashboardActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-                finish();
+                setUser(user);
             }
-
-
         });
     }
 
@@ -111,8 +103,17 @@ public class ClinicianSelectionActivity extends SuperActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        String obj = getJsonManagerInstance().writeValueAsString(userList);
-        writeString(USER_LIST_KEY, obj);
+        String str = JSON.dumps(userList);
+        writeString(USER_LIST_KEY, str);
+    }
+
+    private void setUser(User user) {
+        currentUserName = user.getName();
+        writeLastUsedClinician(currentUserName);
+        Intent i = new Intent(ClinicianSelectionActivity.this, DashboardActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        finish();
     }
 
     private void showDialog() {
@@ -137,6 +138,7 @@ public class ClinicianSelectionActivity extends SuperActivity {
                     userList.add(user);
                     adapter.add(user);
                     adapter.notifyDataSetChanged();
+                    setUser(user);
                 }
                 dialog.dismiss();
             }

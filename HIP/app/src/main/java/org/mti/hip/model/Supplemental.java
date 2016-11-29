@@ -1,14 +1,9 @@
 package org.mti.hip.model;
 
-/**
- * Created by r624513 on 11/4/15.
- */
 public class Supplemental {
 
     private String name;
-
     private int id;
-
     private int diagnosis;
 
     public String getName() {
@@ -17,6 +12,22 @@ public class Supplemental {
 
     public void setName(String description) {
         this.name = description;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(int diagnosis) {
+        this.diagnosis = diagnosis;
     }
 
     @Override
@@ -36,21 +47,5 @@ public class Supplemental {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + id;
         return result;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getDiagnosis() {
-        return diagnosis;
-    }
-
-    public void setDiagnosis(int diagnosis) {
-        this.diagnosis = diagnosis;
     }
 }

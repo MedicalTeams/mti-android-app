@@ -45,7 +45,6 @@ public class DemoTests extends SuperTest {
     }
 
     public void testDemoPartTwo() {
-        // TODO refactor to allow test to inject clinicians
         // Assumes dummy code to add clinicians is active in the app
         // Important, toggle airplane mode on before running
         pause(500);

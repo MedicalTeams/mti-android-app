@@ -23,10 +23,10 @@ import org.mti.hip.model.Supplemental;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.HttpClient;
+import org.mti.hip.utils.JSON;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class VisitSummaryActivity extends SuperActivity {
 
@@ -50,15 +50,15 @@ public class VisitSummaryActivity extends SuperActivity {
         setContentView(R.layout.activity_visit_summary);
         displayMode();
 
-        tallyJson = getJsonManagerInstance().writeValueAsString(getStorageManagerInstance().getTally());
-        tally = (Tally) getJsonManagerInstance().read(tallyJson, Tally.class);
+        tallyJson = JSON.dumps(getStorageManagerInstance().getTally());
+        tally = JSON.loads(tallyJson, Tally.class);
         Tally tallyToSend = new Tally();
         for(Visit visit : tally) {
             if(visit.getStatus() != visitStatusDuplicate && visit.getStatus() != visitStatusSuccess) {
                 tallyToSend.add(visit);
             }
         }
-        tallyJsonToSend = getJsonManagerInstance().writeValueAsString(tallyToSend);
+        tallyJsonToSend = JSON.dumps(tallyToSend);
         editDiags = (Button) findViewById(R.id.bt_diag_edit);
         editConsultation = (Button) findViewById(R.id.bt_consultation_edit);
         editDiags.setOnClickListener(editDiagListener);
@@ -88,7 +88,12 @@ public class VisitSummaryActivity extends SuperActivity {
                 checkForSupplementalPrompt(supp);
                 tv.append("\n - " + supplementalDiagnosis.getName());
             }
-
+            if(diag.getName().startsWith("STI")) {
+                if (visit.getStiContactsTreated() != -1) {
+                    // TODO refactor. Spaghetti code surrounding getting/setting this in various classes (look at stiContactsTreated static constant in adapter vs. Visit getter/setters)
+                    tv.append("\n" + parseStiContactsTreated(visit.getStiContactsTreated()));
+                }
+            }
             diagData.addView(tv);
         }
 
@@ -96,14 +101,6 @@ public class VisitSummaryActivity extends SuperActivity {
             TextView tv = new TextView(VisitSummaryActivity.this);
             String injuryLocationName = injuryLocations.get(injuryListPosition).getName();
             tv.setText(getString(R.string.injury_location) + ": " + bold(injuryLocationName));
-            diagData.addView(tv);
-        }
-
-        if (visit.getStiContactsTreated() != -1) {
-            TextView tv = new TextView(VisitSummaryActivity.this);
-
-            // TODO refactor. Spagetti code surrounding getting/setting this in various classes (look at stiContactsTreated static constant in adapter vs. Visit getter/setters)
-            tv.setText(parseStiContactsTreated(visit.getStiContactsTreated()));
             diagData.addView(tv);
         }
 
@@ -182,7 +179,7 @@ public class VisitSummaryActivity extends SuperActivity {
         boolean failures = false;
         Log.d("Visit response string", r);
         // update the tally - if tally response contains status == 4 then device is disabled
-        Tally serverTally = (Tally) getJsonManagerInstance().read(r, Tally.class);
+        Tally serverTally = JSON.loads(r, Tally.class);
         for(Visit serverVisit : serverTally) {
             if(serverVisit.getStatus() == visitStatusDisabled) {
                 Log.d("testing 4", "device disabled");
@@ -218,14 +215,10 @@ public class VisitSummaryActivity extends SuperActivity {
     }
 
     private void startDashboard(String message) {
-
-        tallyJson = getJsonManagerInstance().writeValueAsString(tally);
-
+        tallyJson = JSON.dumps(tally);
         getStorageManagerInstance().writeTallyJsonToFile(tallyJson, this);
-
         VisitDiagnosisListAdapter.check_states.clear();
         Intent i = new Intent(VisitSummaryActivity.this, DashboardActivity.class);
-        //i.putExtra(EXTRA_MSG, message);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
@@ -334,8 +327,6 @@ public class VisitSummaryActivity extends SuperActivity {
         consultationData.addView(gender);
         consultationData.addView(isNational);
         consultationData.addView(isRevisit);
-
-
     }
 
     private void addAlerts() {
@@ -359,13 +350,10 @@ public class VisitSummaryActivity extends SuperActivity {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
                 params.bottomMargin = 4;
                 params.topMargin = 4;
-//                line.setBackgroundColor(ContextCompat.getColor(VisitSummaryActivity.this, R.color.colorPrimaryDark));
                 line.setBackgroundColor(Color.DKGRAY);
                 line.setLayoutParams(params);
                 ll.addView(line);
             }
         }
     }
-
-
 }

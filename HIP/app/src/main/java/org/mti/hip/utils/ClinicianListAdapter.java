@@ -13,9 +13,6 @@ import org.mti.hip.model.User;
 
 import java.util.ArrayList;
 
-/**
- * Created by r625361 on 11/30/2015.
- */
 public class ClinicianListAdapter extends ArrayAdapter<User> {
 
     private String lastUsedClinicianName;
@@ -51,8 +48,6 @@ public class ClinicianListAdapter extends ArrayAdapter<User> {
         }
 
         tvClinicianName.setText(clinicianName);
-
         return convertView;
     }
-
 }

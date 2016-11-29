@@ -7,12 +7,7 @@ import org.mti.hip.R;
 import java.util.Date;
 import java.util.HashSet;
 
-/**
- * Created by r624513 on 11/4/15.
- */
 public class Visit {
-
-//    private boolean sent;
 
     private int status;
     public static final int national = 1;
@@ -39,9 +34,7 @@ public class Visit {
         return visitDate;
     }
 
-    public void setVisitDate(Date visitDate) {
-        this.visitDate = visitDate;
-    }
+    public void setVisitDate(Date visitDate) {this.visitDate = visitDate;}
 
     public String getStaffMemberName() {
         return staffMemberName;
@@ -140,7 +133,6 @@ public class Visit {
     public void setPatientDiagnosis(HashSet<Diagnosis> patientDiagnosis) {
         this.patientDiagnosis = patientDiagnosis;
     }
-
 
     public int getStiContactsTreated() {
         return stiContactsTreated;

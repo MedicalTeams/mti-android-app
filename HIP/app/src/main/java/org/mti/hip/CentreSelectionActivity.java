@@ -7,17 +7,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.mti.hip.model.Centre;
-import org.mti.hip.model.CentreWrapper;
+import org.mti.hip.model.Facility;
+import org.mti.hip.model.Facilities;
 import org.mti.hip.utils.FacilityListAdapter;
 import org.mti.hip.utils.HttpClient;
+import org.mti.hip.utils.JSON;
 
 import java.util.ArrayList;
 
 public class CentreSelectionActivity extends SuperActivity {
 
     private ListView lv;
-    private ArrayList<Centre> list;
+    private Facilities list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class CentreSelectionActivity extends SuperActivity {
         if (readString(FACILITIES_LIST_KEY).matches("")) {
             runNetworkTask();
         } else {
-            list = (ArrayList<Centre>) getJsonManagerInstance().read(readString(FACILITIES_LIST_KEY), CentreWrapper.class);
+            list = JSON.loads(readString(FACILITIES_LIST_KEY), Facilities.class);
             showList();
         }
     }
@@ -41,26 +42,25 @@ public class CentreSelectionActivity extends SuperActivity {
 
             @Override
             public void getResponseString(String response) {
-                list = (ArrayList<Centre>) getJsonManagerInstance().read(response, CentreWrapper.class);
+                list = JSON.loads(response, Facilities.class);
                 showList();
             }
         }.execute();
     }
 
     private void showList() {
-        ArrayList<Centre> innerList = new ArrayList<>();
-        for(Centre facility : list) {
+        Facilities innerList = new Facilities();
+        for(Facility facility : list) {
             if(facility.getSettlement().contains(locationName)) {
                 innerList.add(facility);
             }
         }
-        //final ArrayAdapter<Centre> adapter = new ArrayAdapter<>(CentreSelectionActivity.this, android.R.layout.simple_list_item_1, innerList);
-        final ArrayAdapter<Centre> adapter = new FacilityListAdapter(CentreSelectionActivity.this, innerList, readLastUsedFacility());
+        final ArrayAdapter<Facility> adapter = new FacilityListAdapter(CentreSelectionActivity.this, innerList, readLastUsedFacility());
                 lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Centre facility = adapter.getItem(position);
+                Facility facility = adapter.getItem(position);
                 writeLastUsedFacility(facility.getId());
                 writeLastUsedFacilityName(facility.getName());
                 startActivity(new Intent(CentreSelectionActivity.this, ClinicianSelectionActivity.class));

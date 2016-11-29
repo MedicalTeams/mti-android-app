@@ -3,15 +3,10 @@ package org.mti.hip.model;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-/**
- * Created by r624513 on 11/4/15.
- */
 public class Diagnosis {
 
     private String name;
     private int id;
-
-//    private HashMap<Integer, ArrayList<Supplemental>> diagMap = new HashMap<>();
     private ArrayList<Supplemental> supplementals = new ArrayList<>();
 
     public String getName() {
@@ -22,14 +17,6 @@ public class Diagnosis {
         this.name = name;
     }
 
-    public ArrayList<Supplemental> getSupplementals() {
-        return supplementals;
-    }
-
-    public void setSupplementals(ArrayList<Supplemental> supplementals) {
-        this.supplementals = supplementals;
-    }
-
     public int getId() {
         return id;
     }
@@ -37,6 +24,12 @@ public class Diagnosis {
     public void setId(int id) {
         this.id = id;
     }
+
+    public ArrayList<Supplemental> getSupplementals() {
+        return supplementals;
+    }
+
+    public void setSupplementals(ArrayList<Supplemental> supplementals) { this.supplementals = supplementals; }
 
     @Override
     public boolean equals(Object o) {
@@ -46,19 +39,10 @@ public class Diagnosis {
         Diagnosis diagnosis = (Diagnosis) o;
 
         return !(name != null ? !name.equals(diagnosis.name) : diagnosis.name != null);
-
     }
 
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
     }
-
-    //    public HashMap<Integer, ArrayList<Supplemental>> getDiagMap() {
-//        return diagMap;
-//    }
-//
-//    public void setDiagMap(HashMap<Integer, ArrayList<Supplemental>> diagMap) {
-//        this.diagMap = diagMap;
-//    }
 }

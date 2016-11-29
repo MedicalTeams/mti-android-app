@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import org.mti.hip.model.DeviceStatusResponse;
 import org.mti.hip.utils.HttpClient;
-import org.mti.hip.utils.JSONManager;
+import org.mti.hip.utils.JSON;
 import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.StorageManager;
 
@@ -74,9 +74,7 @@ public class MainActivity extends SuperActivity {
                        @Override
                        public void getResponseString(String response) {
                             Log.d("device status", response);
-//
-                           DeviceStatusResponse statusResponse = (DeviceStatusResponse)
-                                   getJsonManagerInstance().read(response, DeviceStatusResponse.class);
+                            DeviceStatusResponse statusResponse = JSON.loads(response, DeviceStatusResponse.class);
 
                            writeDeviceStatus(statusResponse.getStatus());
                            if(statusResponse.getStatus().matches(deviceActiveCode)) {
@@ -162,7 +160,11 @@ public class MainActivity extends SuperActivity {
     private void register() {
         serialNumber = StorageManager.getSerialNumber();
         String description = "Device serial number last created/updated on " + new Date();
-        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, versionName, description);
+        String jsonBody = "{" +
+            " \"uuid\": \"" + serialNumber + "\", " +
+            "\"appVersion\": \"" + versionName + "\", " +
+            "\"description\": \"" + description + "\" " +
+            "}";
         new NetworkTask(jsonBody, HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.put) {
 
             @Override

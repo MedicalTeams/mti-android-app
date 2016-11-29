@@ -59,6 +59,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="and">and</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="add_new_staff_member">Add New Staff Member</string>
+    <string name="centre_instructions">Select your name from the list below or add a new name if your name does not exist.</string>
+    <string name="location_instructions">Select your name from the list below or add a new name if your name does not exist.</string>
+    <string name="staff_member_instructions">Select your name from the list below or add a new name if your name does not exist.</string>
     <string name="last_used">Last Used</string>
     <!-- Connectivity status messages -->
     <string name="is_online">You are currently ON-LINE</string>
@@ -108,6 +111,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="plz_enter_dx_name">Please enter the name of your diagnosis</string>
     <string name="dx_name">Diagnosis name</string>
     <string name="type_of_visit">"Type of Visit: "</string>
+    <string name="visit_date">"Date of Visit: "</string>
     <string name="status">"Status: "</string>
     <string name="age_colon">"Age: "</string>
     <string name="sex_colon">"Sex: "</string>
@@ -120,14 +124,16 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
         <item quantity="other">%d visits </item>
     </plurals>
     <plurals name="sent_visits">
-        <item quantity="other">You have sent %d visits today.</item>
-        <item quantity="one">You have sent 1 visit today.</item>
+        <item quantity="other">You have saved and synced %d visits today.</item>
+        <item quantity="one">You have saved and synced 1 visit today.</item>
     </plurals>
     <plurals name="failed_visits">
-        <item quantity="other">\nThere are %d visits that have not been sent yet.\n
-        Please meet with your data clerk to resolve this.</item>
-        <item quantity="one">\nThere is 1 visit that has not been sent yet.\n
-        Please meet with your data clerk to resolve this.</item>
+        X number of visits have been saved but have NOT yet been sent.  Please sync the visits.
+
+        <item quantity="other">\n%d visits have been saved but have NOT yet been synced.\n
+        Please sync the visits.</item>
+        <item quantity="one">\n1 visit has been saved but has NOT yet been synced.\n
+        Please sync the visits.</item>
     </plurals>
 </resources>
 

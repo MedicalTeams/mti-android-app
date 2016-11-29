@@ -13,16 +13,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import org.mti.hip.model.CentreWrapper;
+import org.mti.hip.model.Facilities;
 import org.mti.hip.model.DeviceInfo;
 import org.mti.hip.model.DiagnosisWrapper;
-import org.mti.hip.model.InjuryLocationWrapper;
-import org.mti.hip.model.SettlementWrapper;
-import org.mti.hip.model.SupplementalsWrapper;
-import org.mti.hip.model.UserWrapper;
+import org.mti.hip.model.InjuryLocations;
+import org.mti.hip.model.Settlements;
+import org.mti.hip.model.Supplementals;
+import org.mti.hip.model.Users;
 import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
-import org.mti.hip.utils.JSONManager;
+import org.mti.hip.utils.JSON;
 import org.mti.hip.utils.StorageManager;
 
 import java.io.IOException;
@@ -35,7 +35,6 @@ public class SuperActivity extends AppCompatActivity {
     public static final String DEFAULT_LOG_TAG = "MTI-HIP";
 
     public static String currentUserName;
-    private static JSONManager jsonManager;
     private static HashMap<String, StorageManager> storageManagerModes = new HashMap<String, StorageManager>();
     private static HttpClient httpClient;
     public static String facilityName;
@@ -97,13 +96,6 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     protected static final String PREFS_NAME = "HipPrefs";
-
-    public JSONManager getJsonManagerInstance() {
-        if (jsonManager == null) {
-            jsonManager = new JSONManager();
-        }
-        return jsonManager;
-    }
 
     public StorageManager getStorageManagerInstance() {
         String mode = getMode();
@@ -344,13 +336,13 @@ public class SuperActivity extends AppCompatActivity {
 
     public Object getObjectFromPrefsKey(String key) {
         Class clazz = null;
-        if (key.matches(SETTLEMENT_LIST_KEY)) clazz = SettlementWrapper.class;
-        if (key.matches(INJURY_LOCATIONS_KEY)) clazz = InjuryLocationWrapper.class;
+        if (key.matches(SETTLEMENT_LIST_KEY)) clazz = Settlements.class;
+        if (key.matches(INJURY_LOCATIONS_KEY)) clazz = InjuryLocations.class;
         if (key.matches(DIAGNOSIS_LIST_KEY)) clazz = DiagnosisWrapper.class;
-        if (key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = SupplementalsWrapper.class;
-        if (key.matches(FACILITIES_LIST_KEY)) clazz = CentreWrapper.class;
-        if (key.matches(USER_LIST_KEY)) clazz = UserWrapper.class;
-        return getJsonManagerInstance().read(readString(getMode() + key), clazz);
+        if (key.matches(SUPPLEMENTAL_LIST_KEY)) clazz = Supplementals.class;
+        if (key.matches(FACILITIES_LIST_KEY)) clazz = Facilities.class;
+        if (key.matches(USER_LIST_KEY)) clazz = Users.class;
+        return JSON.loads(readString(getMode() + key), clazz);
     }
 
     /**

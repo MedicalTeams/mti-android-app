@@ -2,10 +2,7 @@ package org.mti.hip.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-/**
- * Created by r624513 on 11/19/15.
- */
-public class Centre {
+public class Facility {
 
     private int id;
     private String name;

@@ -8,11 +8,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.VisitDiagnosisListAdapter;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class ConsultationActivity extends SuperActivity {
 
@@ -28,6 +32,7 @@ public class ConsultationActivity extends SuperActivity {
     private EditText patientYears;
     private EditText patientMonths;
     private EditText patientDays;
+    private DatePicker dpVisit;
     private StringBuilder errorBuilder;
     private int backPressCount;
     private boolean editMode;
@@ -38,6 +43,7 @@ public class ConsultationActivity extends SuperActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consultation);
         displayMode();
+        dpVisit = (DatePicker) findViewById(R.id.dp_visit);
         opdNum = (EditText) findViewById(R.id.opd_number);
         patientYears = (EditText) findViewById(R.id.patient_years);
         patientMonths = (EditText) findViewById(R.id.patient_months);
@@ -57,6 +63,21 @@ public class ConsultationActivity extends SuperActivity {
             }
         });
 
+        findViewById(R.id.bt_next_screen).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoNext();
+            }
+        });
+    }
+
+    protected void gotoNext() {
+        errorBuilder = new StringBuilder();
+        if (valid()) {
+            startDiagnosisActivity();
+        } else {
+            alert.showAlert(getString(R.string.errors_found), errorBuilder.toString());
+        }
     }
 
     @Override
@@ -82,12 +103,7 @@ public class ConsultationActivity extends SuperActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_next:
-                errorBuilder = new StringBuilder();
-                if (valid()) {
-                    startDiagnosisActivity();
-                } else {
-                    alert.showAlert(getString(R.string.errors_found), errorBuilder.toString());
-                }
+                gotoNext();
                 return true;
             default:
                 return false;
@@ -102,6 +118,8 @@ public class ConsultationActivity extends SuperActivity {
 
     private boolean valid() {
         boolean valid = true;
+        visit.setVisitDate(getDateFromPicker());
+
         if (editTextHasContent(opdNum)) {
             try {
                 visit.setOPD(Long.valueOf(opdNum.getText().toString()));
@@ -156,6 +174,16 @@ public class ConsultationActivity extends SuperActivity {
     private void addErrorString(int id) {
         errorBuilder.append(getString(id));
         errorBuilder.append("\n");
+    }
+
+    private Date getDateFromPicker() {
+        int day = dpVisit.getDayOfMonth();
+        int month = dpVisit.getMonth();
+        int year = dpVisit.getYear();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+        return calendar.getTime();
     }
 
     @Override

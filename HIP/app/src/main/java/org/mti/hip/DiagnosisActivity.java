@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
 
 import org.mti.hip.model.Diagnosis;
@@ -36,13 +37,18 @@ public class DiagnosisActivity extends SuperActivity {
         expListView.setAdapter(listAdapter);
         expListView.setOnChildClickListener(listAdapter.getListener());
 
+        findViewById(R.id.bt_next_screen).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoNext();
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_next, menu);
-
         return true;
     }
 
@@ -50,14 +56,18 @@ public class DiagnosisActivity extends SuperActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_next:
-                if (valid()) {
-                    startActivity(new Intent(this, VisitSummaryActivity.class));
-                } else {
-                    alert.showAlert(getString(R.string.invalid_visit), errorBuilder.toString());
-                }
+                gotoNext();
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private void gotoNext() {
+        if (valid()) {
+            startActivity(new Intent(this, VisitSummaryActivity.class));
+        } else {
+            alert.showAlert(getString(R.string.invalid_visit), errorBuilder.toString());
         }
     }
 
@@ -112,7 +122,6 @@ public class DiagnosisActivity extends SuperActivity {
                     }
                 }
             } // end of check boxes loop
-
         } // end of groups loop
         if (!hadSomethingChecked) {
             errorBuilder.append(getString(R.string.u_must_select_a_dx));
@@ -156,9 +165,6 @@ public class DiagnosisActivity extends SuperActivity {
     }
 
     private boolean checkForStiContactsTreated() {
-
-        // TODO refactor. This got kinda ugly but it's bullet proof for now so I'm leaving it alone.
-
         ArrayList<Integer> checks = VisitDiagnosisListAdapter.check_states.get(stiId);
         if(!checks.contains(0)) {
             return true; // skipping if it doesn't contain any values
@@ -200,11 +206,8 @@ public class DiagnosisActivity extends SuperActivity {
         return false;
     }
 
-    public static boolean isCompletelyUnchecked(ArrayList<Integer> array)
-    {
+    public static boolean isCompletelyUnchecked(ArrayList<Integer> array) {
         for(Integer i : array) if(i == 0) return false;
         return true;
     }
 }
-
-

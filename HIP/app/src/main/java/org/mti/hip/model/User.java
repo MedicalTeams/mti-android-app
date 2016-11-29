@@ -2,17 +2,9 @@ package org.mti.hip.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.mti.hip.SuperActivity;
-
-import java.util.HashMap;
-
-/**
- * Created by r624513 on 11/4/15.
- */
 public class User {
 
     private String name;
-    // other fields might include "hasSeenVisitInstructions" or such things
 
     public String getName() {
         return name;

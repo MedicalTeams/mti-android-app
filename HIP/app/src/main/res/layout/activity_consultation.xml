@@ -14,10 +14,34 @@
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/ll_consultation_entry"
-        android:layout_width="340dp"
+        android:layout_width="match_parent"
         android:layout_marginLeft="32dp"
         android:layout_height="wrap_content">
 
+        <RadioGroup
+            android:id="@+id/rg_visit_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/edge_margin"
+            android:layout_marginBottom="@dimen/edge_margin">
+
+            <TextView
+                android:id="@+id/tv_label_visit_date"
+                android:textSize="@dimen/body_font_medium"
+                android:text="@string/visit_date"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <DatePicker
+                android:id="@+id/dp_visit"
+                android:datePickerMode="spinner"
+                android:calendarViewShown="false"
+                android:spinnersShown="true"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"/>
+        </RadioGroup>
 
         <RadioGroup
             android:id="@+id/rg_visit_revisit"
@@ -195,7 +219,15 @@
         android:id="@+id/tv_revisit_def"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/tooltip_morbidity_revisit"
+        android:layout_above="@+id/bt_next_screen"/>
+    <Button
+        android:id="@+id/bt_next_screen"
+        android:text="@string/next"
+        android:background="@color/lightgreen"
         android:layout_alignParentBottom="true"
-        android:text="@string/tooltip_morbidity_revisit" />
-
+        android:padding="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

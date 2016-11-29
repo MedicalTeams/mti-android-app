@@ -8,8 +8,8 @@ android {
         applicationId "org.medicalteams.hip"
         minSdkVersion 17
         targetSdkVersion 23
-        versionCode 31
-        versionName "1.2.31"
+        versionCode 34
+        versionName "2.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -43,6 +43,3 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.4.1'
     compile 'commons-io:commons-io:2.4'
 }
-
-
-

@@ -7,9 +7,6 @@ import android.support.v7.app.AlertDialog;
 
 import org.mti.hip.R;
 
-/**
- * Created by r624513 on 11/4/15.
- */
 public class AlertDialogManager {
 
     private Context context;
@@ -62,6 +59,4 @@ public class AlertDialogManager {
         alert.setNegativeButton(context.getString(R.string.okay), listener);
         alert.show();
     }
-
-
 }

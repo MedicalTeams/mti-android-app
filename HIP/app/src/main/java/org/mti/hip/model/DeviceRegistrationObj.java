@@ -4,9 +4,6 @@ import org.mti.hip.utils.StorageManager;
 
 import java.util.Date;
 
-/**
- * Created by r624513 on 12/11/15.
- */
 public class DeviceRegistrationObj {
 
     private String uuid = StorageManager.getSerialNumber();

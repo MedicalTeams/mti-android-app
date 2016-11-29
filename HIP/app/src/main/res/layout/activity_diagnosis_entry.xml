@@ -16,5 +16,15 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/visitdiaglist"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/bt_next_screen"/>
+    <Button
+        android:id="@+id/bt_next_screen"
+        android:text="@string/next"
+        android:layout_alignParentBottom="true"
+        android:background="@color/lightgreen"
+        android:padding="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

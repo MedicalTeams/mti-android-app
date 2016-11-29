@@ -9,18 +9,14 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.mti.hip.R;
-import org.mti.hip.model.Centre;
+import org.mti.hip.model.Facilities;
+import org.mti.hip.model.Facility;
 
-import java.util.ArrayList;
-
-/**
- * Created by r625361 on 11/30/2015.
- */
-public class FacilityListAdapter extends ArrayAdapter<Centre> {
+public class FacilityListAdapter extends ArrayAdapter<Facility> {
 
     private int lastUsedCentreId;
 
-    public FacilityListAdapter(Context context, ArrayList<Centre> facilities, int lastUsedFacilityId) {
+    public FacilityListAdapter(Context context, Facilities facilities, int lastUsedFacilityId) {
         super(context, 0, facilities);
         this.lastUsedCentreId = lastUsedFacilityId;
     }
@@ -28,7 +24,7 @@ public class FacilityListAdapter extends ArrayAdapter<Centre> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Centre facility = getItem(position);
+        Facility facility = getItem(position);
         int facilityId = facility.getId();
         String facilityName = facility.getName();
         // Check if an existing view is being reused, otherwise inflate the view

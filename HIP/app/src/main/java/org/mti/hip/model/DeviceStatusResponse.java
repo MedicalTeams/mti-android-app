@@ -1,8 +1,5 @@
 package org.mti.hip.model;
 
-/**
- * Created by r624513 on 12/1/15.
- */
 public class DeviceStatusResponse {
 
     private String uuid;
@@ -21,9 +18,7 @@ public class DeviceStatusResponse {
         return applicationVersion;
     }
 
-    public void setApplicationVersion(String applicationVersion) {
-        this.applicationVersion = applicationVersion;
-    }
+    public void setApplicationVersion(String applicationVersion) { this.applicationVersion = applicationVersion; }
 
     public String getStatus() {
         return status;

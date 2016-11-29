@@ -13,9 +13,6 @@ import org.mti.hip.model.Settlement;
 
 import java.util.ArrayList;
 
-/**
- * Created by r625361 on 11/30/2015.
- */
 public class LocationListAdapter extends ArrayAdapter<Settlement> {
 
     private String lastUsedLocation;
