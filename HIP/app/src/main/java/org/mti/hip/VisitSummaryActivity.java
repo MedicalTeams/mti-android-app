@@ -1,13 +1,9 @@
 package org.mti.hip;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
@@ -141,11 +137,8 @@ public class VisitSummaryActivity extends SuperActivity {
             processUnsuccessfulResponse("");
             return;
         }
-        final ProgressDialog progDiag = progressDialog;
-        progDiag.setCancelable(false);
 
         new NetworkTask(tallyJsonToSend, HttpClient.tallyEndpoint, HttpClient.post) {
-
 
             @Override
             public void getResponseString(String response) {
@@ -157,20 +150,15 @@ public class VisitSummaryActivity extends SuperActivity {
                 super.onCancelled();
             }
 
-
-
             @Override
             protected void onPostExecute(String r) {
-                progDiag.dismiss();
+                progressDialog.dismiss();
                 if (super.e == null) {
                     getResponseString(r);
                 } else if(!isCancelled()){
                    processUnsuccessfulResponse(r);
                 }
             }
-
-
-
         }.execute();
     }
 
@@ -196,21 +184,13 @@ public class VisitSummaryActivity extends SuperActivity {
                 visit.setStatus(serverVisit.getStatus());
             }
         }
-//        if(disabled) {
-//            startDashboard(getString(R.string.ur_device_has_been_disabled));
-//        } else if (failures) {
-//            startDashboard(getString(R.string.some_recs_not_processed));
-//        } else {
-            startDashboard("");
-//        }
-
+        startDashboard("");
     }
 
     private void processUnsuccessfulResponse(String r) {
         if(r != null) {
             Log.e("Visit error string", r);
         }
-//        visit.setSent(false);
         startDashboard("");
     }
 

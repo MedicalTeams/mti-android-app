@@ -28,6 +28,7 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/logo"
+        android:drawableLeft="@drawable/ic_visit"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/margin_large"
         android:text="@string/create_new_visit"
@@ -68,12 +69,28 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/dashboard_connectivity_status"
         />
+
+    <Button
+        android:id="@+id/bt_connectivity_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout="@+id/bt_sign_out"
+        android:drawableLeft="@drawable/ic_wifi"
+        android:text="ON LINE"
+        android:layout_above="@+id/ll_poweredby"
+        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/margin_large"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <Button
         android:id="@+id/bt_sign_out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ll_poweredby"
         android:layout_alignParentRight="true"
+        android:drawableLeft="@drawable/ic_changeuser"
         android:text="@string/edit_location_slash_name"
         android:layout_margin="@dimen/margin_large"
         android:textAllCaps="true"

@@ -1,6 +1,5 @@
 package org.mti.hip;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -24,6 +23,7 @@ import org.mti.hip.model.DeviceRegistrationObj;
 import org.mti.hip.model.DeviceStatusResponse;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
+import org.mti.hip.utils.AdvProgressDialog;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSON;
 import org.mti.hip.utils.NetworkBroadcastReceiver;
@@ -53,6 +53,7 @@ public class DashboardActivity extends SuperActivity {
     private Tally tally;
     private boolean needsSync;
     private TextView manualSync;
+    private Button connectivityStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,13 @@ public class DashboardActivity extends SuperActivity {
             @Override
             public void onClick(View v) {
                 sendTally();
+            }
+        });
+        connectivityStatus = (Button) findViewById(R.id.bt_connectivity_status);
+        connectivityStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoNetworkMode();
             }
         });
 
@@ -134,8 +142,6 @@ public class DashboardActivity extends SuperActivity {
         versionCode = pInfo.versionCode;
 
 
-        final TextView connectivityStatus = (TextView) findViewById(R.id.dashboard_connectivity_status);
-
         tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
 
         if (tallyJson != null) {
@@ -171,10 +177,10 @@ public class DashboardActivity extends SuperActivity {
                         getServerConstants();
                     }
                     connectivityStatus.setText(R.string.is_online);
-                    connectivityStatus.setTextColor(green);
+                    connectivityStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_wifi, 0, 0, 0);
                 } else {
                     connectivityStatus.setText(R.string.is_offline);
-                    connectivityStatus.setTextColor(red);
+                    connectivityStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_nowifi, 0, 0, 0);
                 }
             }
         };
@@ -212,7 +218,6 @@ public class DashboardActivity extends SuperActivity {
         regObj.setUuid(serialNumber);
         regObj.setFacility(readLastUsedFacility());
         regObj.setAppVersion(String.valueOf(versionCode));
-        progressDialog.setMessage(getString(R.string.plz_wait));
         String jsonBody = JSON.dumps(regObj);
         new NetworkTask(jsonBody, HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.put) {
 
@@ -223,12 +228,12 @@ public class DashboardActivity extends SuperActivity {
 
             @Override
             protected void onPostExecute(String r) {
-
                 if (e == null) {
                     getResponseString(r);
                     writeVersionCode();
                 } else {
                     alert.showAlert(getString(R.string.error), getString(R.string.request_2register_no_succeed) + ":\n" + e.getMessage());
+                    alertNoNetwork();
                 }
                 progressDialog.dismiss();
             }
@@ -248,9 +253,8 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void getServerConstants() {
-        final ProgressDialog localProgress = new ProgressDialog(this);
+        final AdvProgressDialog localProgress = new AdvProgressDialog(this);
         localProgress.setMessage(getString(R.string.updating_lists));
-        localProgress.setCancelable(false);
         localProgress.show();
 
         new AsyncTask<Void, Void, Void>() {
@@ -278,6 +282,7 @@ public class DashboardActivity extends SuperActivity {
                 if(e != null) {
                     Log.e(DEFAULT_LOG_TAG, "Couldn't get constants " + e.getMessage());
                     Toast.makeText(DashboardActivity.this, R.string.failed_to_retrieve_updated_lists, Toast.LENGTH_SHORT).show();
+                    alertNoNetwork();
                 } else {
                     writeLastServerConstantsSyncTime();
                 }

@@ -123,9 +123,8 @@ public class ClinicianSelectionActivity extends SuperActivity {
         TextView tv = (TextView) dialog.findViewById(R.id.dialog_message_text);
         tv.setText(getString(R.string.enter_your_name));
         final EditText et = (EditText) dialog.findViewById(R.id.et_dialog);
-        et.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        et.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_WORDS | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         et.setHint(getString(R.string.your_name));
-
         alert.setView(dialog);
         alert.setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
 

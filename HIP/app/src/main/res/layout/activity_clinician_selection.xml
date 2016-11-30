@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/name_instructions"
         android:layout_above="@+id/bt_add_new_staff_member"/>
-   <Button
+    <Button
         android:id="@+id/bt_add_new_staff_member"
         android:text="@string/add_new_staff_member"
         android:layout_alignParentBottom="true"

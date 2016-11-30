@@ -64,8 +64,8 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="staff_member_instructions">Select your name from the list below or add a new name if your name does not exist.</string>
     <string name="last_used">Last Used</string>
     <!-- Connectivity status messages -->
-    <string name="is_online">You are currently ON-LINE</string>
-    <string name="is_offline">You are currently OFF-LINE</string>
+    <string name="is_online">ON-LINE</string>
+    <string name="is_offline">OFF-LINE</string>
     <string name="register_device">Register Device</string>
     <string name="start">Start</string>
     <string name="delete">Delete</string>

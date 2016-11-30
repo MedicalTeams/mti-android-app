@@ -1,11 +1,13 @@
 package org.mti.hip;
 
-import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
@@ -20,6 +22,7 @@ import org.mti.hip.model.InjuryLocations;
 import org.mti.hip.model.Settlements;
 import org.mti.hip.model.Supplementals;
 import org.mti.hip.model.Users;
+import org.mti.hip.utils.AdvProgressDialog;
 import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSON;
@@ -40,7 +43,7 @@ public class SuperActivity extends AppCompatActivity {
     public static String facilityName;
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
-    public ProgressDialog progressDialog;
+    public AdvProgressDialog progressDialog;
     private static boolean isConnected;
     private static String mode;
     private static DeviceInfo deviceInfo;
@@ -86,8 +89,7 @@ public class SuperActivity extends AppCompatActivity {
         if(getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(buildHeader());
         }
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
+        progressDialog = new AdvProgressDialog(this);
     }
 
     @Override
@@ -181,7 +183,6 @@ public class SuperActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog.setMessage(getString(R.string.plz_wait));
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -233,6 +234,7 @@ public class SuperActivity extends AppCompatActivity {
                     // REMOVE FOR NOW TO STOP ERROR MESSAGES.
                     //alert.showAlert(getString(R.string.error), e.getMessage());
                 }
+                alertNoNetwork();
             }
             super.onPostExecute(r);
         }
@@ -396,6 +398,43 @@ public class SuperActivity extends AppCompatActivity {
             setMode(MODE_PROD);
         } else {
             setMode(MODE_TEST);
+        }
+    }
+
+    protected void alertNoNetwork() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("No network");
+        alert.setMessage("The network connection failed.  If there is no available internet connection, turn the device to airplane mode.  Click YES, set airplane mode to ON and then hit the back button.");
+        alert.setPositiveButton(this.getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                gotoNetworkMode();
+                dialog.dismiss();
+            }
+        });
+        alert.setNegativeButton(this.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alert.show();
+    }
+
+    protected void gotoNetworkMode() {
+        try {
+            Intent intent = new Intent(android.provider.Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            try {
+                Intent intent = new Intent("android.settings.WIRELESS_SETTINGS");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } catch (ActivityNotFoundException ex) {
+                //TODO Fix to correct tag.
+                Log.e("FIXME", ex.getMessage());
+            }
         }
     }
 }
