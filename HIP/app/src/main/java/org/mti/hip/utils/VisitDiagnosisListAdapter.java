@@ -2,6 +2,7 @@ package org.mti.hip.utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -25,9 +26,6 @@ import org.mti.hip.model.Supplemental;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by r624513 on 11/5/15.
- */
 public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     private String customOtherName;
@@ -50,9 +48,9 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     private static final int primaryOtherId = 23;
     private static final int chronicOtherId = 54;
+    private static final int stiOtherId = 42;
     private static final int mentalHealthOtherId = 62;
     private static final int customContactsTreatedId = -1;
-
     public static int stiContactsTreated = -1;
 
     private ArrayList<Integer> removedDiagHeaders = new ArrayList<>();
@@ -63,6 +61,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     public ExpandableListView.OnChildClickListener listener;
     private int customContactsTreatedListPos;
+    private String searchPhrase;
 
     public VisitDiagnosisListAdapter(SuperActivity context) {
         this.context = context;
@@ -87,9 +86,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         children.put(injuryId, injuryList);
         children.put(injuryLocId, injuryLocList);
 
-
         if (check_states.isEmpty()) {
-
             setChildrenAndValues();
         }
         setListener();
@@ -101,7 +98,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     //  set checkbox states
     public static ArrayList<ArrayList<Integer>> check_states = new ArrayList<>();
-    // TODO refactor to not be static (currently only referenced from a few places)
 
     public void setChildrenAndValues() {
         for (int i = 0; i < children.size(); i++) {
@@ -120,6 +116,39 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         check_states.get(groupPosition).add(childPosition - 1, 0);
     }
 
+    public int search(String phrase) {
+        searchPhrase = phrase;
+
+        // Find first occurance of match.
+        ArrayList child = null;
+        String name = "";
+        int groupCount = getGroupCount();
+        int overallPosition = 0;
+        for(int groupPosition = 0; groupPosition < groupCount; groupPosition++) {
+            int childrenCount = getChildrenCount(groupPosition);
+            for(int childPosition = 0; childPosition < childrenCount; childPosition++) {
+                switch (groupPosition) {
+                    case diagId:
+                        child = (ArrayList<Diagnosis>) children.get(groupPosition);
+                        name = ((Diagnosis) child.get(childPosition)).getName();
+                        if (name.toLowerCase().contains(searchPhrase.toLowerCase())) {
+                            return overallPosition;
+                        }
+                        break;
+                    default:
+                        child = (ArrayList<Supplemental>) children.get(groupPosition);
+                        name = ((Supplemental) child.get(childPosition)).getName();
+                        if (name.toLowerCase().contains(searchPhrase.toLowerCase())) {
+                            return overallPosition;
+                        }
+                }
+                overallPosition++;
+            }
+            overallPosition++;
+        }
+        return 0;
+    }
+
     public void setListener() {
         listener = new ExpandableListView.OnChildClickListener() {
             @Override
@@ -127,9 +156,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 if (groupPosition == mentalIllnessId || groupPosition == injuryLocId) {
                     RadioButton button = (RadioButton) v.findViewById(R.id.rb_single_select);
                     boolean check = false;
-
-                    // TODO refactor. Works but is messy.
-
 
                     if (check_states.get(groupPosition).get(childPosition) == 0) {
                         // we've touched the same one twice
@@ -171,12 +197,12 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                     CheckBox cb = (CheckBox) v.findViewById(R.id.cb_multi_select);
 
                     // this prevents others and sti contacts from being added to checked state
-                    boolean isOther = processIfIsOther(groupPosition, childPosition);
                     boolean isStiContacts = false;
                     isStiContacts = processIfIsStiContactsTreated(groupPosition, childPosition);
                     if (stiContactsTreated == -1) {
                         processIfIsSti(groupPosition, childPosition);
                     }
+                    boolean isOther = processIfIsOther(groupPosition, childPosition);
                     if (isOther || isStiContacts) {
                         return true;
                     }
@@ -243,10 +269,13 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 addOtherDiag(true, chronicOtherId, groupPosition);
                 return true;
             }
+            if (supp.getId() == stiOtherId) {
+                addOtherDiag(true, stiOtherId, groupPosition);
+                return true;
+            }
         }
 
         return false;
-
     }
 
     public void showStiContactsDialog() {
@@ -385,7 +414,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         return listHeaders.size();
     }
 
-
     @Override
     public int getChildrenCount(int groupPosition) {
         ArrayList child = null;
@@ -395,11 +423,9 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 break;
             default:
                 child = (ArrayList<Supplemental>) children.get(groupPosition);
-
         }
         return child.size();
     }
-
 
     @Override
     public Object getGroup(int groupPosition) {
@@ -419,7 +445,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 break;
             default:
                 child = (ArrayList<Supplemental>) children.get(groupPosition);
-
         }
         return child.get(childPosition);
     }
@@ -428,7 +453,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
-
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
@@ -454,7 +478,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         tv.setTypeface(null, Typeface.BOLD);
         tv.setText(headerTitle);
         return v;
-
     }
 
     public HashMap<Integer, Integer> getSelectableOthers() {
@@ -462,7 +485,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         String childText = null;
         int id;
         boolean selected = check_states.get(groupPosition).get(childPosition) == 0;
@@ -476,7 +499,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
             id = obj.getId();
         }
 
-
         LayoutInflater inflater = (LayoutInflater) this.context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TextView tv = null;
@@ -489,23 +511,18 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
             selector = convertView.findViewById(R.id.rb_single_select);
             buttonMap.get(groupPosition).add((RadioButton) selector);
             ((RadioButton) selector).setChecked(selected);
-
         } else {
             convertView = inflater.inflate(R.layout.list_item_multi_select, null);
-            tv = (TextView) convertView
-                    .findViewById(R.id.tv_multi_select);
+            tv = (TextView) convertView.findViewById(R.id.tv_multi_select);
             selector = convertView.findViewById(R.id.cb_multi_select);
 
             ((CheckBox) selector).setChecked(selected);
             if (groupPosition == chronicDiseaseId && id == 47) {
                 setupEndochrineTooltip(convertView);
             }
-
         }
-        if (id == chronicOtherId || id == primaryOtherId || id == customContactsTreatedId) {
-
+        if (id == chronicOtherId || id == primaryOtherId || id == stiOtherId || id == customContactsTreatedId) {
             // IMPORTANT
-
             /* All "others" have the same id, but we only want the
                 first entry of "other" to trigger the dialog. Without
                 the following code, a user could tap on the new custom
@@ -521,13 +538,14 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
             // this code hides the CheckBox widget
             if (selectableOthers.containsValue(childPosition))
                 selector.setVisibility(View.INVISIBLE);
-
         }
-
-
         tv.setText(childText);
-        return convertView;
 
+        // Build search / filtering logic.
+        if(!searchPhrase.equals("") && childText.toLowerCase().contains(searchPhrase.toLowerCase())) {
+            convertView.setBackgroundColor(Color.YELLOW);
+        }
+        return convertView;
     }
 
     private void setupEndochrineTooltip(View convertView) {
@@ -565,7 +583,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         }
 
         listHeaders.add(getString(R.string.header_injury_location));
-
 
         return displayList;
     }

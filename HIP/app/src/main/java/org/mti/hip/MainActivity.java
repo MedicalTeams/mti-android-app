@@ -199,7 +199,7 @@ public class MainActivity extends SuperActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressDialog.hide();
+                progressDialog.show();
             }
 
             @Override
@@ -225,6 +225,7 @@ public class MainActivity extends SuperActivity {
                     initialized = true;
                     btRegister.setText(getString(R.string.start));
                 }
+                progressDialog.dismiss();
                 super.onPostExecute(aVoid);
             }
 

@@ -2,10 +2,15 @@ package org.mti.hip;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 
 import org.mti.hip.model.Diagnosis;
@@ -19,6 +24,7 @@ public class DiagnosisActivity extends SuperActivity {
 
     VisitDiagnosisListAdapter listAdapter;
     ExpandableListView expListView;
+    EditText searchPhrase;
     private StringBuilder errorBuilder = new StringBuilder();
     private Visit visit = getStorageManagerInstance().currentVisit();
 
@@ -28,7 +34,7 @@ public class DiagnosisActivity extends SuperActivity {
         setContentView(R.layout.activity_diagnosis_entry);
         displayMode();
 
-        // get the listview
+        searchPhrase = (EditText) findViewById(R.id.search_phrase);
         expListView = (ExpandableListView) findViewById(R.id.visitdiaglist);
 
         listAdapter = new VisitDiagnosisListAdapter(this);
@@ -36,6 +42,35 @@ public class DiagnosisActivity extends SuperActivity {
         // setting list adapter
         expListView.setAdapter(listAdapter);
         expListView.setOnChildClickListener(listAdapter.getListener());
+
+        searchPhrase.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int groupCount = listAdapter.getGroupCount();
+                for (int i =0; i < groupCount; i++) {
+                    expListView.expandGroup(i);
+                }
+                final int childPosition = listAdapter.search(searchPhrase.getText().toString());
+                listAdapter.notifyDataSetChanged();
+
+                expListView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        expListView.setSelectionFromTop(childPosition, 0);
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         findViewById(R.id.bt_next_screen).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -105,7 +105,6 @@ public class DashboardActivity extends SuperActivity {
                             startVisit();
                         }
                     }.execute();
-
                 }
             }
         });
@@ -357,7 +356,6 @@ public class DashboardActivity extends SuperActivity {
             Visit visit = iter.next();
             total++;
             if (DateUtils.isToday(visit.getVisitDate().getTime())) {
-
                 switch (visit.getStatus()) {
                     case visitStatusDisabled:
                         break;
@@ -372,7 +370,6 @@ public class DashboardActivity extends SuperActivity {
                     case visitStatusUnsent:
                         break;
                 }
-
             } else {
                 // not today
                 switch (visit.getStatus()) {
@@ -411,18 +408,13 @@ public class DashboardActivity extends SuperActivity {
         // write to file with new edits
         getStorageManagerInstance().writeTallyJsonToFile(tallyJsonOut, this);
 
-
         TextView status = (TextView) findViewById(R.id.tv_tally_status);
 
         status.setText("");
 
         if(sent > 0) {
-////            status.setText(getString(R.string.uhave_sent) + " " +
-//                    getResources().getQuantityString(R.plurals.visitOrVisits, sent, sent) + " " +
-//                    getString(R.string.today_period));
             status.setText(getResources().getQuantityString(R.plurals.sent_visits, sent, sent));
         }
-
 
         int totalUnsynced;
 
@@ -441,8 +433,6 @@ public class DashboardActivity extends SuperActivity {
         if (!readDeviceStatus().matches(deviceActiveCode)) {
             status.append("\n" + getString(R.string.ur_device_disabled));
         }
-
-
     }
 
     @Override
@@ -540,6 +530,4 @@ public class DashboardActivity extends SuperActivity {
         }
         return false;
     }
-
-
 }
