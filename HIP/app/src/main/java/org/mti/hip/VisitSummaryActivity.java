@@ -90,13 +90,12 @@ public class VisitSummaryActivity extends SuperActivity {
                     tv.append("\n" + parseStiContactsTreated(visit.getStiContactsTreated()));
                 }
             }
-            diagData.addView(tv);
-        }
-
-        if (visit.getInjuryLocation() != 0) {
-            TextView tv = new TextView(VisitSummaryActivity.this);
-            String injuryLocationName = injuryLocations.get(injuryListPosition).getName();
-            tv.setText(getString(R.string.injury_location) + ": " + bold(injuryLocationName));
+            if(diag.getName().startsWith("Injuries")) {
+                if (visit.getInjuryLocation() != 0) {
+                    String injuryLocationName = injuryLocations.get(injuryListPosition).getName();
+                    tv.append("\n" + getString(R.string.injury_location) + ": " + bold(injuryLocationName));
+                }
+            }
             diagData.addView(tv);
         }
 

@@ -59,9 +59,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="and">and</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="add_new_staff_member">Add New Staff Member</string>
-    <string name="centre_instructions">Select your name from the list below or add a new name if your name does not exist.</string>
-    <string name="location_instructions">Select your name from the list below or add a new name if your name does not exist.</string>
-    <string name="staff_member_instructions">Select your name from the list below or add a new name if your name does not exist.</string>
+    <string name="centre_instructions">Select your health centre from the list below by pressing on the item.</string>
+    <string name="location_instructions">Select your location from the list below by pressing on the item.</string>
+    <string name="staff_member_instructions">Select your name from the list below or press Add New Staff Member to add a new name.</string>
     <string name="last_used">Last Used</string>
     <!-- Connectivity status messages -->
     <string name="is_online">ON-LINE</string>
@@ -106,6 +106,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="oops_something_wrong">Oops! Something went wrong.</string>
     <string name="send_report">Send Report</string>
     <string name="permissions_notice">Permissions notice</string>
+    <string name="visit_list">List of Visits</string>
     <string name="visits_can_be_entered">Visits can be entered but they will not be submitted until the device has been activated by the device administrator.</string>
     <string name="no_of_contacts_treated">Number of Contacts Treated</string>
     <string name="plz_enter_dx_name">Please enter the name of your diagnosis</string>

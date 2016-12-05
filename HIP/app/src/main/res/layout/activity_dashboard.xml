@@ -71,6 +71,19 @@
         />
 
     <Button
+        android:id="@+id/bt_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout="@+id/bt_sign_out"
+        android:drawableLeft="@drawable/ic_clipboard"
+        android:text="@string/visit_list"
+        android:layout_above="@+id/bt_connectivity_status"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/margin_large"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
         android:id="@+id/bt_connectivity_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

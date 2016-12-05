@@ -293,19 +293,20 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 if (context.editTextHasContent(et)) {
                     String input = et.getText().toString();
                     stiContactsTreated = Integer.valueOf(input);
-                    if(stiContactsTreated == 0) {
-                        // Did not put in anything.  Reshow dialog.
-                        showStiContactsDialog();
-                    } else {
-                        Supplemental supp = (Supplemental) getChild(stiId, customContactsTreatedListPos);
-                        supp.setName(context.parseStiContactsTreated(stiContactsTreated));
-                        notifyDataSetChanged();
-                    }
-                } else {
+                    Supplemental supp = (Supplemental) getChild(stiId, customContactsTreatedListPos);
+                    supp.setName(context.parseStiContactsTreated(stiContactsTreated));
+                    notifyDataSetChanged();
+                }
+                dialog.dismiss();
+            }
+        });
+        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(stiContactsTreated <= 0) {
                     // Did not put in anything.  Reshow dialog.
                     showStiContactsDialog();
                 }
-                dialog.dismiss();
             }
         });
         final AlertDialog dialog = alert.create();

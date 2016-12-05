@@ -76,6 +76,16 @@ public class DashboardActivity extends SuperActivity {
             }
         });
 
+        findViewById(R.id.bt_history).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(DashboardActivity.this, VisitsActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                finish();
+            }
+        });
+
         findViewById(R.id.bt_sign_out).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -294,7 +304,6 @@ public class DashboardActivity extends SuperActivity {
         Log.d("sendTally", tallyJson);
         new NetworkTask(tallyJson, HttpClient.tallyEndpoint, HttpClient.post) {
 
-
             @Override
             public void getResponseString(String response) {
                 Log.d("Visit response string", response);
@@ -341,11 +350,7 @@ public class DashboardActivity extends SuperActivity {
         }.execute();
     }
 
-
     private void manageTally() {
-
-        // TODO refactor: this is messy (also... App sends "sent" bool to the server and this should eventually be removed but will require some other serialization method
-
         int sent = 0;
         int total = 0;
         int warningCount = 0;
@@ -426,7 +431,6 @@ public class DashboardActivity extends SuperActivity {
             }
 
             status.append(getResources().getQuantityString(R.plurals.failed_visits, totalUnsynced, totalUnsynced));
-
         }
         if (!readDeviceStatus().matches(deviceActiveCode)) {
             status.append("\n" + getString(R.string.ur_device_disabled));
