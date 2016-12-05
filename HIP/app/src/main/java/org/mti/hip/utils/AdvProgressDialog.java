@@ -66,7 +66,15 @@ public class AdvProgressDialog extends ProgressDialog {
     public void forceDismiss() {
         timer.cancel();
         timer = new Timer(false); // Create a new timer, cancel stops timer thread.
-        super.dismiss();
+        try {
+            if (super.isShowing()) {
+                super.dismiss();
+            }
+        } catch (final IllegalArgumentException e) {
+            // Handle or log or ignore
+        } catch (final Exception e) {
+            // Handle or log or ignore
+        }
     }
 
     /**

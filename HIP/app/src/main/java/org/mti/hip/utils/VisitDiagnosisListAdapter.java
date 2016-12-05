@@ -61,7 +61,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
 
     public ExpandableListView.OnChildClickListener listener;
     private int customContactsTreatedListPos;
-    private String searchPhrase;
+    private String searchPhrase = "";
 
     public VisitDiagnosisListAdapter(SuperActivity context) {
         this.context = context;
@@ -235,8 +235,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 showStiContactsDialog();
             }
         }
-
-
     }
 
     private boolean processIfIsStiContactsTreated(int group, int child) {
@@ -295,12 +293,18 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                 if (context.editTextHasContent(et)) {
                     String input = et.getText().toString();
                     stiContactsTreated = Integer.valueOf(input);
-                    Supplemental supp = (Supplemental) getChild(stiId, customContactsTreatedListPos);
-                    supp.setName(context.parseStiContactsTreated(stiContactsTreated));
-                    notifyDataSetChanged();
-
+                    if(stiContactsTreated == 0) {
+                        // Did not put in anything.  Reshow dialog.
+                        showStiContactsDialog();
+                    } else {
+                        Supplemental supp = (Supplemental) getChild(stiId, customContactsTreatedListPos);
+                        supp.setName(context.parseStiContactsTreated(stiContactsTreated));
+                        notifyDataSetChanged();
+                    }
+                } else {
+                    // Did not put in anything.  Reshow dialog.
+                    showStiContactsDialog();
                 }
-
                 dialog.dismiss();
             }
         });

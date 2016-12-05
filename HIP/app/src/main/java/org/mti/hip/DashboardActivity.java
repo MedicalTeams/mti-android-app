@@ -159,8 +159,6 @@ public class DashboardActivity extends SuperActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 super.onReceive(context, intent);
-                int green = getResources().getColor(R.color.lightgreen);
-                int red = getResources().getColor(R.color.colorPrimary);
                 if (isConnected()) {
                     if(needsSync) {
                         manualSync.setVisibility(View.VISIBLE);
