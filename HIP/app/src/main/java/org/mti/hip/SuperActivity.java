@@ -27,6 +27,7 @@ import org.mti.hip.utils.AlertDialogManager;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSON;
 import org.mti.hip.utils.StorageManager;
+import org.mti.hip.utils.UserTimeout;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -43,7 +44,8 @@ public class SuperActivity extends AppCompatActivity {
     public static String facilityName;
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
-    public AdvProgressDialog progressDialog;
+    protected AdvProgressDialog progressDialog;
+    protected UserTimeout userTimeout;
     private static boolean isConnected;
     private static String mode;
     private static DeviceInfo deviceInfo;
@@ -55,12 +57,6 @@ public class SuperActivity extends AppCompatActivity {
     public static final int injuryId = 4;
     public static final int injuryLocId = 5;
     public static int injuryListPosition;
-
-    public static final int visitStatusUnsent = 0; // (doesn’t count toward sent value and will try to send)
-    public static final int visitStatusSuccess = 1; // (gets counted toward the "sent" value and won't send again)
-    public static final int visitStatusDuplicate = 2; // (gets counted toward the "sent" value and won't send again – useful for logging)
-    public static final int visitStatusFailure = 3; // (useful for logging and I WILL try to resend this during the next round or on a manual sync – doesn’t count toward the “sent” value in the UI)
-    public static final int visitStatusDisabled = 4; // device has been disabled, will try to send again if re-activated
 
     public static final String deviceActiveCode = "A";
 
@@ -82,6 +78,9 @@ public class SuperActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userTimeout = new UserTimeout(this);
+        userTimeout.start();
+
         facilityName = readLastUsedFacilityName();
         currentUserName = readLastUsedClinician();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -95,6 +94,8 @@ public class SuperActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        userTimeout.stop();
+        progressDialog.forceDismiss();
     }
 
     protected static final String PREFS_NAME = "HipPrefs";
@@ -187,6 +188,7 @@ public class SuperActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     progressDialog.show();
+                    userTimeout.stop();
                 }
             });
         }
@@ -224,6 +226,7 @@ public class SuperActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String r) {
             progressDialog.dismiss();
+            userTimeout.start();
             if (e == null) {
                 getResponseString(r);
             } else if(!isCancelled()){

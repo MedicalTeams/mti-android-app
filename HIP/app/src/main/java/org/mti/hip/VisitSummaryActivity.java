@@ -51,7 +51,7 @@ public class VisitSummaryActivity extends SuperActivity {
         tally = JSON.loads(tallyJson, Tally.class);
         Tally tallyToSend = new Tally();
         for(Visit visit : tally) {
-            if(visit.getStatus() != visitStatusDuplicate && visit.getStatus() != visitStatusSuccess) {
+            if(visit.getStatus() != Visit.statusDuplicate && visit.getStatus() != Visit.statusSuccess) {
                 tallyToSend.add(visit);
             }
         }
@@ -155,6 +155,7 @@ public class VisitSummaryActivity extends SuperActivity {
             @Override
             protected void onPostExecute(String r) {
                 progressDialog.dismiss();
+                userTimeout.start();
                 if (super.e == null) {
                     getResponseString(r);
                 } else if(!isCancelled()){
@@ -171,7 +172,7 @@ public class VisitSummaryActivity extends SuperActivity {
         // update the tally - if tally response contains status == 4 then device is disabled
         Tally serverTally = JSON.loads(r, Tally.class);
         for(Visit serverVisit : serverTally) {
-            if(serverVisit.getStatus() == visitStatusDisabled) {
+            if(serverVisit.getStatus() == Visit.statusDisabled) {
                 Log.d("testing 4", "device disabled");
                 disabled = true;
                 writeDeviceStatus("D");
@@ -180,7 +181,7 @@ public class VisitSummaryActivity extends SuperActivity {
                 Log.d("testing 4", "code is: " + serverVisit.getStatus());
             }
             for(Visit visit : tally) {
-                if(serverVisit.getStatus() == visitStatusFailure) {
+                if(serverVisit.getStatus() == Visit.statusFailure) {
                     failures = true;
                 }
                 visit.setStatus(serverVisit.getStatus());

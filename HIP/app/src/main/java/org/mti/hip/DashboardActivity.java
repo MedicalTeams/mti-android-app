@@ -316,10 +316,10 @@ public class DashboardActivity extends SuperActivity {
                     warnings = tally.size();
                 } else {
                     for (Visit serverVisit : serverTally) {
-                        if (serverVisit.getStatus() == visitStatusDisabled) {
+                        if (serverVisit.getStatus() == Visit.statusDisabled) {
                             writeDeviceStatus("D");
                         }
-                        if (serverVisit.getStatus() == visitStatusSuccess || serverVisit.getStatus() == visitStatusDuplicate) {
+                        if (serverVisit.getStatus() == Visit.statusSuccess || serverVisit.getStatus() == Visit.statusDuplicate) {
                             if (DateUtils.isToday(serverVisit.getVisitDate().getTime())) {
                                 success++;
                             } else {
@@ -360,37 +360,37 @@ public class DashboardActivity extends SuperActivity {
             total++;
             if (DateUtils.isToday(visit.getVisitDate().getTime())) {
                 switch (visit.getStatus()) {
-                    case visitStatusDisabled:
+                    case Visit.statusDisabled:
                         break;
-                    case visitStatusFailure:
+                    case Visit.statusFailure:
                         break;
-                    case visitStatusDuplicate:
+                    case Visit.statusDuplicate:
                         sent++;
                         break;
-                    case visitStatusSuccess:
+                    case Visit.statusSuccess:
                         sent++;
                         break;
-                    case visitStatusUnsent:
+                    case Visit.statusUnsent:
                         break;
                 }
             } else {
                 // not today
                 switch (visit.getStatus()) {
-                    case visitStatusDisabled:
+                    case Visit.statusDisabled:
                         warningCount++;
                         break;
-                    case visitStatusFailure:
+                    case Visit.statusFailure:
                         warningCount++;
                         break;
-                    case visitStatusDuplicate:
+                    case Visit.statusDuplicate:
                         iter.remove();
                         total--;
                         break;
-                    case visitStatusSuccess:
+                    case Visit.statusSuccess:
                         iter.remove();
                         total--;
                         break;
-                    case visitStatusUnsent:
+                    case Visit.statusUnsent:
                         warningCount++;
                         break;
                 }

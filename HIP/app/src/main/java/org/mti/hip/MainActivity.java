@@ -37,6 +37,7 @@ public class MainActivity extends SuperActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userTimeout.stop();
         setContentView(R.layout.activity_main);
         displayMode();
 
@@ -94,6 +95,12 @@ public class MainActivity extends SuperActivity {
                                };
                                alert.showPermissionsAlert(listener);
                            }
+                       }
+
+                       @Override
+                       protected void onPostExecute(String r) {
+                           super.onPostExecute(r);
+                           userTimeout.stop();
                        }
                    }.execute();
 

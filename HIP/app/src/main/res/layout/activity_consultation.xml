@@ -95,7 +95,8 @@
                 android:id="@+id/tv_label_age"
                 android:text="@string/age_colon"
                 android:layout_width="wrap_content"
-               android:textSize="@dimen/body_font_medium"
+                android:textSize="@dimen/body_font_medium"
+                android:width="180dp"
                 android:layout_height="wrap_content" />
 
             <EditText
@@ -155,8 +156,6 @@
                 android:text="@string/female"
                android:textSize="@dimen/body_font_medium" />
         </RadioGroup>
-
-
     </LinearLayout>
 
     <TextView
@@ -195,13 +194,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tooltip_morbidity_revisit"
-        android:layout_above="@+id/bt_next_screen"/>
+        android:layout_below="@+id/opd_tooltip"/>
     <Button
         android:id="@+id/bt_next_screen"
         android:text="@string/next"
         android:background="@color/lightgreen"
-        android:layout_alignParentBottom="true"
         android:padding="30dp"
+        android:layout_below="@+id/tv_revisit_def"
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

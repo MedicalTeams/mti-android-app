@@ -12,6 +12,11 @@ public class Visit {
     private int status;
     public static final int national = 1;
     public static final int refugee = 2;
+    public static final int statusUnsent = 0; // (doesn’t count toward sent value and will try to send)
+    public static final int statusSuccess = 1; // (gets counted toward the "sent" value and won't send again)
+    public static final int statusDuplicate = 2; // (gets counted toward the "sent" value and won't send again – useful for logging)
+    public static final int statusFailure = 3; // (useful for logging and I WILL try to resend this during the next round or on a manual sync – doesn’t count toward the “sent” value in the UI)
+    public static final int statusDisabled = 4; // device has been disabled, will try to send again if re-activated.
 
     private String staffMemberName;
     private String facilityName;
