@@ -4,16 +4,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.mti.hip.VisitsActivity">
+
     <include layout="@layout/includeable_dev_mode"
         android:id="@+id/dev_mode"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/bt_next_screen"/>
+        android:layout_above="@+id/bt_next_screen">
+
+        <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/linlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:stretchColumns="1"/>
+
+        </HorizontalScrollView>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/tv_count"
+        android:text="@string/number_of_results"
+        android:layout_alignParentBottom="true"
+        android:padding="30dp"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/bt_next_screen"
         android:text="@string/next"

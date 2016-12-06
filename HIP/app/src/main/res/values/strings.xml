@@ -63,6 +63,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="location_instructions">Select your location from the list below by pressing on the item.</string>
     <string name="staff_member_instructions">Select your name from the list below or press Add New Staff Member to add a new name.</string>
     <string name="last_used">Last Used</string>
+    <string name="number_of_results">Number of Results</string>
     <!-- Connectivity status messages -->
     <string name="is_online">ON-LINE</string>
     <string name="is_offline">OFF-LINE</string>

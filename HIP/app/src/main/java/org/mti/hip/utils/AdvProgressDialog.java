@@ -21,7 +21,7 @@ public class AdvProgressDialog extends ProgressDialog {
 
     private long showTime;
     private Timer timer;
-    private final long MIN_TIME = 1000; //2 seconds
+    private final long MIN_TIME = 2000; //2 seconds
     private final long MAX_TIME = 30000; //30 seconds
 
     public AdvProgressDialog(Context context) {

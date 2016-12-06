@@ -30,7 +30,11 @@ public class VisitListAdapter extends ArrayAdapter<Visit> {
         // Get the data item for this position
         Visit visit = getItem(position);
         TextView tvStatus = (TextView) convertView.findViewById(R.id.tv_status);
-        tvStatus.setText("" + visit.getStatus());
+        if(visit.getBeneficiaryType() == Visit.national) {
+            tvStatus.setText("National");
+        }else{
+            tvStatus.setText("Refugee");
+        }
 
         TextView tvAge = (TextView) convertView.findViewById(R.id.tv_age);
         tvAge.setText("" + visit.getPatientAgeYears());
@@ -47,6 +51,15 @@ public class VisitListAdapter extends ArrayAdapter<Visit> {
 
         TextView tvVisitDate = (TextView) convertView.findViewById(R.id.tv_visit_date);
         tvVisitDate.setText(visit.getVisitDate().toString());
+
+        TextView tvVisitType = (TextView) convertView.findViewById(R.id.tv_visit_type);
+        tvVisitType.setText(visit.getIsRevisit().toString());
+
+        TextView tvStaff = (TextView) convertView.findViewById(R.id.tv_staff);
+        tvStaff.setText(visit.getStaffMemberName());
+
+        TextView tvGender = (TextView) convertView.findViewById(R.id.tv_gender);
+        tvGender.setText(visit.getGender());
         return convertView;
     }
 }

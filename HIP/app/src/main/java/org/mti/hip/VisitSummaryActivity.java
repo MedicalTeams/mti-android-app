@@ -1,6 +1,7 @@
 package org.mti.hip;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -108,7 +109,6 @@ public class VisitSummaryActivity extends SuperActivity {
             @Override
             public void onClick(View v) {
                 sendTally();
-
             }
         });
     }
@@ -134,19 +134,22 @@ public class VisitSummaryActivity extends SuperActivity {
     private void sendTally() {
         if(!isConnected()) {
             processUnsuccessfulResponse("");
+            startDashboard("");
             return;
         }
+
+        progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                startDashboard("");
+            }
+        });
 
         new NetworkTask(tallyJsonToSend, HttpClient.tallyEndpoint, HttpClient.post) {
 
             @Override
             public void getResponseString(String response) {
-               processSuccessfulResponse(response);
-            }
-
-            @Override
-            protected void onCancelled() {
-                super.onCancelled();
+                processSuccessfulResponse(response);
             }
 
             @Override
@@ -183,14 +186,12 @@ public class VisitSummaryActivity extends SuperActivity {
                 visit.setStatus(serverVisit.getStatus());
             }
         }
-        startDashboard("");
     }
 
     private void processUnsuccessfulResponse(String r) {
         if(r != null) {
             Log.e("Visit error string", r);
         }
-        startDashboard("");
     }
 
     private void startDashboard(String message) {

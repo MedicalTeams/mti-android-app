@@ -32,18 +32,13 @@ public class ConsultationActivity extends SuperActivity {
     private EditText patientYears;
     private EditText patientMonths;
     private EditText patientDays;
-    private DatePicker dpVisit;
     private StringBuilder errorBuilder;
-    private int backPressCount;
-    private boolean editMode;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consultation);
         displayMode();
-        dpVisit = (DatePicker) findViewById(R.id.dp_visit);
         opdNum = (EditText) findViewById(R.id.opd_number);
         patientYears = (EditText) findViewById(R.id.patient_years);
         patientMonths = (EditText) findViewById(R.id.patient_months);
@@ -83,13 +78,11 @@ public class ConsultationActivity extends SuperActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        editMode = true;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        editMode = false;
     }
 
     @Override
@@ -118,8 +111,6 @@ public class ConsultationActivity extends SuperActivity {
 
     private boolean valid() {
         boolean valid = true;
-        visit.setVisitDate(getDateFromPicker());
-
         if (editTextHasContent(opdNum)) {
             try {
                 visit.setOPD(Long.valueOf(opdNum.getText().toString()));
@@ -174,16 +165,6 @@ public class ConsultationActivity extends SuperActivity {
     private void addErrorString(int id) {
         errorBuilder.append(getString(id));
         errorBuilder.append("\n");
-    }
-
-    private Date getDateFromPicker() {
-        int day = dpVisit.getDayOfMonth();
-        int month = dpVisit.getMonth();
-        int year = dpVisit.getYear();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day);
-        return calendar.getTime();
     }
 
     @Override
