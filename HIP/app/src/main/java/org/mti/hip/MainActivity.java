@@ -69,6 +69,12 @@ public class MainActivity extends SuperActivity {
                 }
 
                if (initialized){ // text = "Start"
+                   progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                       @Override
+                       public void onDismiss(DialogInterface dialog) {
+                           gotoNext();
+                       }
+                   });
                    new NetworkTask(HttpClient.devicesEndpoint + "/" + serialNumber, HttpClient.get) {
 
                        @Override
@@ -78,14 +84,11 @@ public class MainActivity extends SuperActivity {
 
                            writeDeviceStatus(statusResponse.getStatus());
                            if(statusResponse.getStatus().matches(deviceActiveCode)) {
-                               startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
-                               finish();
+                               progressDialog.dismiss();
                            } else {
                                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                                    @Override
                                    public void onClick(DialogInterface dialog, int which) {
-                                       startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
-                                       finish();
                                        dialog.dismiss();
                                    }
                                };
@@ -116,6 +119,11 @@ public class MainActivity extends SuperActivity {
         startActivity(i);
         finish();
         return true;
+    }
+
+    private void gotoNext(){
+        startActivity(new Intent(MainActivity.this, LocationSelectionActivity.class));
+        finish();
     }
 
     public boolean checkForAppReadiness() {
