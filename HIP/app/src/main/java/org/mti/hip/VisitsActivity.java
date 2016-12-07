@@ -29,6 +29,8 @@ public class VisitsActivity extends SuperActivity {
     private Button btNext;
     private ArrayAdapter<Visit> adapter;
     private TextView tvSearchPhrase;
+    private Tally tally;
+    private final int maxShown = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,6 @@ public class VisitsActivity extends SuperActivity {
         displayMode();
 
         String tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
-        final Tally tally;
         if(tallyJson == "" || tallyJson == null) {
             tally = new Tally();
         } else {
@@ -78,8 +79,7 @@ public class VisitsActivity extends SuperActivity {
                         }
                     }
                 }
-                TextView tv = (TextView)findViewById(R.id.tv_count);
-                tv.setText(getString(R.string.number_of_results) + ": " + searchCount);
+                buildTable(searchPhrase);
             }
 
             @Override
@@ -93,17 +93,7 @@ public class VisitsActivity extends SuperActivity {
                 gotoNext();
             }
         });
-
-        TextView tv = (TextView)findViewById(R.id.tv_count);
-        tv.setText(getString(R.string.number_of_results) + ": " + tally.size());
-
-        table.addView(buildHeader());
-        for(int i = 0; i < tally.size(); i++) {
-            table.addView(buildRow(tally.get(i)));
-        }
-        for(int i = tally.size(); i < 20; i++) {
-            table.addView(buildBlank());
-        }
+        buildTable(null);
     }
 
     @Override
@@ -124,6 +114,45 @@ public class VisitsActivity extends SuperActivity {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
         finish();
+    }
+
+    private void buildTable(String searchPhrase) {
+        TextView tv = (TextView)findViewById(R.id.tv_count);
+        tv.setText(getString(R.string.number_of_results) + ": " + tally.size());
+
+        int searchCount = 0;
+        table.addView(buildHeader());
+        for(int i = tally.size() - 1; i >= 0 ; i--) {
+            boolean found = true;
+            TableRow row = buildRow(tally.get(i));
+            String tag = (String)row.getTag();
+            if(searchPhrase != null && searchPhrase != "") {
+                for (String searchPhrasePart : searchPhrase.split(" ")) {
+                    if (!tag.contains(searchPhrasePart)) {
+                        found = false;
+                        break;
+                    }
+                }
+            }
+            if(found) {
+                table.addView(row);
+                searchCount++;
+            }
+            if(searchCount >= maxShown) {
+                break;
+            }
+        }
+        TextView tvCount = (TextView)findViewById(R.id.tv_count);
+        if(searchCount >= maxShown) {
+            tvCount.setText(getString(R.string.number_of_results) + ": " + tally.size());
+            TableRow row = buildMore();
+            table.addView(row);
+        } else {
+            tvCount.setText(getString(R.string.number_of_results) + ": " + searchCount);
+        }
+        for(int i = searchCount; i < 20; i++) {
+            table.addView(buildBlank());
+        }
     }
 
     private TableRow buildHeader() {
@@ -159,6 +188,15 @@ public class VisitsActivity extends SuperActivity {
         TextView tvGender = (TextView) row.findViewById(R.id.tv_gender);
         tvGender.setText("GENDER");
         tvGender.setTypeface(null, Typeface.BOLD);
+
+        return row;
+    }
+
+    private TableRow buildMore() {
+        TableRow row = (TableRow)LayoutInflater.from(VisitsActivity.this).inflate(R.layout.item_visit, null);
+        TextView tvDiagnosis = (TextView) row.findViewById(R.id.tv_diagnosis);
+        tvDiagnosis.setText("Cannot show more than " + maxShown);
+        tvDiagnosis.setTypeface(null, Typeface.BOLD);
 
         return row;
     }

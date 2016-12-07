@@ -65,8 +65,8 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="last_used">Last Used</string>
     <string name="number_of_results">Number of Results</string>
     <!-- Connectivity status messages -->
-    <string name="is_online">ON-LINE</string>
-    <string name="is_offline">OFF-LINE</string>
+    <string name="is_online">WIFI ON</string>
+    <string name="is_offline">WIFI OFF</string>
     <string name="register_device">Register Device</string>
     <string name="start">Start</string>
     <string name="delete">Delete</string>

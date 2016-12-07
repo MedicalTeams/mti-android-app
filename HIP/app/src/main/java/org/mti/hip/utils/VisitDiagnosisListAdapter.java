@@ -303,7 +303,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if(stiContactsTreated <= 0) {
+                if(stiContactsTreated < 0) {
                     // Did not put in anything.  Reshow dialog.
                     showStiContactsDialog();
                 }

@@ -386,10 +386,8 @@ public class DashboardActivity extends SuperActivity {
                         warningCount++;
                         break;
                     case Visit.statusDuplicate:
-                        total--;
                         break;
                     case Visit.statusSuccess:
-                        total--;
                         break;
                     case Visit.statusUnsent:
                         warningCount++;
@@ -448,7 +446,8 @@ public class DashboardActivity extends SuperActivity {
             status.append(getResources().getQuantityString(R.plurals.failed_visits, totalUnsynced, totalUnsynced));
         }
         if (!readDeviceStatus().matches(deviceActiveCode)) {
-            status.append("\n" + getString(R.string.ur_device_disabled));
+            //Remove for now.
+            //status.append("\n" + getString(R.string.ur_device_disabled));
         }
     }
 
