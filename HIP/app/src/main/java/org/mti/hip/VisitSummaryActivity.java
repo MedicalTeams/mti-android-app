@@ -35,8 +35,6 @@ public class VisitSummaryActivity extends SuperActivity {
     private ArrayList<InjuryLocation> injuryLocations;
     private Visit visit;
     private ArrayList<Spanned> prompts = new ArrayList<>();
-    private String tallyJson;
-    private String tallyJsonToSend;
     private Tally tally;
 
     private float headerSize = 20f;
@@ -47,22 +45,14 @@ public class VisitSummaryActivity extends SuperActivity {
         setContentView(R.layout.activity_visit_summary);
         displayMode();
 
-        tallyJson = JSON.dumps(getStorageManagerInstance().getTally());
+        String tallyJson = JSON.dumps(getStorageManagerInstance().getTally());
         tally = JSON.loads(tallyJson, Tally.class);
-        Tally tallyToSend = new Tally();
-        for(Visit visit : tally) {
-            if(visit.getStatus() != Visit.statusDuplicate && visit.getStatus() != Visit.statusSuccess) {
-                tallyToSend.add(visit);
-            }
-        }
-        tallyJsonToSend = JSON.dumps(tallyToSend);
         editDiags = (Button) findViewById(R.id.bt_diag_edit);
         editConsultation = (Button) findViewById(R.id.bt_consultation_edit);
         editDiags.setOnClickListener(editDiagListener);
         editConsultation.setOnClickListener(editConsultationListener);
 
         injuryLocations = (ArrayList<InjuryLocation>) getObjectFromPrefsKey(INJURY_LOCATIONS_KEY);
-
 
         visit = getStorageManagerInstance().currentVisit();
         consultationData = (LinearLayout) findViewById(R.id.ll_consultation_data);
@@ -100,8 +90,6 @@ public class VisitSummaryActivity extends SuperActivity {
             diagData.addView(tv);
         }
 
-        Log.d("tally json to send", tallyJsonToSend);
-
         addAlerts();
 
         submit = (Button) findViewById(R.id.submit);
@@ -138,6 +126,9 @@ public class VisitSummaryActivity extends SuperActivity {
             return;
         }
 
+        String tallyJson = JSON.dumps(tally.getUnsynced());
+        Log.d("sendTally", tallyJson);
+
         progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -145,7 +136,7 @@ public class VisitSummaryActivity extends SuperActivity {
             }
         });
 
-        new NetworkTask(tallyJsonToSend, HttpClient.tallyEndpoint, HttpClient.post) {
+        new NetworkTask(tallyJson, HttpClient.tallyEndpoint, HttpClient.post) {
 
             @Override
             public void getResponseString(String response) {
@@ -184,7 +175,9 @@ public class VisitSummaryActivity extends SuperActivity {
                 if(serverVisit.getStatus() == Visit.statusFailure) {
                     failures = true;
                 }
-                visit.setStatus(serverVisit.getStatus());
+                if(visit.getVisitDate().equals(serverVisit.getVisitDate())) {
+                    visit.setStatus(serverVisit.getStatus());
+                }
             }
         }
     }
@@ -196,7 +189,7 @@ public class VisitSummaryActivity extends SuperActivity {
     }
 
     private void startDashboard(String message) {
-        tallyJson = JSON.dumps(tally);
+        String tallyJson = JSON.dumps(tally);
         getStorageManagerInstance().writeTallyJsonToFile(tallyJson, this);
         VisitDiagnosisListAdapter.check_states.clear();
         Intent i = new Intent(VisitSummaryActivity.this, DashboardActivity.class);

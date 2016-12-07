@@ -49,7 +49,6 @@ public class DashboardActivity extends SuperActivity {
     private int backPressCount;
     private NetworkBroadcastReceiver networkBroadcastReceiver;
     private int versionCode;
-    private String tallyJson;
     private Tally tally;
     private boolean needsSync;
     private TextView manualSync;
@@ -151,9 +150,9 @@ public class DashboardActivity extends SuperActivity {
         versionCode = pInfo.versionCode;
 
 
-        tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
+        String tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
 
-        if (tallyJson != null) {
+        if (tallyJson != null && !tallyJson.equals("")) {
             // make object from string
             tally = JSON.loads(tallyJson, Tally.class);
             getStorageManagerInstance().setTally(tally);
@@ -161,7 +160,8 @@ public class DashboardActivity extends SuperActivity {
                 manageTally();
             }
         } else { // no tally stored on disk so make a new one (will get written to disk on next visit)
-            getStorageManagerInstance().setTally(new Tally());
+            tally = new Tally();
+            getStorageManagerInstance().setTally(tally);
         }
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -240,7 +240,6 @@ public class DashboardActivity extends SuperActivity {
                     writeVersionCode();
                 } else {
                     alert.showAlert(getString(R.string.error), getString(R.string.request_2register_no_succeed) + ":\n" + e.getMessage());
-                    alertNoNetwork();
                 }
                 progressDialog.dismiss();
             }
@@ -289,7 +288,6 @@ public class DashboardActivity extends SuperActivity {
                 if(e != null) {
                     Log.e(DEFAULT_LOG_TAG, "Couldn't get constants " + e.getMessage());
                     Toast.makeText(DashboardActivity.this, R.string.failed_to_retrieve_updated_lists, Toast.LENGTH_SHORT).show();
-                    alertNoNetwork();
                 } else {
                     writeLastServerConstantsSyncTime();
                 }
@@ -301,6 +299,7 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void sendTally() {
+        String tallyJson = JSON.dumps(tally.getUnsynced());
         Log.d("sendTally", tallyJson);
         new NetworkTask(tallyJson, HttpClient.tallyEndpoint, HttpClient.post) {
 
@@ -329,7 +328,9 @@ public class DashboardActivity extends SuperActivity {
                             warnings++;
                         }
                         for (Visit visit : tally) {
-                            visit.setStatus(serverVisit.getStatus());
+                            if(visit.getVisitDate().equals(serverVisit.getVisitDate())) {
+                                visit.setStatus(serverVisit.getStatus());
+                            }
                         }
                     }
                 }
@@ -355,10 +356,12 @@ public class DashboardActivity extends SuperActivity {
         int total = 0;
         int warningCount = 0;
         Iterator<Visit> iter = tally.iterator();
+        Date now = new Date();
         while (iter.hasNext()) {
             Visit visit = iter.next();
             total++;
-            if (DateUtils.isToday(visit.getVisitDate().getTime())) {
+            long diff = now.getTime() - visit.getVisitDate().getTime();
+            if (diff > 8640000) { // One day
                 switch (visit.getStatus()) {
                     case Visit.statusDisabled:
                         break;
@@ -383,11 +386,9 @@ public class DashboardActivity extends SuperActivity {
                         warningCount++;
                         break;
                     case Visit.statusDuplicate:
-                        iter.remove();
                         total--;
                         break;
                     case Visit.statusSuccess:
-                        iter.remove();
                         total--;
                         break;
                     case Visit.statusUnsent:
@@ -397,9 +398,23 @@ public class DashboardActivity extends SuperActivity {
             }
         }
 
+        // Delete after X days
+        Iterator<Visit> iter2 = tally.iterator();
+        while (iter2.hasNext()) {
+            Visit visit = iter2.next();
+            long diff = now.getTime() - visit.getVisitDate().getTime();
+            if (diff > 45 * 8640000) { // 45 days
+                iter2.remove();
+            }
+        }
+
         if(sent != total || warningCount > 0) {
             needsSync = true;
-            if(isConnected()) manualSync.setVisibility(View.VISIBLE);
+            if(isConnected()) {
+                manualSync.setVisibility(View.VISIBLE);
+            } else {
+                manualSync.setVisibility(View.GONE);
+            }
         } else {
             manualSync.setVisibility(View.GONE);
             needsSync = false;

@@ -15,6 +15,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.mti.hip.model.Diagnosis;
+import org.mti.hip.model.Supplemental;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.JSON;
@@ -42,10 +43,11 @@ public class VisitsActivity extends SuperActivity {
         });
 
         String tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
-        Tally tally = JSON.loads(tallyJson, Tally.class);
-
-        if(tally == null) {
+        Tally tally;
+        if(tallyJson == "" || tallyJson == null) {
             tally = new Tally();
+        } else {
+            tally = JSON.loads(tallyJson, Tally.class);
         }
         TextView tv = (TextView)findViewById(R.id.tv_count);
         tv.setText(getString(R.string.number_of_results) + ": " + tally.size());
@@ -119,15 +121,15 @@ public class VisitsActivity extends SuperActivity {
         TableRow row = (TableRow)LayoutInflater.from(VisitsActivity.this).inflate(R.layout.item_visit, null);
         TextView tvSync = (TextView) row.findViewById(R.id.tv_sync);
         if(visit.getStatus() == Visit.statusUnsent) {
-            tvSync.setText("Unsent");
+            tvSync.setText("Not Synced");
         } else if(visit.getStatus() == Visit.statusSuccess) {
-            tvSync.setText("Success");
+            tvSync.setText("Synced");
         } else if(visit.getStatus() == Visit.statusDuplicate) {
-            tvSync.setText("Duplicate");
+            tvSync.setText("Synced");
         } else if(visit.getStatus() == Visit.statusFailure) {
-            tvSync.setText("Failure");
+            tvSync.setText("Not Synced");
         } else if(visit.getStatus() == Visit.statusDisabled) {
-            tvSync.setText("Disabled");
+            tvSync.setText("Not Synced");
         }else{
             tvSync.setText("Unknown");
         }
@@ -140,20 +142,36 @@ public class VisitsActivity extends SuperActivity {
         }
 
         TextView tvAge = (TextView) row.findViewById(R.id.tv_age);
-        tvAge.setText("" + visit.getPatientAgeYears());
+        tvAge.setText("");
+        int years = visit.getPatientAgeYears();
+        int months = visit.getPatientAgeMonths();
+        int days = visit.getPatientAgeDays();
+        if(years > 0) {
+            tvAge.append(String.valueOf(years) + " " + getString(R.string.years) + " ");
+        }
+        if(months > 0) {
+            tvAge.append(String.valueOf(months) + " " + getString(R.string.months) + " ");
+        }
+        if(days > 0) {
+            tvAge.append(String.valueOf(days) + " " + getString(R.string.days) + " ");
+        }
 
         String diagnosesString = "";
-        visit.getPatientDiagnosis();
-        Iterator<Diagnosis> iter = visit.getPatientDiagnosis().iterator();
-        while(iter.hasNext()) {
-            Diagnosis diagnosis = iter.next();
-            diagnosesString += diagnosis.getName() + ",";
+        Iterator<Diagnosis> iterDiagnosis = visit.getPatientDiagnosis().iterator();
+        while(iterDiagnosis.hasNext()) {
+            Diagnosis diagnosis = iterDiagnosis.next();
+            diagnosesString += diagnosis.getName() + "\n";
+            Iterator<Supplemental> iterSupplemental = diagnosis.getSupplementals().iterator();
+            while(iterSupplemental.hasNext()) {
+                Supplemental supplemental = iterSupplemental.next();
+                diagnosesString += "- " + supplemental.getName() + "\n";
+            }
         }
         TextView tvDiagnosis = (TextView) row.findViewById(R.id.tv_diagnosis);
         tvDiagnosis.setText(diagnosesString);
 
         TextView tvVisitDate = (TextView) row.findViewById(R.id.tv_visit_date);
-        tvVisitDate.setText(visit.getVisitDate().toString());
+        tvVisitDate.setText(getFormattedDate(visit.getVisitDate()));
 
         TextView tvVisitType = (TextView) row.findViewById(R.id.tv_visit_type);
         if(visit.getIsRevisit()) {
@@ -166,7 +184,11 @@ public class VisitsActivity extends SuperActivity {
         tvStaff.setText(visit.getStaffMemberName());
 
         TextView tvGender = (TextView) row.findViewById(R.id.tv_gender);
-        tvGender.setText("" + visit.getGender());
+        if(visit.getGender() == 'M') {
+            tvGender.setText(getString(R.string.male));
+        } else {
+            tvGender.setText(getString(R.string.female));
+        }
         return row;
     }
 

@@ -237,7 +237,6 @@ public class SuperActivity extends AppCompatActivity {
                     // REMOVE FOR NOW TO STOP ERROR MESSAGES.
                     //alert.showAlert(getString(R.string.error), e.getMessage());
                 }
-                alertNoNetwork();
             }
             super.onPostExecute(r);
         }
@@ -402,26 +401,6 @@ public class SuperActivity extends AppCompatActivity {
         } else {
             setMode(MODE_TEST);
         }
-    }
-
-    protected void alertNoNetwork() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("No network");
-        alert.setMessage("The network connection failed.  If there is no available internet connection, turn the device to airplane mode.  Click YES, set airplane mode to ON and then hit the back button.");
-        alert.setPositiveButton(this.getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                gotoNetworkMode();
-                dialog.dismiss();
-            }
-        });
-        alert.setNegativeButton(this.getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        alert.show();
     }
 
     protected void gotoNetworkMode() {
