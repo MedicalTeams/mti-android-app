@@ -3,6 +3,8 @@ package org.mti.hip;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +28,7 @@ public class VisitsActivity extends SuperActivity {
     private TableLayout table;
     private Button btNext;
     private ArrayAdapter<Visit> adapter;
+    private TextView tvSearchPhrase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +36,57 @@ public class VisitsActivity extends SuperActivity {
         setContentView(R.layout.activity_visits);
         displayMode();
 
-        table = (TableLayout) findViewById(R.id.linlay);
+        String tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
+        final Tally tally;
+        if(tallyJson == "" || tallyJson == null) {
+            tally = new Tally();
+        } else {
+            tally = JSON.loads(tallyJson, Tally.class);
+        }
 
+        table = (TableLayout) findViewById(R.id.linlay);
+        tvSearchPhrase = (TextView) findViewById(R.id.search_phrase);
+
+        tvSearchPhrase.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String searchPhrase = tvSearchPhrase.getText().toString().toLowerCase();
+                int tallyLength = tally.size();
+                int searchCount = 0;
+                for(int i = 0; i < tallyLength; i++) {
+                    View view = table.getChildAt(i + 1);
+                    if (view instanceof TableRow) {
+                        boolean found = true;
+                        TableRow row = (TableRow) view;
+                        String tag = (String)row.getTag();
+                        for(String searchPhrasePart: searchPhrase.split(" ")) {
+                            if(!tag.contains(searchPhrasePart)) {
+                                found = false;
+                                break;
+                            }
+                        }
+                        if(found) {
+                            row.setVisibility(View.VISIBLE);
+                            searchCount++;
+                        } else {
+                            row.setVisibility(View.GONE);
+                        }
+                    }
+                }
+                TextView tv = (TextView)findViewById(R.id.tv_count);
+                tv.setText(getString(R.string.number_of_results) + ": " + searchCount);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         findViewById(R.id.bt_next_screen).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,13 +94,6 @@ public class VisitsActivity extends SuperActivity {
             }
         });
 
-        String tallyJson = getStorageManagerInstance().readTallyToJsonString(this);
-        Tally tally;
-        if(tallyJson == "" || tallyJson == null) {
-            tally = new Tally();
-        } else {
-            tally = JSON.loads(tallyJson, Tally.class);
-        }
         TextView tv = (TextView)findViewById(R.id.tv_count);
         tv.setText(getString(R.string.number_of_results) + ": " + tally.size());
 
@@ -114,10 +159,12 @@ public class VisitsActivity extends SuperActivity {
         TextView tvGender = (TextView) row.findViewById(R.id.tv_gender);
         tvGender.setText("GENDER");
         tvGender.setTypeface(null, Typeface.BOLD);
+
         return row;
     }
 
     private TableRow buildRow(Visit visit) {
+        String tag = "";
         TableRow row = (TableRow)LayoutInflater.from(VisitsActivity.this).inflate(R.layout.item_visit, null);
         TextView tvSync = (TextView) row.findViewById(R.id.tv_sync);
         if(visit.getStatus() == Visit.statusUnsent) {
@@ -133,6 +180,7 @@ public class VisitsActivity extends SuperActivity {
         }else{
             tvSync.setText("Unknown");
         }
+        tag += tvSync.getText().toString() + "|";
 
         TextView tvStatus = (TextView) row.findViewById(R.id.tv_status);
         if(visit.getBeneficiaryType() == Visit.national) {
@@ -140,6 +188,7 @@ public class VisitsActivity extends SuperActivity {
         }else{
             tvStatus.setText("Refugee");
         }
+        tag += tvStatus.getText().toString() + "|";
 
         TextView tvAge = (TextView) row.findViewById(R.id.tv_age);
         tvAge.setText("");
@@ -155,6 +204,7 @@ public class VisitsActivity extends SuperActivity {
         if(days > 0) {
             tvAge.append(String.valueOf(days) + " " + getString(R.string.days) + " ");
         }
+        tag += tvAge.getText().toString() + "|";
 
         String diagnosesString = "";
         Iterator<Diagnosis> iterDiagnosis = visit.getPatientDiagnosis().iterator();
@@ -169,9 +219,11 @@ public class VisitsActivity extends SuperActivity {
         }
         TextView tvDiagnosis = (TextView) row.findViewById(R.id.tv_diagnosis);
         tvDiagnosis.setText(diagnosesString);
+        tag += tvDiagnosis.getText().toString() + "|";
 
         TextView tvVisitDate = (TextView) row.findViewById(R.id.tv_visit_date);
         tvVisitDate.setText(getFormattedDate(visit.getVisitDate()));
+        tag += tvVisitDate.getText().toString() + "|";
 
         TextView tvVisitType = (TextView) row.findViewById(R.id.tv_visit_type);
         if(visit.getIsRevisit()) {
@@ -179,9 +231,11 @@ public class VisitsActivity extends SuperActivity {
         }else{
             tvVisitType.setText("New Visit");
         }
+        tag += tvVisitType.getText().toString() + "|";
 
         TextView tvStaff = (TextView) row.findViewById(R.id.tv_staff);
         tvStaff.setText(visit.getStaffMemberName());
+        tag += tvStaff.getText().toString() + "|";
 
         TextView tvGender = (TextView) row.findViewById(R.id.tv_gender);
         if(visit.getGender() == 'M') {
@@ -189,6 +243,8 @@ public class VisitsActivity extends SuperActivity {
         } else {
             tvGender.setText(getString(R.string.female));
         }
+        tag += tvGender.getText().toString() + "|";
+        row.setTag(tag.toLowerCase());
         return row;
     }
 

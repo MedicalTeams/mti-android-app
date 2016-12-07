@@ -10,10 +10,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <EditText
+        android:id="@+id/search_phrase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_search"
+        android:hint="@string/search"
+        android:layout_alignParentTop="true"/>
+
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/search_phrase"
         android:layout_above="@+id/bt_next_screen">
 
         <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
