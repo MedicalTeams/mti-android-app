@@ -380,7 +380,8 @@ public class DashboardActivity extends SuperActivity {
         }
 
         // Delete after 45 days
-        long MAX_RETENTION = 45 * 24 * 60 * 60 * 1000; // 45 days
+        long MAX_RETENTION = 45l * 24l * 60l * 60l * 1000l; // 45 days
+        Log.d("TONY", "" + MAX_RETENTION);
         for(int i = tally.size() - 1; i >= 0; i--) {
             Visit visit = tally.get(i);
             long diff = now.getTime() - visit.getVisitDate().getTime();
