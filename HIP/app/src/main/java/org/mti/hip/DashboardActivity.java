@@ -117,7 +117,6 @@ public class DashboardActivity extends SuperActivity {
                 }
             }
         });
-
     }
 
     @Override
@@ -299,7 +298,7 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void sendTally() {
-        String tallyJson = JSON.dumps(tally.getUnsynced());
+        String tallyJson = JSON.dumps(tally.getLimitedUnsynced());
         Log.d("sendTally", tallyJson);
         new NetworkTask(tallyJson, HttpClient.tallyEndpoint, HttpClient.post) {
 
@@ -352,61 +351,46 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void manageTally() {
-        int sent = 0;
-        int total = 0;
-        int warningCount = 0;
+        int syncedToday = 0;
+        int unSyncedToday = 0;
         Iterator<Visit> iter = tally.iterator();
         Date now = new Date();
         while (iter.hasNext()) {
             Visit visit = iter.next();
-            total++;
             long diff = now.getTime() - visit.getVisitDate().getTime();
-            if (diff > 8640000) { // One day
+            if (getFormattedDate(now).equals(getFormattedDate(visit.getVisitDate()))) { // Show same day.
                 switch (visit.getStatus()) {
                     case Visit.statusDisabled:
+                        unSyncedToday++;
                         break;
                     case Visit.statusFailure:
+                        unSyncedToday++;
                         break;
                     case Visit.statusDuplicate:
-                        sent++;
+                        syncedToday++;
                         break;
                     case Visit.statusSuccess:
-                        sent++;
+                        syncedToday++;
                         break;
                     case Visit.statusUnsent:
-                        break;
-                }
-            } else {
-                // not today
-                switch (visit.getStatus()) {
-                    case Visit.statusDisabled:
-                        warningCount++;
-                        break;
-                    case Visit.statusFailure:
-                        warningCount++;
-                        break;
-                    case Visit.statusDuplicate:
-                        break;
-                    case Visit.statusSuccess:
-                        break;
-                    case Visit.statusUnsent:
-                        warningCount++;
+                        unSyncedToday++;
                         break;
                 }
             }
         }
 
-        // Delete after X days
-        Iterator<Visit> iter2 = tally.iterator();
-        while (iter2.hasNext()) {
-            Visit visit = iter2.next();
+        // Delete after 45 days
+        long MAX_RETENTION = 45 * 24 * 60 * 60 * 1000; // 45 days
+        for(int i = tally.size() - 1; i >= 0; i--) {
+            Visit visit = tally.get(i);
             long diff = now.getTime() - visit.getVisitDate().getTime();
-            if (diff > 45 * 8640000) { // 45 days
-                iter2.remove();
+            if (diff > MAX_RETENTION && // 45 days
+                    (visit.getStatus() == Visit.statusSuccess || visit.getStatus() == Visit.statusDuplicate)) {
+                tally.remove(i);
             }
         }
 
-        if(sent != total || warningCount > 0) {
+        if(unSyncedToday > 0) {
             needsSync = true;
             if(isConnected()) {
                 manualSync.setVisibility(View.VISIBLE);
@@ -428,22 +412,14 @@ public class DashboardActivity extends SuperActivity {
 
         status.setText("");
 
-        if(sent > 0) {
-            status.setText(getResources().getQuantityString(R.plurals.sent_visits, sent, sent));
+        if(syncedToday > 0) {
+            status.setText(getResources().getQuantityString(R.plurals.sent_visits, syncedToday, syncedToday));
         }
 
-        int totalUnsynced;
+        if(unSyncedToday > 0) {
+            status.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.colorPrimary));
 
-        if(sent != total) {
-            totalUnsynced = total - sent;
-            // yellow
-            status.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.colorPrimaryDark));
-
-            if(warningCount > 0) {
-                status.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.colorPrimary));
-            }
-
-            status.append(getResources().getQuantityString(R.plurals.failed_visits, totalUnsynced, totalUnsynced));
+            status.append(getResources().getQuantityString(R.plurals.failed_visits, unSyncedToday, unSyncedToday));
         }
         if (!readDeviceStatus().matches(deviceActiveCode)) {
             //Remove for now.

@@ -126,7 +126,7 @@ public class VisitSummaryActivity extends SuperActivity {
             return;
         }
 
-        String tallyJson = JSON.dumps(tally.getUnsynced());
+        String tallyJson = JSON.dumps(tally.getLimitedUnsynced());
         Log.d("sendTally", tallyJson);
 
         progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {

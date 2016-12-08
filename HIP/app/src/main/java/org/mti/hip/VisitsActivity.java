@@ -3,8 +3,6 @@ package org.mti.hip;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +19,7 @@ import org.mti.hip.model.Supplemental;
 import org.mti.hip.model.Tally;
 import org.mti.hip.model.Visit;
 import org.mti.hip.utils.JSON;
+
 import java.util.Iterator;
 
 public class VisitsActivity extends SuperActivity {
@@ -48,43 +47,11 @@ public class VisitsActivity extends SuperActivity {
         table = (TableLayout) findViewById(R.id.linlay);
         tvSearchPhrase = (TextView) findViewById(R.id.search_phrase);
 
-        tvSearchPhrase.addTextChangedListener(new TextWatcher() {
+        findViewById(R.id.bt_search).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onClick(View v) {
                 String searchPhrase = tvSearchPhrase.getText().toString().toLowerCase();
-                int tallyLength = tally.size();
-                int searchCount = 0;
-                for(int i = 0; i < tallyLength; i++) {
-                    View view = table.getChildAt(i + 1);
-                    if (view instanceof TableRow) {
-                        boolean found = true;
-                        TableRow row = (TableRow) view;
-                        String tag = (String)row.getTag();
-                        for(String searchPhrasePart: searchPhrase.split(" ")) {
-                            if(!tag.contains(searchPhrasePart)) {
-                                found = false;
-                                break;
-                            }
-                        }
-                        if(found) {
-                            row.setVisibility(View.VISIBLE);
-                            searchCount++;
-                        } else {
-                            row.setVisibility(View.GONE);
-                        }
-                    }
-                }
                 buildTable(searchPhrase);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
             }
         });
         findViewById(R.id.bt_next_screen).setOnClickListener(new View.OnClickListener() {
@@ -109,6 +76,11 @@ public class VisitsActivity extends SuperActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        gotoNext();
+    }
+
     private void gotoNext() {
         Intent i = new Intent(VisitsActivity.this, DashboardActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -117,6 +89,7 @@ public class VisitsActivity extends SuperActivity {
     }
 
     private void buildTable(String searchPhrase) {
+        table.removeAllViews();
         TextView tv = (TextView)findViewById(R.id.tv_count);
         tv.setText(getString(R.string.number_of_results) + ": " + tally.size());
 
