@@ -353,6 +353,8 @@ public class DashboardActivity extends SuperActivity {
     private void manageTally() {
         int syncedToday = 0;
         int unSyncedToday = 0;
+        int syncedAll = 0;
+        int unSycnedAll = 0;
         Iterator<Visit> iter = tally.iterator();
         Date now = new Date();
         while (iter.hasNext()) {
@@ -377,11 +379,27 @@ public class DashboardActivity extends SuperActivity {
                         break;
                 }
             }
+            switch (visit.getStatus()) {
+                case Visit.statusDisabled:
+                    unSycnedAll++;
+                    break;
+                case Visit.statusFailure:
+                    unSycnedAll++;
+                    break;
+                case Visit.statusDuplicate:
+                    syncedAll++;
+                    break;
+                case Visit.statusSuccess:
+                    syncedAll++;
+                    break;
+                case Visit.statusUnsent:
+                    unSycnedAll++;
+                    break;
+            }
         }
 
         // Delete after 45 days
         long MAX_RETENTION = 45l * 24l * 60l * 60l * 1000l; // 45 days
-        Log.d("TONY", "" + MAX_RETENTION);
         for(int i = tally.size() - 1; i >= 0; i--) {
             Visit visit = tally.get(i);
             long diff = now.getTime() - visit.getVisitDate().getTime();
@@ -391,7 +409,7 @@ public class DashboardActivity extends SuperActivity {
             }
         }
 
-        if(unSyncedToday > 0) {
+        if(unSycnedAll > 0) {
             needsSync = true;
             if(isConnected()) {
                 manualSync.setVisibility(View.VISIBLE);
