@@ -22,8 +22,8 @@ public class HttpClient {
     public static final String injuryLocationsEndpoint = "/injurylocations";
     public static final String devicesEndpoint = "/devices";
 
-    public static final String prodWebUrl = "https://hip-app-service-prod.azurewebsites.net/hip/";
-    public static final String testWebUrl = "https://clinicwebapp.azurewebsites.net/hip";
+    public static final String prodWebUrl = "https://hipapp.medicalteams.org/hip/";
+    public static final String testWebUrl = "https://hipapp-dev.medicalteams.org/hip/";
 
     public static final String post = "POST";
     public static final String get = "GET";
