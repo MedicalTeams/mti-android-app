@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -72,6 +73,14 @@ public class DashboardActivity extends SuperActivity {
             @Override
             public void onClick(View v) {
                 gotoNetworkMode();
+            }
+        });
+
+        findViewById(R.id.bt_alert).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                startActivity(i);
             }
         });
 

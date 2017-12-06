@@ -71,6 +71,18 @@
         />
 
     <Button
+        android:id="@+id/bt_alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout="@+id/bt_sign_out"
+        android:drawableLeft="@drawable/ic_tooltip"
+        android:text="@string/alerts"
+        android:layout_above="@+id/bt_history"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
         android:id="@+id/bt_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

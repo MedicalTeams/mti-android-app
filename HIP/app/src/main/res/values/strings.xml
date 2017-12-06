@@ -121,7 +121,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="health_info_pgm">Health Information Program</string>
     <string name="sync_now">Sync Now</string>
     <string name="failed_to_retrieve_updated_lists">Failed to retrieve updated lists.</string>
-    <string name="alerts">Alerts Summary</string>
+    <string name="alerts">Alerts</string>
     <plurals name="visitOrVisits">
         <item quantity="one">1 visit </item>
         <item quantity="other">%d visits </item>
