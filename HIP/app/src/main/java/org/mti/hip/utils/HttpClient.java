@@ -2,6 +2,7 @@ package org.mti.hip.utils;
 
 import android.util.Log;
 
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -32,27 +33,33 @@ public class HttpClient {
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
-    public HttpClient() {
+    private boolean isProduction;
+    private String countryCode;
+
+    public HttpClient(final boolean isProduction, final String countryCode) {
         client = new OkHttpClient();
+        Log.d("HTTP", "START " + countryCode);
+        this.isProduction = isProduction;
+        this.countryCode = countryCode;
 //        client.setConnectTimeout(3, TimeUnit.SECONDS);
 //        client.setReadTimeout(3, TimeUnit.SECONDS);
 //        client.setWriteTimeout(15, TimeUnit.SECONDS);
     }
 
-    public String post(final String endpoint, final String json, final boolean isProduction) throws IOException {
+    public String post(final String endpoint, final String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = null;
+        String url = "";
         if(isProduction) {
-            request = new Request.Builder()
-                    .url(prodWebUrl + endpoint)
-                    .post(body)
-                    .build();
+            url = prodWebUrl + endpoint;
         } else {
-            request = new Request.Builder()
-                    .url(testWebUrl + endpoint)
-                    .post(body)
-                    .build();
+            url = testWebUrl + endpoint;
         }
+        request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("country", "xxx")
+                .build();
         Response response;
         String responseString = null;
         response = client.newCall(request).execute();
@@ -60,17 +67,18 @@ public class HttpClient {
         return responseString;
     }
 
-    public String get(final String endpoint, final boolean isProduction) throws IOException {
+    public String get(final String endpoint) throws IOException {
         Request request = null;
+        String url = "";
         if(isProduction) {
-            request = new Request.Builder()
-                    .url(prodWebUrl + endpoint)
-                    .build();
+            url = prodWebUrl + endpoint;
         } else {
-            request = new Request.Builder()
-                    .url(testWebUrl + endpoint)
-                    .build();
+            url = testWebUrl + endpoint;
         }
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("country", "xxx")
+                .build();
         Response response;
 
         String responseString = null;
@@ -88,20 +96,20 @@ public class HttpClient {
         return responseString;
     }
 
-    public String put(final String endpoint, final String json, final boolean isProduction) throws IOException {
+    public String put(final String endpoint, final String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = null;
+        String url;
         if(isProduction) {
-            request = new Request.Builder()
-                    .url(prodWebUrl + endpoint)
-                    .put(body)
-                    .build();
+            url = prodWebUrl + endpoint;
         } else {
-            request = new Request.Builder()
-                    .url(testWebUrl + endpoint)
-                    .put(body)
-                    .build();
+            url = testWebUrl + endpoint;
         }
+        request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .addHeader("country", "xxx")
+                .build();
         Log.v("mti","request.toString() = " + request.toString());
         Response response;
         String responseString;
@@ -109,5 +117,4 @@ public class HttpClient {
         responseString = parseResponse(response);
         return responseString;
     }
-
 }

@@ -40,7 +40,7 @@ public class SuperActivity extends AppCompatActivity {
 
     public static String currentUserName;
     private static HashMap<String, StorageManager> storageManagerModes = new HashMap<String, StorageManager>();
-    private static HttpClient httpClient;
+    protected static HttpClient httpClient;
     public static String facilityName;
     public static String locationName;
     public AlertDialogManager alert = new AlertDialogManager(this);
@@ -49,6 +49,7 @@ public class SuperActivity extends AppCompatActivity {
     private static boolean isConnected;
     private static String mode;
     private static DeviceInfo deviceInfo;
+    private static String countryCode;
 
     public static final int diagId = 0;
     public static final int stiId = 1;
@@ -71,6 +72,7 @@ public class SuperActivity extends AppCompatActivity {
     public static final String INJURY_LOCATIONS_KEY = "injurylockey";
     public static final String USER_LIST_KEY = "userlistkey";
     public static final String DEVICE_STATUS_KEY = "devicestatuskey";
+    private static final String COUNTRY_KEY = "countrykey";
     private static final String MODE_KEY = "modekey";
     public static final String MODE_PROD = "PROD";
     public static final String MODE_TEST = "TEST";
@@ -87,8 +89,16 @@ public class SuperActivity extends AppCompatActivity {
         setContentView(R.layout.activity_super);
         if(getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(buildHeader());
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setIcon(getResources().getDrawable(getFlagId()));
         }
         progressDialog = new AdvProgressDialog(this);
+    }
+
+    protected int getFlagId()
+    {
+        return getResources().getIdentifier("ic_" + getCountryCode(),
+                "drawable", getPackageName());
     }
 
     @Override
@@ -111,7 +121,7 @@ public class SuperActivity extends AppCompatActivity {
 
     public HttpClient getHttpClientInstance() {
         if (httpClient == null) {
-            httpClient = new HttpClient();
+            httpClient = new HttpClient(getIsProductionMode(), getCountryCode());
         }
         return httpClient;
     }
@@ -203,19 +213,19 @@ public class SuperActivity extends AppCompatActivity {
             String responseString = null;
             if(httpMethod.equals(HttpClient.post)) {
                 try {
-                    responseString = getHttpClientInstance().post(endpoint, body, getIsProductionMode());
+                    responseString = getHttpClientInstance().post(endpoint, body);
                 } catch (IOException e) {
                     this.e = e;
                 }
             } else if (httpMethod.equals(HttpClient.put)) {
                 try {
-                    responseString = getHttpClientInstance().put(endpoint, body, getIsProductionMode());
+                    responseString = getHttpClientInstance().put(endpoint, body);
                 } catch (IOException e) {
                     this.e = e;
                 }
             } else {
                 try {
-                    responseString = getHttpClientInstance().get(endpoint, getIsProductionMode());
+                    responseString = getHttpClientInstance().get(endpoint);
                 } catch (IOException e) {
                     this.e = e;
                 }
@@ -385,6 +395,21 @@ public class SuperActivity extends AppCompatActivity {
     private void setMode(String mode) {
         this.mode = mode;
         writeString(MODE_KEY, mode);
+    }
+
+    public String getCountryCode() {
+        if(countryCode == null) {
+            countryCode = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(COUNTRY_KEY, "");
+            if(countryCode == "") {
+                countryCode = getResources().getString(R.string.country_default);
+            }
+        }
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+        writeString(COUNTRY_KEY, countryCode);
     }
 
     public boolean getIsProductionMode() {

@@ -220,11 +220,11 @@ public class MainActivity extends SuperActivity {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    writeString(DIAGNOSIS_LIST_KEY, client.get(HttpClient.diagnosisEndpoint, getIsProductionMode()));
-                    writeString(FACILITIES_LIST_KEY, client.get(HttpClient.facilitiesEndpoint, getIsProductionMode()));
-                    writeString(SUPPLEMENTAL_LIST_KEY, client.get(HttpClient.supplementalEndpoint, getIsProductionMode()));
-                    writeString(SETTLEMENT_LIST_KEY, client.get(HttpClient.settlementEndpoint, getIsProductionMode()));
-                    writeString(INJURY_LOCATIONS_KEY, client.get(HttpClient.injuryLocationsEndpoint, getIsProductionMode()));
+                    writeString(DIAGNOSIS_LIST_KEY, client.get(HttpClient.diagnosisEndpoint));
+                    writeString(FACILITIES_LIST_KEY, client.get(HttpClient.facilitiesEndpoint));
+                    writeString(SUPPLEMENTAL_LIST_KEY, client.get(HttpClient.supplementalEndpoint));
+                    writeString(SETTLEMENT_LIST_KEY, client.get(HttpClient.settlementEndpoint));
+                    writeString(INJURY_LOCATIONS_KEY, client.get(HttpClient.injuryLocationsEndpoint));
                 } catch (IOException e1) {
                     e = e1;
                 }

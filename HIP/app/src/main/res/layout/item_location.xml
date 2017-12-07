@@ -20,4 +20,11 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignParentLeft="true"/>
 
+    <Button
+        android:id="@+id/flag"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_uga"
+        android:layout_alignParentRight="true" />
+
 </RelativeLayout>
