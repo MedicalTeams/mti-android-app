@@ -8,8 +8,8 @@ android {
         applicationId "org.medicalteams.hip"
         minSdkVersion 17
         targetSdkVersion 23
-        versionCode 49
-        versionName "1.3.49"
+        versionCode 53
+        versionName "1.4.53"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
