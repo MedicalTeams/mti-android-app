@@ -38,7 +38,7 @@ public class HttpClient {
 
     public HttpClient(final boolean isProduction, final String countryCode) {
         client = new OkHttpClient();
-        Log.d("HTTP", "START " + countryCode);
+        Log.d("HttpClient.constructor", countryCode);
         this.isProduction = isProduction;
         this.countryCode = countryCode;
 //        client.setConnectTimeout(3, TimeUnit.SECONDS);
@@ -47,6 +47,7 @@ public class HttpClient {
     }
 
     public String post(final String endpoint, final String json) throws IOException {
+        Log.d("HttpClient.post", endpoint);
         RequestBody body = RequestBody.create(JSON, json);
         Request request = null;
         String url = "";
@@ -58,7 +59,7 @@ public class HttpClient {
         request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("country", "xxx")
+                .addHeader("country", this.countryCode)
                 .build();
         Response response;
         String responseString = null;
@@ -68,6 +69,7 @@ public class HttpClient {
     }
 
     public String get(final String endpoint) throws IOException {
+        Log.d("HttpClient.get", endpoint);
         Request request = null;
         String url = "";
         if(isProduction) {
@@ -77,7 +79,7 @@ public class HttpClient {
         }
         request = new Request.Builder()
                 .url(url)
-                .addHeader("country", "xxx")
+                .addHeader("country", this.countryCode)
                 .build();
         Response response;
 
@@ -97,6 +99,7 @@ public class HttpClient {
     }
 
     public String put(final String endpoint, final String json) throws IOException {
+        Log.d("HttpClient.put", endpoint);
         RequestBody body = RequestBody.create(JSON, json);
         Request request = null;
         String url;
@@ -108,7 +111,7 @@ public class HttpClient {
         request = new Request.Builder()
                 .url(url)
                 .put(body)
-                .addHeader("country", "xxx")
+                .addHeader("country", this.countryCode)
                 .build();
         Log.v("mti","request.toString() = " + request.toString());
         Response response;

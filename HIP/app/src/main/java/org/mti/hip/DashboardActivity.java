@@ -217,6 +217,7 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void updateDeviceRegistration() {
+        Log.d("DashboardActivity.updateDeviceRegistration", "Starting...");
         String serialNumber = StorageManager.getSerialNumber();
 //        String description = "Device serial number last created/updated on " + new Date();
 //        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, String.valueOf(versionCode), description);
@@ -299,12 +300,11 @@ public class DashboardActivity extends SuperActivity {
 
     private void sendTally() {
         String tallyJson = JSON.dumps(tally.getLimitedUnsynced());
-        Log.d("sendTally", tallyJson);
+        Log.d("DashboardActivity.sendTally", tallyJson);
         new NetworkTask(tallyJson, HttpClient.tallyEndpoint, HttpClient.post) {
-
             @Override
             public void getResponseString(String response) {
-                Log.d("Visit response string", response);
+                Log.d("DashboardActivity.getResponseString", response);
                 // update the tally - if tally response contains status == 4 then device is disabled
                 Tally serverTally = JSON.loads(response, Tally.class);
                 int success = 0;
@@ -346,7 +346,6 @@ public class DashboardActivity extends SuperActivity {
 
                 manageTally();
             }
-
         }.execute();
     }
 
