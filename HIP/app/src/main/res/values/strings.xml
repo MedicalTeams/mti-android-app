@@ -124,9 +124,9 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="alerts">Alerts Summary</string>
     <string name="country_default">uga</string>
     <string-array name="country_array">
-        <item>bgd:Bangladesh</item>
-        <item>uga:Uganda</item>
-        <item>usa:USA</item>
+        <item>bd:Bangladesh</item>
+        <item>ug:Uganda</item>
+        <item>us:USA</item>
     </string-array>
     <plurals name="visitOrVisits">
         <item quantity="one">1 visit </item>
