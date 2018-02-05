@@ -122,7 +122,7 @@ A patient with a ‘mixed’ presentation (i.e. diagnoses that fulfill New &amp;
     <string name="sync_now">Sync Now</string>
     <string name="failed_to_retrieve_updated_lists">Failed to retrieve updated lists.</string>
     <string name="alerts">Alerts Summary</string>
-    <string name="country_default">uga</string>
+    <string name="country_default">ug</string>
     <string-array name="country_array">
         <item>bd:Bangladesh</item>
         <item>ug:Uganda</item>

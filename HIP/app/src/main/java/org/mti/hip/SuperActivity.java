@@ -400,7 +400,16 @@ public class SuperActivity extends AppCompatActivity {
     public String getCountryCode() {
         if(countryCode == null) {
             countryCode = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getString(COUNTRY_KEY, "");
-            if(countryCode == "") {
+            // Check to see if country code is in list of valid country codes.
+            String[] validCountries = getResources().getStringArray(R.array.country_array);
+            boolean found = false;
+            for(int i = 0; i < validCountries.length; i++) {
+                String[] parts = validCountries[i].split(":");
+                if(parts[0] == countryCode) {
+                    found = true;
+                }
+            }
+            if(!found) {
                 countryCode = getResources().getString(R.string.country_default);
             }
         }
