@@ -65,7 +65,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/body_font_medium"/>
+                android:textSize="@dimen/body_font_medium"
+                android:background="@drawable/spinner_border"/>
         </RadioGroup>
 
         <RadioGroup

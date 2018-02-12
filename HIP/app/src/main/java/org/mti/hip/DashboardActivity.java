@@ -41,10 +41,6 @@ public class DashboardActivity extends SuperActivity {
     private static final int tallyFileSyncOverdueThresholdDays = 1;
     private static final int visitEnteredOverdueThresholdMintues = 30;
     private static final int serverConstantsSyncOverdueThresholdDays = 1;
-    private static final String LAST_VISIT_ENTERED_TIME_KEY = "lastTallyFileSyncTimeKey";
-    private static final String LAST_TALLY_FILE_SYNC_TIME_KEY = "lastTallyFileSyncTimeKey";
-    private static final String LAST_SERVER_CONSTANTS_SYNC_TIME_KEY = "lastServerConstantsSyncTimeKey";
-    private static final String APP_VERSION_KEY = "appversionkey";
 
     private int backPressCount;
     private NetworkBroadcastReceiver networkBroadcastReceiver;
@@ -105,7 +101,7 @@ public class DashboardActivity extends SuperActivity {
                 if (readDeviceStatus().matches(deviceActiveCode)) {
                     startVisit();
                 } else {
-                    new NetworkTask(HttpClient.getDeviceStatus + StorageManager.getSerialNumber(), HttpClient.get) {
+                    new NetworkTask(HttpClient.devicesEndpoint + "/" + StorageManager.getSerialNumber(), HttpClient.get) {
 
                         @Override
                         public void getResponseString(String response) {
@@ -217,10 +213,8 @@ public class DashboardActivity extends SuperActivity {
     }
 
     private void updateDeviceRegistration() {
-        Log.d("DashboardActivity.updateDeviceRegistration", "Starting...");
+        Log.d("Register", "Starting...");
         String serialNumber = StorageManager.getSerialNumber();
-//        String description = "Device serial number last created/updated on " + new Date();
-//        String jsonBody = JSONManager.getJsonToPutDevice(serialNumber, String.valueOf(versionCode), description);
         DeviceRegistrationObj regObj = new DeviceRegistrationObj();
         regObj.setUuid(serialNumber);
         regObj.setFacility(readLastUsedFacility());
@@ -237,25 +231,13 @@ public class DashboardActivity extends SuperActivity {
             protected void onPostExecute(String r) {
                 if (e == null) {
                     getResponseString(r);
-                    writeVersionCode();
+                    writeVersionCode(versionCode);
                 } else {
                     alert.showAlert(getString(R.string.error), getString(R.string.request_2register_no_succeed) + ":\n" + e.getMessage());
                 }
                 progressDialog.dismiss();
             }
         }.execute();
-    }
-
-    private String readDeviceStatus() {
-        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getString(DEVICE_STATUS_KEY, "");
-    }
-
-    private void writeVersionCode() {
-        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putInt(APP_VERSION_KEY, versionCode).commit();
-    }
-
-    private int readVersionCode() {
-        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getInt(APP_VERSION_KEY, 0);
     }
 
     private void getServerConstants() {
@@ -300,11 +282,11 @@ public class DashboardActivity extends SuperActivity {
 
     private void sendTally() {
         String tallyJson = JSON.dumps(tally.getLimitedUnsynced());
-        Log.d("DashboardActivity.sendTally", tallyJson);
+        Log.d("sendTally", tallyJson);
         new NetworkTask(tallyJson, HttpClient.tallyEndpoint, HttpClient.post) {
             @Override
             public void getResponseString(String response) {
-                Log.d("DashboardActivity.getResponseString", response);
+                Log.d("getResponseString", response);
                 // update the tally - if tally response contains status == 4 then device is disabled
                 Tally serverTally = JSON.loads(response, Tally.class);
                 int success = 0;
@@ -467,18 +449,6 @@ public class DashboardActivity extends SuperActivity {
 
     /**
      */
-    public void writeLastVisitEnteredTime() {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_VISIT_ENTERED_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
-    }
-
-    /**
-     */
-    public Long readLastVisitEnteredTime() {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_VISIT_ENTERED_TIME_KEY, 0L);
-    }
-
-    /**
-     */
     public boolean isVisitEnteredOverdue() {
         Long diffMillis = Calendar.getInstance().getTimeInMillis() - readLastVisitEnteredTime();
         int diffDays = (int) TimeUnit.MILLISECONDS.toMinutes(diffMillis);
@@ -488,19 +458,6 @@ public class DashboardActivity extends SuperActivity {
         return false;
     }
 
-    /**
-     * Save the last date/time (as UTC milliseconds from the epoch) at which the tally file was successfully sent up to the server
-     */
-    public void writeLastTallyFileSyncTime() {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_TALLY_FILE_SYNC_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
-    }
-
-    /**
-     * @return The last date/time (as UTC milliseconds from the epoch) at which the tally file was successfully sent up to the server
-     */
-    public Long readLastTallyFileSyncTime() {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_TALLY_FILE_SYNC_TIME_KEY, 0L);
-    }
 
     /**
      * @return true if the last time the tally file was successfully sent up to the server was too long ago
@@ -512,21 +469,6 @@ public class DashboardActivity extends SuperActivity {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Save the last date/time (as UTC milliseconds from the epoch) at which the constants were successfully downloaded from the server
-     */
-    public void writeLastServerConstantsSyncTime() {
-        Log.v(DEFAULT_LOG_TAG, "Server constants downloaded and sync time updated");
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_SERVER_CONSTANTS_SYNC_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
-    }
-
-    /**
-     * @return The last date/time (as UTC milliseconds from the epoch) at which the constants were successfully downloaded from the server
-     */
-    public Long readLastServerConstantsSyncTime() {
-        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_SERVER_CONSTANTS_SYNC_TIME_KEY, 0L);
     }
 
     /**

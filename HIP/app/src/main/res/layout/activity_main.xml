@@ -32,11 +32,23 @@
         android:textSize="@dimen/title_font"
         android:layout_height="wrap_content" />
 
+    <Spinner
+        android:id="@+id/sp_country"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logo"
+        android:layout_centerHorizontal="true"
+        android:layout_weight="1"
+        android:layout_marginTop="24dp"
+        android:padding="24dp"
+        android:textSize="@dimen/body_font_medium"
+        android:background="@drawable/spinner_border"/>
+
     <Button
         android:id="@+id/register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/logo"
+        android:layout_below="@+id/sp_country"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:padding="24dp"

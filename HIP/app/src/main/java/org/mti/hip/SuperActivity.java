@@ -31,6 +31,7 @@ import org.mti.hip.utils.UserTimeout;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -73,6 +74,10 @@ public class SuperActivity extends AppCompatActivity {
     public static final String USER_LIST_KEY = "userlistkey";
     public static final String DEVICE_STATUS_KEY = "devicestatuskey";
     private static final String COUNTRY_KEY = "countrykey";
+    private static final String LAST_VISIT_ENTERED_TIME_KEY = "lastVisitEnteredTimeKey";
+    private static final String LAST_TALLY_FILE_SYNC_TIME_KEY = "lastTallyFileSyncTimeKey";
+    private static final String LAST_SERVER_CONSTANTS_SYNC_TIME_KEY = "lastServerConstantsSyncTimeKey";
+    private static final String APP_VERSION_KEY = "appversionkey";
     private static final String MODE_KEY = "modekey";
     public static final String MODE_PROD = "PROD";
     public static final String MODE_TEST = "TEST";
@@ -395,6 +400,60 @@ public class SuperActivity extends AppCompatActivity {
     private void setMode(String mode) {
         this.mode = mode;
         writeString(MODE_KEY, mode);
+    }
+
+    protected String readDeviceStatus() {
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getString(DEVICE_STATUS_KEY, "");
+    }
+
+    protected void writeVersionCode(int versionCode) {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putInt(APP_VERSION_KEY, versionCode).commit();
+    }
+
+    protected int readVersionCode() {
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getInt(APP_VERSION_KEY, 0);
+    }
+
+    protected void writeLastVisitEnteredTime() {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_VISIT_ENTERED_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
+    }
+
+    protected Long readLastVisitEnteredTime() {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_VISIT_ENTERED_TIME_KEY, 0L);
+    }
+
+    /**
+     * Save the last date/time (as UTC milliseconds from the epoch) at which the tally file was successfully sent up to the server
+     */
+    protected void writeLastTallyFileSyncTime() {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_TALLY_FILE_SYNC_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
+    }
+
+    /**
+     * @return The last date/time (as UTC milliseconds from the epoch) at which the tally file was successfully sent up to the server
+     */
+    protected Long readLastTallyFileSyncTime() {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_TALLY_FILE_SYNC_TIME_KEY, 0L);
+    }
+
+    protected void resetLastServerConstantsSyncTime() {
+        Log.v(DEFAULT_LOG_TAG, "Server constants downloaded and sync time updated");
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_SERVER_CONSTANTS_SYNC_TIME_KEY, 0).commit();
+    }
+
+    /**
+     * Save the last date/time (as UTC milliseconds from the epoch) at which the constants were successfully downloaded from the server
+     */
+    protected void writeLastServerConstantsSyncTime() {
+        Log.v(DEFAULT_LOG_TAG, "Server constants downloaded and sync time updated");
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().putLong(LAST_SERVER_CONSTANTS_SYNC_TIME_KEY, Calendar.getInstance().getTimeInMillis()).commit();
+    }
+
+    /**
+     * @return The last date/time (as UTC milliseconds from the epoch) at which the constants were successfully downloaded from the server
+     */
+    protected Long readLastServerConstantsSyncTime() {
+        return getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(LAST_SERVER_CONSTANTS_SYNC_TIME_KEY, 0L);
     }
 
     public String getCountryCode() {

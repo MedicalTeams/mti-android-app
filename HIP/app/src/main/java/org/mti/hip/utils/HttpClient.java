@@ -14,20 +14,17 @@ import java.io.IOException;
 public class HttpClient {
 
     private OkHttpClient client;
-    // Endpoints for which country should NOT be sent.
-    public static final String getDeviceStatus = "/devices/";
-    public static final String devicesEndpoint = "/devices";
 
-    // Endpoints for which country should be sent.
     public static final String tallyEndpoint = "/visits/upload";
     public static final String facilitiesEndpoint = "/facilities";
     public static final String diagnosisEndpoint = "/diagnosis";
     public static final String supplementalEndpoint = "/supplementals";
     public static final String settlementEndpoint = "/settlements";
     public static final String injuryLocationsEndpoint = "/injurylocations";
+    public static final String devicesEndpoint = "/devices";
 
-    public static final String prodWebUrl = "https://hipapp.medicalteams.org/hip/";
-    public static final String testWebUrl = "https://hipapp-dev.medicalteams.org/hip/";
+    public static final String prodWebUrl = "https://hipapp.medicalteams.org/hip";
+    public static final String testWebUrl = "https://hipapp-dev.medicalteams.org/hip";
 
     public static final String post = "POST";
     public static final String get = "GET";
@@ -53,45 +50,39 @@ public class HttpClient {
         Log.d("HttpClient.post", endpoint);
         RequestBody body = RequestBody.create(JSON, json);
         Request request = null;
-        Request.Builder builder = null;
         String url = "";
         if(isProduction) {
             url = prodWebUrl + endpoint;
         } else {
             url = testWebUrl + endpoint;
         }
-        builder = new Request.Builder()
+        request = new Request.Builder()
                 .url(url)
-                .post(body);
-        if(!endpoint.equals(getDeviceStatus) && !endpoint.equals(devicesEndpoint)) {
-            builder = builder
-                    .addHeader("country", this.countryCode);
-        }
-        request = builder.build();
+                .post(body)
+                .addHeader("country", this.countryCode)
+                .build();
+        Log.v("HttpClient.post", endpoint + " REQUEST " + request.toString());
         Response response;
         String responseString = null;
         response = client.newCall(request).execute();
         responseString = parseResponse(response);
+        Log.v("HttpClient.post", endpoint + " RESPONSE " + responseString);
         return responseString;
     }
 
     public String get(final String endpoint) throws IOException {
         Log.d("HttpClient.get", endpoint);
         Request request = null;
-        Request.Builder builder = null;
         String url = "";
         if(isProduction) {
             url = prodWebUrl + endpoint;
         } else {
             url = testWebUrl + endpoint;
         }
-        builder = new Request.Builder()
-                .url(url);
-        if(!endpoint.equals(getDeviceStatus) && !endpoint.equals(devicesEndpoint)) {
-            builder = builder
-                    .addHeader("country", this.countryCode);
-        }
-        request = builder.build();
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("country", this.countryCode)
+                .build();
         Response response;
 
         String responseString = null;
@@ -113,26 +104,23 @@ public class HttpClient {
         Log.d("HttpClient.put", endpoint);
         RequestBody body = RequestBody.create(JSON, json);
         Request request = null;
-        Request.Builder builder = null;
         String url;
         if(isProduction) {
             url = prodWebUrl + endpoint;
         } else {
             url = testWebUrl + endpoint;
         }
-        builder = new Request.Builder()
+        request = new Request.Builder()
                 .url(url)
-                .put(body);
-        if(!endpoint.equals(getDeviceStatus) && !endpoint.equals(devicesEndpoint)) {
-            builder = builder
-                    .addHeader("country", this.countryCode);
-        }
-        request = builder.build();
-        Log.v("mti","request.toString() = " + request.toString());
+                .put(body)
+                .addHeader("country", this.countryCode)
+                .build();
+        Log.v("HttpClient.put", endpoint + " REQUEST " + request.toString());
         Response response;
         String responseString;
         response = client.newCall(request).execute();
         responseString = parseResponse(response);
+        Log.v("HttpClient.put", endpoint + " RESPONSE " + responseString);
         return responseString;
     }
 }

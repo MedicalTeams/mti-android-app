@@ -13,9 +13,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.mti.hip.model.Country;
 import org.mti.hip.model.DeviceStatusResponse;
 import org.mti.hip.utils.HttpClient;
 import org.mti.hip.utils.JSON;
@@ -23,6 +26,7 @@ import org.mti.hip.utils.NetworkBroadcastReceiver;
 import org.mti.hip.utils.StorageManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends SuperActivity {
@@ -33,6 +37,7 @@ public class MainActivity extends SuperActivity {
     private boolean registered;
     private String serialNumber;
     private NetworkBroadcastReceiver networkBroadcastReceiver = null;
+    private Spinner spCountry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +60,16 @@ public class MainActivity extends SuperActivity {
         versionName = String.valueOf(pInfo.versionName);
         version.setText(getString(R.string.version_code) + " " + versionName);
 
+        spCountry = (Spinner) findViewById(R.id.sp_country);
+        buildCountrySpinner();
+
         btRegister = (Button) findViewById(R.id.register);
         btRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String countryCode = ((Country)spCountry.getSelectedItem()).getId();
+                setCountryCode(countryCode);
 
                 if(!isConnected()) {
                     alert.showAlert(getString(R.string.no_network), getString(R.string.plz_connect2_internet_ntry_again));
@@ -187,6 +198,7 @@ public class MainActivity extends SuperActivity {
                 registered = true;
                 Log.d("Registration response", response);
                 initApp();
+                spCountry.setVisibility(View.INVISIBLE);
                 btRegister.setText(getString(R.string.start));
             }
 
@@ -238,6 +250,7 @@ public class MainActivity extends SuperActivity {
                 } else {
                     Log.d(DEFAULT_LOG_TAG, "initialized");
                     initialized = true;
+                    spCountry.setVisibility(View.INVISIBLE);
                     btRegister.setText(getString(R.string.start));
                 }
                 progressDialog.dismiss();
@@ -245,5 +258,28 @@ public class MainActivity extends SuperActivity {
             }
 
         }.execute();
+    }
+
+    private void buildCountrySpinner(){
+        // Update text on page.
+        String countryCode = getCountryCode();
+        String defaultCountryCode = getResources().getString(R.string.country_default);
+        String[] countryKeyVal = getResources().getStringArray(R.array.country_array);
+        Country selectedCountry = new Country(countryCode, "");
+        ArrayList<Country> countryList = new ArrayList<>();
+        for(int i = 0; i < countryKeyVal.length; i++) {
+            String[] pair = countryKeyVal[i].split(":");
+            countryList.add(new Country(pair[0], pair[1]));
+        }
+        ArrayAdapter<Country> adapter = new ArrayAdapter<Country>(this,
+                android.R.layout.simple_spinner_item, countryList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCountry.setAdapter(adapter);
+        int pos = adapter.getPosition(selectedCountry);
+        if (pos == -1) {
+            spCountry.setSelection(adapter.getPosition(new Country(defaultCountryCode, "")));
+        } else {
+            spCountry.setSelection(pos);
+        }
     }
 }
