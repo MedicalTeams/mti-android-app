@@ -347,7 +347,6 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                     ArrayList<Supplemental> list = getList(groupPosition);
                     Supplemental supp = new Supplemental();
                     supp.setId(id);
-                    supp.setDiagnosis(19); // would need to be 20 for mental health
                     supp.setName(customOtherName);
                     list.add(supp);
 
