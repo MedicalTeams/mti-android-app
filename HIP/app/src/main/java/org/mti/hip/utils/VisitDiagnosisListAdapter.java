@@ -258,17 +258,17 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         if (obj instanceof Diagnosis) {
             diag = (Diagnosis) obj;
             if (diag.getId() == primaryOtherId) {
-                addOtherDiag(false, primaryOtherId, groupPosition);
+                addOtherDiag(diag.getId(), -1, groupPosition);
                 return true;
             }
         } else if (obj instanceof Supplemental) {
             supp = (Supplemental) obj;
             if (supp.getId() == chronicOtherId) {
-                addOtherDiag(true, chronicOtherId, groupPosition);
+                addOtherDiag(supp.getDiagnosis(), supp.getId(), groupPosition);
                 return true;
             }
             if (supp.getId() == stiOtherId) {
-                addOtherDiag(true, stiOtherId, groupPosition);
+                addOtherDiag(supp.getDiagnosis(), supp.getId(), groupPosition);
                 return true;
             }
         }
@@ -321,7 +321,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
         dialog.show();
     }
 
-    private void addOtherDiag(final boolean isSupplemental, final int id, final int groupPosition) {
+    private void addOtherDiag(final int diagnosisId, final int supplementalId, final int groupPosition) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         LayoutInflater inflater = context.getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_edittext, null);
@@ -343,10 +343,11 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 if (customOtherName.matches("")) return;
-                if (isSupplemental) {
+                if (supplementalId > -1) {
                     ArrayList<Supplemental> list = getList(groupPosition);
                     Supplemental supp = new Supplemental();
-                    supp.setId(id);
+                    supp.setId(supplementalId);
+                    supp.setDiagnosis(diagnosisId); // would need to be 20 for mental health
                     supp.setName(customOtherName);
                     list.add(supp);
 
@@ -354,7 +355,7 @@ public class VisitDiagnosisListAdapter extends BaseExpandableListAdapter {
                     ArrayList<Diagnosis> list = getList(groupPosition);
                     Diagnosis diag = new Diagnosis();
                     diag.setName(customOtherName);
-                    diag.setId(id);
+                    diag.setId(diagnosisId);
                     list.add(diag);
                 }
 
